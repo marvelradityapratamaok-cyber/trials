@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Laundry</title>
-    
+    <link rel="icon" href="logo.jpeg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     
@@ -128,10 +128,10 @@
         th { background: #f8fafc; color: #64748b; }
         
         .badge { padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; border: none; cursor: pointer; }
-        .badge.belum { background: rgba(255, 0, 0, 0.349); color: #ff0000; }
-        .badge.proses { background: rgba(255, 166, 0, 0.363); color: #ff8800; }
-        .badge.siap { background: rgba(0, 60, 255, 0.212); color: #00aaff; }
-        .badge.selesai { background: rgba(51, 255, 0, 0.301); color: #148b40; }
+        .badge.belum { background: #fee2e2; color: #ef4444; }
+        .badge.proses { background: #fef3c7; color: #d97706; }
+        .badge.siap { background: #e0f2fe; color: #0284c7; }
+        .badge.selesai { background: #dcfce7; color: #15803d; }
 
         .badge-antar { padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; border: none; display: inline-block; transition: all 0.2s; }
         .badge-antar.antar-jemput { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
@@ -175,6 +175,13 @@
             .mobile-fixed-nav { display: flex; }
             .parallax-layer { position: relative; min-height: auto; }
         }
+
+       @media only screen and (min-width: 577px)  {
+            .logo-gambar{
+              margin-right: -830px;
+
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-50 via-blue-50/50 to-slate-100">
@@ -183,7 +190,7 @@
         
         <nav id="public-navbar" class="bg-white/95 backdrop-blur shadow-sm fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center gap-2 max-w-full transition-transform duration-300 ease-in-out">
             <div class="text-xl font-black text-blue-600 tracking-tight shrink-0 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-               Admin<span class="text-amber-500">Laundry.</span>
+                Admin<span class="text-amber-500">Laundry.</span>
             </div>
             <div class="hidden md:flex space-x-8 font-semibold text-slate-600">
                 <a href="#beranda-section" class="hover:text-blue-600 transition">Beranda</a>
@@ -237,10 +244,10 @@
                         Baju Kotor Menumpuk? <br><span class="text-blue-600">Kami Jemput & Cuci 24 Jam!</span>
                     </h1>
                     <p class="text-slate-600 mt-4 text-base">
-                        Gak perlu keluar rumah.Admin Laundry siap melayani cuci kiloan, bed cover, karpet, boneka, hingga sepatu & bahan kulit kapan saja Anda butuhkan. Ditangani oleh tim ahli serta mesin andalan modern.
+                        Gak perlu keluar rumah. Admin Laundry siap melayani cuci kiloan, bed cover, karpet, boneka, hingga sepatu & bahan kulit kapan saja Anda butuhkan. Ditangani oleh tim ahli serta mesin andalan modern.
                     </p>
                     <div class="mt-8 flex flex-col sm:flex-row gap-4">
-                        <a href="https://wa.me/628138772373" target="_blank" class="bg-emerald-500 text-white text-center px-8 py-3.5 rounded-xl font-bold hover:bg-emerald-600 transition shadow-lg flex items-center justify-center gap-2">
+                        <a href="https://web.whatsapp.com/" target="_blank" class="bg-emerald-500 text-white text-center px-8 py-3.5 rounded-xl font-bold hover:bg-emerald-600 transition shadow-lg flex items-center justify-center gap-2">
                             Pesan via WhatsApp
                         </a>
                         <a href="#layanan-section" class="bg-blue-600 text-white text-center px-6 py-3.5 rounded-xl font-bold hover:bg-blue-700 transition shadow-md flex items-center justify-center">
@@ -249,7 +256,7 @@
                     </div>
                 </div>
             </section>
-             <h1 style="font-size: 150%; text-align: center; font-family: Arial, Helvetica, sans-serif;" ><b>udah selesai belum ya?</b></h1>
+            <div><h1 style="font-size: 25px; text-align: center;"><b>Sudah selesai belum ya?</b></h1></div>
         </div>
 
         <div class="parallax-layer z-20">
@@ -296,34 +303,34 @@
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition overflow-hidden">
                         <img src="loundry.jpg" alt="Cuci Setrika Reguler" class="w-full h-40 object-cover">
                         <div class="p-6">
-                            <div class="text-2xl mb-1"><img src="logo.jpeg" alt=""style="width: 20px; height=20px;"></div>
+                            <div class="text-2xl mb-1"><img src="logo.jpeg" alt="" style="width:20px;" height="20px"></div>
                             <h3 class="font-bold text-slate-900 text-lg">Cuci Setrika Reguler</h3>
                             <p class="text-slate-500 text-xs mt-1 mb-4">Cuci, kering, lipat harian higienis, bersih dan wangi semerbak.</p>
                             <div class="text-blue-600 font-extrabold text-lg">Rp 7.000 / kg</div>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition overflow-hidden">
-                        <img src="loundry1.jpg" alt="Express 6 Jam" class="w-full h-40 object-cover">
+                        <img src="loundry2.jpg" alt="Express 6 Jam" class="w-full h-40 object-cover">
                         <div class="p-6">
-                             <div class="text-2xl mb-1"><img src="logo.jpeg" alt=""style="width: 20px; height=20px;"></div>
+                            <div class="text-2xl mb-1"><img src="logo.jpeg" alt="" style="width:20px;" height="20px"></div>
                             <h3 class="font-bold text-slate-900 text-lg">Express 6 Jam</h3>
                             <p class="text-slate-500 text-xs mt-1 mb-4">Layanan super kilat selesai dalam hitungan jam untuk kebutuhan mendesak.</p>
                             <div class="text-blue-600 font-extrabold text-lg">Rp 15.000 / kg</div>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition overflow-hidden">
-                        <img src="loundry2.jpg" alt="Deep Clean Sepatu" class="w-full h-40 object-cover">
+                        <img src="loundry3.jpg" alt="Deep Clean Sepatu" class="w-full h-40 object-cover">
                         <div class="p-6">
-                             <div class="text-2xl mb-1"><img src="logo.jpeg" alt=""style="width: 20px; height=20px;"></div>
+                          <div class="text-2xl mb-1"><img src="logo.jpeg" alt="" style="width:20px;" height="20px"></div>
                             <h3 class="font-bold text-slate-900 text-lg">Deep Clean Sepatu</h3>
                             <p class="text-slate-500 text-xs mt-1 mb-4">Perawatan khusus sneakers, canvas, dan kulit agar segar kembali seperti baru.</p>
                             <div class="text-blue-600 font-extrabold text-lg">Rp 35.000 / pasang</div>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition overflow-hidden">
-                        <img src="loundry3.jpg" alt="Bed Cover" class="w-full h-40 object-cover">
+                        <img src="loundry2.jpg" alt="Bed Cover" class="w-full h-40 object-cover">
                         <div class="p-6">
-                            <div class="text-2xl mb-1"><img src="logo.jpeg" alt=""style="width: 20px; height=20px;"></div>
+                            <div class="text-2xl mb-1"><img src="logo.jpeg" alt="" style="width:20px;" height="20px"></div>
                             <h3 class="font-bold text-slate-900 text-lg">Bed Cover & Kain Tebal</h3>
                             <p class="text-slate-500 text-xs mt-1 mb-4">Pembersihan comforter tebal, blanket, gorden dengan mesin kapasitas besar.</p>
                             <div class="text-blue-600 font-extrabold text-sm">Mulai Rp 25.000 / pcs</div>
@@ -334,7 +341,7 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 max-w-3xl mx-auto overflow-hidden mb-8">
                     <img src="https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=80&w=800&auto=format&fit=cover" alt="Banner Ketentuan Layanan" class="w-full h-48 object-cover">
                     <div class="p-6">
-                        <h4 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2" >📋 Ketentuan & Syarat Layanan Pemesanan</h4>
+                        <h4 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">📋 Ketentuan & Syarat Layanan Pemesanan</h4>
                         <ul class="text-xs text-slate-600 space-y-2">
                             <li>• Minimal pencucian kiloan adalah sebesar 3 kg per nota transaksi.</li>
                             <li>• Pembayaran dapat dilakukan tunai atau nontunai via QRIS bank/e-wallet resmi toko saat baju selesai/diantar.</li>
@@ -396,7 +403,7 @@
                             </div>
                         </div>
                         <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
-                            <img src="loundry1.jpg" alt="Setrika Uap" class="w-full h-48 object-cover">
+                            <img src="loundry2.jpg" alt="Setrika Uap" class="w-full h-48 object-cover">
                             <div class="p-5">
                                 <h4 class="font-bold text-slate-900 text-base">Setrika Boiler Uap Geser</h4>
                                 <p class="text-xs text-slate-500 mt-2">Menyetrika tanpa gosong, meluruskan kerutan pakaian tersulit sekalipun jauh lebih cepat dan rapi dibanding setrika listrik rumahan.</p>
@@ -444,7 +451,7 @@
                 </div>
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative">
-                        <p class="text-slate-600 text-sm italic">"Sangat terbantu dengan layanan Express 6 jam nyaAdmin Laundry. Pas ada acara mendadak, baju langsung siap, wangi dan rapi banget!"</p>
+                        <p class="text-slate-600 text-sm italic">"Sangat terbantu dengan layanan Express 6 jam nya Admin Laundry. Pas ada acara mendadak, baju langsung siap, wangi dan rapi banget!"</p>
                         <div class="flex items-center gap-3 mt-6">
                             <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150" alt="Client 1" class="w-10 h-10 rounded-full object-cover">
                             <div>
@@ -480,7 +487,7 @@
                 <div class="w-full bg-gradient-to-tr from-blue-600 to-indigo-700 rounded-3xl shadow-2xl flex flex-col justify-between text-white p-6 md:p-8 text-center">
                     <div class="mb-4">
                         <h3 class="text-2xl font-bold md:text-3xl">Informasi lokasi alamat</h3>
-                        <p class="text-blue-50 mt-1 text-sm md:text-base">Jl. depok, 2026</p>
+                        <p class="text-blue-50 mt-1 text-sm md:text-base">Jl. depok 2026 admin loundry</p>
                     </div>
                     
                     <div class="w-full rounded-2xl overflow-hidden shadow-inner border border-white/20 h-[300px] md:h-[450px]">
@@ -497,7 +504,7 @@
             </section>
 
             <section id="developer-notice" class="max-w-7xl mx-auto px-6 pb-6 text-center text-xs text-slate-400">
-               Admin loundry
+                Admin loundry 2026
             </section>
 
             <footer id="kontak-footer" class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
@@ -509,7 +516,7 @@
                     <div>
                         <h4 class="text-white font-bold mb-4">Kontak Operasional</h4>
                         <p class="text-sm">WhatsApp: +62 819-4549-7854</p>
-                        <p class="text-sm mt-2">Lokasi: Jl. depok, 2026</p>
+                        <p class="text-sm mt-2">Lokasi: Jl. depok 2026 admin loundry</p>
                     </div>
                     <div>
                         <h4 class="text-white font-bold mb-4">Sistem Manajemen</h4>
@@ -523,7 +530,7 @@
     <div id="login-gate" class="hidden fixed top-0 left-0 w-screen h-screen bg-gradient-to-tr from-slate-950 via-slate-900 to-blue-950 items-center justify-center z-50 p-4 overflow-x-hidden">
         <div class="bg-white/95 backdrop-blur-md p-8 rounded-2xl w-full max-w-md relative overflow-x-hidden shadow-2xl border border-white/20">
             <button onclick="tutupPintuLogin()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">×</button>
-            <h2 class="text-3xl font-black text-slate-900 text-center tracking-tight">Laundry-In</h2>
+            <h2 class="text-3xl font-black text-slate-900 text-center tracking-tight">Admin loundry</h2>
             <p class="text-sm font-medium text-blue-600 text-center mb-6">Sistem Validasi Karyawan & Pemilik</p>
             <div class="form-group">
                 <label class="text-slate-700 font-semibold text-xs uppercase tracking-wider">Nama Pengguna (Bebas)</label>
@@ -547,9 +554,9 @@
 
         <div class="sidebar">
             <div>
-               <b><h2>loundry</h2></b>
-                <img src="logo.jpeg" alt="" class="logo-gambar" style="width: 80px; height: 80px; float: right; margin-left: 200px; margin-top: -60px; border-bottom-left-radius: 30%; object-fit: cover;" onerror="this.style.display='none'">
-                <div class="role-tag" id="current-role">Sesi Memuat...</div>
+                <b><h2>loundry</h2></b>
+                <img src="logo.jpeg" alt="" class="logo-gambar" style="width: 80px; height: 80px; float: right; margin-left: 100px; margin-top: -60px; border-bottom-left-radius: 30%; object-fit: cover;" onerror="this.style.display='none'">
+                <div class="role-tag" id="current-role">Sesi Memuat...</div> 
             </div>
             <button id="btn-logout-system" class="btn-role-toggle" onclick="executeLogout()">Logout Sesi</button>
             <menu>
@@ -1135,7 +1142,7 @@
         window.kirimRekapanWhatsApp = function() {
             let omzetKotor = orders.filter(o => o.status !== 'belum').reduce((sum, o) => sum + o.total, 0);
             let totalPengeluaran = expenses.reduce((sum, e) => sum + e.cost, 0);
-            let teksRekap = `📊 *REKAPAdmin LAUNDRY*\nKeuntungan Bersih: Rp ${(omzetKotor - totalPengeluaran).toLocaleString('id-ID')}`;
+            let teksRekap = `📊 *REKAP Admin LAUNDRY*\nKeuntungan Bersih: Rp ${(omzetKotor - totalPengeluaran).toLocaleString('id-ID')}`;
             window.open(`https://api.whatsapp.com/send?phone=6281945497854&text=${encodeURIComponent(teksRekap)}`, '_blank');
         }
 
