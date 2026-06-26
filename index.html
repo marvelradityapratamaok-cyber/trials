@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Laundry</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0; 
+            padding: 0; 
+            background-color: #f8fafc;
+            width: 100%; 
+            max-width: 100vw; 
+            overflow-x: hidden; 
+        }
+
+        /* STRUKTUR PARALLAX BERLAPIS (STACKED PARALLAX) */
+        .parallax-layer {
+            position: relative;
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            min-height: 100vh;
+            width: 100%;
+            background: transparent;
+        }
+
+        /* EFEK SLIDER UTAMA MENGGUNAKAN ELEMEN IMG (MUDAH DIGANTI) */
+        .slider-container-full {
+            width: 100%;
+            height: 60vh; 
+            overflow: hidden;
+            position: relative;
+        }
+        .slider-track-full {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            animation: geserGambarFull 12s infinite ease-in-out;
+        }
+        .slider-track-full .slide-item {
+            width: 33.333%;
+            height: 100%;
+            position: relative;
+        }
+        .slider-track-full .slide-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes geserGambarFull {
+            0%, 25% { transform: translateX(0%); }
+            33%, 58% { transform: translateX(-33.333%); }
+            66%, 91% { transform: translateX(-66.666%); }
+            100% { transform: translateX(0%); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animasi-hero-kiri { animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* BACKEND WORKSPACE SIDEBAR & DASHBOARD */
+        .sidebar { 
+            width: 240px; 
+            background: #1e293b; 
+            color: white; 
+            height: 100vh; 
+            padding: 20px; 
+            box-sizing: border-box; 
+            position: fixed; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 100; 
+            overflow-x: hidden; 
+        }
+        .sidebar h2 { color: #ffffff; font-size: 1.5rem; margin: 0 0 5px 0; }
+        .sidebar .role-tag { font-size: 0.8rem; background: #334155; padding: 5px 8px; border-radius: 4px; color: #38bdf8; display: inline-block; margin-bottom: 25px; font-weight: bold; align-self: flex-start; }
+        .sidebar menu { list-style: none; padding: 0; margin: 0; flex: 1; }
+        .sidebar menu li { padding: 12px 10px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .sidebar menu li.active, .sidebar menu li:hover { background: #334155; color: #38bdf8; }
+        .btn-role-toggle { background: #ffffff; color: rgb(0, 0, 0); border: none; padding: 10px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.9rem; margin-bottom: 10px; }
+
+        .main-content { 
+            margin-left: 240px; 
+            padding: 30px; 
+            box-sizing: border-box; 
+            min-height: 100vh; 
+            position: relative; 
+            z-index: 10; 
+            max-width: calc(100vw - 240px); 
+            overflow-x: hidden; 
+        }
+        .dashboard-section { display: none; width: 100%; overflow-x: hidden; }
+        .dashboard-section.active { display: block; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); box-sizing: border-box; }
+        .stat-card h3 { margin: 0; font-size: 0.85rem; color: #64748b; text-transform: uppercase; }
+        .stat-card p { margin: 10px 0 0; font-size: 1.6rem; font-weight: bold; color: #0f172a; }
+        #card-pendapatan { background: #ecfdf5; border: 1px solid #a7f3d0; }
+        #card-pendapatan p { color: #059669; }
+        #card-pengeluaran { background: #fff5f5; border: 1px solid #feb2b2; }
+        #card-pengeluaran p { color: #e53e3e; }
+
+        .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 15px; margin-bottom: 25px; }
+        .chart-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); height: 380px; box-sizing: border-box; display: flex; flex-direction: column; overflow-x: hidden; } 
+        .chart-wrapper { width: 100%; flex: 1; min-height: 0; position: relative; }
+        
+        .filter-container { display: flex; gap: 5px; margin-bottom: 15px; background: #f1f5f9; padding: 4px; border-radius: 8px; width: fit-content; overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; }
+        .btn-filter { background: transparent; border: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; color: #475569; white-space: nowrap; }
+        .btn-filter.active { background: #10b981; color: white; }
+
+        .table-section { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 25px; overflow-x: hidden; }
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; color: #64748b; }
+        
+        .badge { padding: 6px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; border: none; cursor: pointer; }
+        .badge.belum { background: #fee2e2; color: #ef4444; }
+        .badge.proses { background: #cfc7fe; color: #d97706; }
+        .badge.siap { background: #e0e3fe; color: #0284c7; }
+        .badge.selesai { background: #dcfce7; color: #15803d; }
+
+        .badge-antar { padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: bold; cursor: pointer; border: none; display: inline-block; transition: all 0.2s; }
+        .badge-antar.antar-jemput { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+        .badge-antar.ambil-sendiri { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        
+        .btn-wa { background: #25d366; color: white; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; text-decoration: none; }
+        .btn-delete { background: #ef4444; color: white; border: none; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+        .paper-number { background: #e2e8f0; color: #334155; font-weight: bold; padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; color: #475569; font-size: 0.9rem; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+        .kalkulator-box { background: #f8fafc; border: 2px dashed #cbd5e1; padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .btn-container { display: flex; gap: 10px; }
+        .btn-add { background: #38bdf8; color: #1e293b; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; flex: 2; font-size: 1rem; }
+        .btn-refresh { background: #94a3b8; color: white; border: none; padding: 12px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; flex: 1; }
+
+        .mobile-fixed-nav { position: fixed; bottom: 25px; right: 25px; display: none; flex-direction: column; gap: 12px; z-index: 9999; }
+        .btn-floating { width: 56px; height: 56px; border-radius: 50%; border: none; font-size: 1.1rem; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; font-weight: bold; transition: transform 0.1s ease; }
+        .btn-floating:active { transform: scale(0.9); }
+        .float-dash { background: #1e293b; color: #38bdf8; }
+        .float-plus { background: #0ea5e9; color: white; }
+        .float-exp { background: #ef4444; color: white; }
+
+        /* CSS BARU UNTUK BARIS JADWAL MOBILE BIAR PERSIS */
+        .jadwal-mobile-row { display: flex; flex-direction: column; margin-bottom: 12px; }
+        .jadwal-mobile-row label { font-weight: 600; font-size: 0.85rem; color: #475569; margin-bottom: 4px; }
+        .jadwal-mobile-input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.95rem; background: #fff; box-sizing: border-box; }
+
+        @keyframes masukDashboard {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animasi-masuk { animation: masukDashboard 0.4s ease-out forwards; }
+
+        @media (max-width: 991px) {
+            .sidebar { width: 100%; height: auto; position: relative; padding: 15px; flex-direction: row; flex-wrap: wrap; overflow-x: hidden; }
+            .sidebar menu { display: flex; width: 100%; margin-top: 15px; gap: 10px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+            .sidebar menu li { flex: 1; text-align: center; padding: 10px 15px; min-width: 120px; }
+            .main-content { margin-left: 0; padding: 15px; width: 100%; max-width: 100vw; overflow-x: hidden; }
+            .mobile-fixed-nav { display: flex; }
+            .parallax-layer { position: relative; min-height: auto; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50/50 to-slate-100">
+
+    <div id="public-page" class="w-full overflow-x-hidden pt-[72px]">
+        
+        <nav id="public-navbar" class="bg-white/95 backdrop-blur shadow-sm fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center gap-2 max-w-full transition-transform duration-300 ease-in-out">
+            <div class="text-xl font-black text-blue-600 tracking-tight shrink-0 cursor-pointer" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+               Admin<span class="text-amber-500">Laundry.</span>
+            </div>
+            <div class="hidden md:flex space-x-8 font-semibold text-slate-600">
+                <a href="#beranda-section" class="hover:text-blue-600 transition">Beranda</a>
+                <a href="#layanan-section" class="hover:text-blue-600 transition">Menu Layanan</a>
+                <a href="#tentang-section" class="hover:text-blue-600 transition">Tentang Kami</a>
+                <a href="#testimoni-section" class="hover:text-blue-600 transition">Testimoni</a>
+                <a href="#kontak-footer" class="hover:text-blue-600 transition">Kontak</a>
+            </div>
+            <button onclick="bukaPintuLogin()" class="bg-slate-900 text-white px-4 py-2 rounded-full font-bold hover:bg-slate-800 transition text-xs md:text-sm whitespace-nowrap shrink-0 shadow">
+                Masuk Admin
+            </button>
+        </nav>
+
+        <div class="slider-container-full border-b border-slate-200">
+            <div class="slider-track-full">
+                <div class="slide-item">
+                    <img src="loundry.jpg" alt="Slide Laundry 1">
+                    <div class="absolute inset-0 bg-slate-950/40 flex items-center px-8 md:px-16 text-white">
+                        <div>
+                            <span class="bg-amber-500 text-slate-950 px-3 py-1 rounded-full text-xs font-black uppercase">Promo Spesial</span>
+                            <h2 class="text-3xl md:text-5xl font-black mt-2 drop-shadow-md">Cuci Kiloan Higienis Bergaransi</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-item">
+                    <img src="loundry1.jpg" alt="Slide Laundry 2">
+                    <div class="absolute inset-0 bg-slate-950/40 flex items-center px-8 md:px-16 text-white">
+                        <div>
+                            <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-black uppercase">Layanan Kilat</span>
+                            <h2 class="text-3xl md:text-5xl font-black mt-2 drop-shadow-md">Express 6 Jam Langsung Selesai</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-item">
+                    <img src="loundry2.jpg" alt="Slide Laundry 3">
+                    <div class="absolute inset-0 bg-slate-950/40 flex items-center px-8 md:px-16 text-white">
+                        <div>
+                            <span class="bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-black uppercase">Gratis Ongkir</span>
+                            <h2 class="text-3xl md:text-5xl font-black mt-2 drop-shadow-md">Layanan Antar Jemput Area Bekasi</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="parallax-layer z-10">
+            <section id="beranda-section" class="max-w-7xl mx-auto px-6 py-12 md:py-20 flex flex-col gap-12">
+                <div class="animasi-hero-kiri max-w-3xl">
+                    <span class="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase">GRATIS ANTAR JEMPUT BEKASI</span>
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mt-4 leading-tight">
+                        Baju Kotor Menumpuk? <br><span class="text-blue-600">Kami Jemput & Cuci 24 Jam!</span>
+                    </h1>
+                    <p class="text-slate-600 mt-4 text-base">
+                        Gak perlu keluar rumah.Admin Laundry siap melayani cuci kiloan, bed cover, karpet, boneka, hingga sepatu & bahan kulit kapan saja Anda butuhkan. Ditangani oleh tim ahli serta mesin andalan modern.
+                    </p>
+                    <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                        <a href="https://wa.me/628138772373" target="_blank" class="bg-emerald-500 text-white text-center px-8 py-3.5 rounded-xl font-bold hover:bg-emerald-600 transition shadow-lg flex items-center justify-center gap-2">
+                            Pesan via WhatsApp
+                        </a>
+                        <a href="#layanan-section" class="bg-blue-600 text-white text-center px-6 py-3.5 rounded-xl font-bold hover:bg-blue-700 transition shadow-md flex items-center justify-center">
+                            Lihat Menu Harga
+                        </a>
+                    </div>
+                </div>
+            </section>
+             <h1 style="font-size: 150%; text-align: center; font-family: Arial, Helvetica, sans-serif;" ><b>udah selesai belum ya?</b></h1>
+        </div>
+
+        <div class="parallax-layer z-20">
+            <section id="lacak-section" class="bg-blue-600 py-12 text-white shadow-lg relative">
+                <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+                    <h2 class="text-2xl md:text-3xl font-bold">Lacak Pakaian Anda (Live Status)</h2>
+                    <p class="text-blue-100 mt-2 text-sm">Masukkan Nomor Kertas Tempel / Nota Anda yang diberikan oleh kasir.</p>
+                    <div class="mt-6 max-w-md mx-auto flex gap-2 bg-white p-2 rounded-2xl shadow-md">
+                        <input type="number" id="search-nota-input" placeholder="Masukkan Angka Nota (Contoh: 1)" class="w-full px-4 py-2 text-slate-800 focus:outline-none text-sm">
+                        <button onclick="lacakNotaPelanggan()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-2 rounded-xl transition text-sm whitespace-nowrap">
+                            Cek Status
+                        </button>
+                    </div>
+                    
+                    <div id="hasil-lacak-box" class="hidden max-w-md mx-auto bg-white text-slate-900 p-5 rounded-2xl text-left border-2 border-amber-400 shadow-xl mt-6">
+                        <h4 class="font-bold text-lg text-blue-600" id="lacak-nama">Nama Pelanggan</h4>
+                        <p class="text-sm text-slate-500 mt-1" id="lacak-layanan">Layanan: -</p>
+                        <p class="text-sm text-slate-500 mt-1" id="lacak-antar">Metode Pengiriman: -</p>
+                        <p class="text-sm font-bold text-slate-900 mt-1" id="lacak-total">Total Tagihan: -</p>
+                        <div class="mt-4 flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                            <span class="text-sm font-medium">Status Cucian:</span>
+                            <span id="lacak-badge" class="font-bold px-3 py-1 rounded-full text-xs">Memuat...</span>
+                        </div>
+                        
+                        <div id="qris-pay-wrapper" class="hidden mt-5 pt-4 border-t border-slate-100 text-center">
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Scan QRIS Untuk Melakukan Pembayaran</p>
+                            <div class="flex justify-center bg-white p-2 border border-slate-200 rounded-xl max-w-[200px] mx-auto">
+                                <img id="qris-image-src" src="sqris_toko.png" alt="QRIS QR Code" class="w-full h-auto" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AdminLaundryDemoPayment'">
+                            </div>
+                            <p class="text-[11px] text-amber-600 font-medium mt-2">Silakan transfer sesuai total tagihan dan kirim bukti bayar ke WhatsApp Toko.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="layanan-section" class="max-w-7xl mx-auto px-6 py-16">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Daftar Menu</span>
+                    <h2 class="text-3xl font-extrabold text-slate-900 mt-2">Layanan Binatu Spesialis & Harga</h2>
+                    <p class="text-sm text-slate-500 mt-2">Kami menawarkan harga transparan dengan kualitas pengerjaan terbaik di kelasnya.</p>
+                </div>
+                
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition overflow-hidden">
+                        <img src="loundry.jpg" alt="Cuci Setrika Reguler" class="w-full h-40 object-cover">
+                        <div class="p-6">
+                            <div class="text-2xl mb-1"><img src="logo.jpeg" alt=""style="width: 20px; height=20px;"></div>
+                            <h3 class="font-bold text-slate-900 text-lg">Cuci Setrika Reguler</h3>
+                            <p class="text-slate-500 text-xs mt-1 mb-4">Cuci, kering, lipat harian higienis, bersih dan wangi semerbak.</p>
+                            <div class="text-blue-600 font-extrabold text-lg">Rp 7.000 / kg</div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition overflow-hidden">
+                        <img src="loundry1.jpg" alt="Express 6 Jam" class="w-full h-40 object-cover">
+                        <div class="p-6">
+                             <div class="text-2xl mb-1"><img src="logo.jpeg" alt=""style="width: 20px; height=20px;"></div>
+                            <h3 class="font-bold text-slate-900 text-lg">Express 6 Jam</h3>
+                            <p class="text-slate-500 text-xs mt-1 mb-4">Layanan super kilat selesai dalam hitungan jam untuk kebutuhan mendesak.</p>
+                            <div class="text-blue-600 font-extrabold text-lg">Rp 15.000 / kg</div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition overflow-hidden">
+                        <img src="loundry2.jpg" alt="Deep Clean Sepatu" class="w-full h-40 object-cover">
+                        <div class="p-6">
+                             <div class="text-2xl mb-1"><img src="logo.jpeg" alt=""style="width: 20px; height=20px;"></div>
+                            <h3 class="font-bold text-slate-900 text-lg">Deep Clean Sepatu</h3>
+                            <p class="text-slate-500 text-xs mt-1 mb-4">Perawatan khusus sneakers, canvas, dan kulit agar segar kembali seperti baru.</p>
+                            <div class="text-blue-600 font-extrabold text-lg">Rp 35.000 / pasang</div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition overflow-hidden">
+                        <img src="loundry3.jpg" alt="Bed Cover" class="w-full h-40 object-cover">
+                        <div class="p-6">
+                            <div class="text-2xl mb-1"><img src="logo.jpeg" alt=""style="width: 20px; height=20px;"></div>
+                            <h3 class="font-bold text-slate-900 text-lg">Bed Cover & Kain Tebal</h3>
+                            <p class="text-slate-500 text-xs mt-1 mb-4">Pembersihan comforter tebal, blanket, gorden dengan mesin kapasitas besar.</p>
+                            <div class="text-blue-600 font-extrabold text-sm">Mulai Rp 25.000 / pcs</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 max-w-3xl mx-auto overflow-hidden mb-8">
+                    <img src="https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=80&w=800&auto=format&fit=cover" alt="Banner Ketentuan Layanan" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h4 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2" >📋 Ketentuan & Syarat Layanan Pemesanan</h4>
+                        <ul class="text-xs text-slate-600 space-y-2">
+                            <li>• Minimal pencucian kiloan adalah sebesar 3 kg per nota transaksi.</li>
+                            <li>• Pembayaran dapat dilakukan tunai atau nontunai via QRIS bank/e-wallet resmi toko saat baju selesai/diantar.</li>
+                            <li>• Layanan Antar-Jemput Gratis berlaku khusus untuk radius jangkauan maksimal 5 KM dari lokasi workshop utama.</li>
+                            <li>• Setiap orderan dilengkapi asuransi jaminan ganti rugi jika terjadi kehilangan fatal akibat kelalaian sistem operasional.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6 max-w-3xl mx-auto shadow-sm">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-2xl">🗓️</span>
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-base">Jam Operasional & Jadwal Toko (Realtime)</h4>
+                            <p class="text-slate-500 text-xs">Pantau jadwal aktif buka toko kami agar penjemputan cucian Anda terjadwal sempurna.</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 text-center mt-2">
+                        <div class="bg-white p-3 rounded-xl border border-blue-200 shadow-xs">
+                            <span class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Senin - Jumat</span>
+                            <span id="public-jadwal-weekday" class="block text-sm font-extrabold text-blue-700 mt-1">07:00 - 21:00</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-blue-200 shadow-xs">
+                            <span class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Hari Sabtu</span>
+                            <span id="public-jadwal-sabtu" class="block text-sm font-extrabold text-blue-700 mt-1">06:00 - 22:00</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-blue-200 shadow-xs">
+                            <span class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">Hari Minggu</span>
+                            <span id="public-jadwal-minggu" class="block text-sm font-extrabold text-amber-600 mt-1">06:00 - 22:00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="parallax-layer z-30">
+            <section id="tentang-section" class="max-w-7xl mx-auto px-6 py-16">
+                <div class="text-center max-w-2xl mx-auto mb-16">
+                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Mengenal Kami</span>
+                    <h2 class="text-3xl font-extrabold text-slate-900 mt-2">Karyawan Profesional & Armada Mesin Kami</h2>
+                    <p class="text-sm text-slate-500 mt-2">Dibalik pakaian wangi and bersih Anda, ada teknologi andalan dan tim kerja yang berdedikasi tinggi.</p>
+                </div>
+
+                <div class="mb-16">
+                    <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">⚙️ Standar Peralatan & Mesin Cuci Industrial</h3>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                            <img src="loundry.jpg" alt="Mesin Cuci Otomatis" class="w-full h-48 object-cover">
+                            <div class="p-5">
+                                <h4 class="font-bold text-slate-900 text-base">Mesin Cuci Front-Load Berkecepatan Tinggi</h4>
+                                <p class="text-xs text-slate-500 mt-2">Menggunakan putaran rotasi pintar yang dapat disesuaikan otomatis dengan kelembutan jenis serat kain agar baju kesayangan tidak melar.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                            <img src="loundry3.jpg" alt="Mesin Pengering" class="w-full h-48 object-cover">
+                            <div class="p-5">
+                                <h4 class="font-bold text-slate-900 text-base">Unit Pengeringan (Dryer Max Room)</h4>
+                                <p class="text-xs text-slate-500 mt-2">Pakaian kering 100% bebas dari bau apek lembap meskipun kondisi luar sedang hujan lebat, menjaga kebersihan bebas bakteri kontaminan.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+                            <img src="loundry1.jpg" alt="Setrika Uap" class="w-full h-48 object-cover">
+                            <div class="p-5">
+                                <h4 class="font-bold text-slate-900 text-base">Setrika Boiler Uap Geser</h4>
+                                <p class="text-xs text-slate-500 mt-2">Menyetrika tanpa gosong, meluruskan kerutan pakaian tersulit sekalipun jauh lebih cepat dan rapi dibanding setrika listrik rumahan.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">👥 Tim Eksekutif & Karyawan Profesional</h3>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-white p-5 rounded-2xl text-center shadow-sm border border-slate-100">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=300" alt="Tim Operasional" class="w-24 h-24 rounded-full mx-auto object-cover border-2 border-blue-500 p-1">
+                            <h4 class="font-bold text-slate-900 text-sm mt-4">Siti Aminah</h4>
+                            <span class="text-[11px] bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full font-bold inline-block mt-1">Quality Control</span>
+                            <p class="text-[11px] text-slate-500 mt-3">Memastikan pemilahan jenis bahan kain tepat dan pengepakan lipatan parfum berjalan higienis menggunakan standar sarung tangan medis.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl text-center shadow-sm border border-slate-100">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=300" alt="Tim Kurir" class="w-24 h-24 rounded-full mx-auto object-cover border-2 border-blue-500 p-1">
+                            <h4 class="font-bold text-slate-900 text-sm mt-4">Rian Hidayat</h4>
+                            <span class="text-[11px] bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full font-bold inline-block mt-1">Armada Antar-Jemput</span>
+                            <p class="text-[11px] text-slate-500 mt-3">Kurir andalan yang siap menjemput baju kotor langsung ke depan pintu gerbang rumah Anda wilayah Bekasi tepat waktu.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl text-center shadow-sm border border-slate-100">
+                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=300" alt="Tim Kasir" class="w-24 h-24 rounded-full mx-auto object-cover border-2 border-blue-500 p-1">
+                            <h4 class="font-bold text-slate-900 text-sm mt-4">Dewi Lestari</h4>
+                            <span class="text-[11px] bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full font-bold inline-block mt-1">Manajer Front Office</span>
+                            <p class="text-[11px] text-slate-500 mt-3">Melayani pendaftaran nota, penimbangan timbangan digital akurat, serta memandu aktivasi QRIS transaksi orderan Anda.</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl text-center shadow-sm border border-slate-100">
+                            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=300" alt="Tim Detailer" class="w-24 h-24 rounded-full mx-auto object-cover border-2 border-blue-500 p-1">
+                            <h4 class="font-bold text-slate-900 text-sm mt-4">Budi Prasetyo</h4>
+                            <span class="text-[11px] bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full font-bold inline-block mt-1">Teknisi Cuci Sepatu</span>
+                            <p class="text-[11px] text-slate-500 mt-3">Ahli menangani pembersihan noda membandel pada midsole sepatu kain maupun jaket kulit premium dengan chemical khusus aman.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="testimoni-section" class="max-w-7xl mx-auto px-6 py-16">
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider">Ulasan Kepuasan</span>
+                    <h2 class="text-3xl font-extrabold text-slate-900 mt-2">Apa Kata Pelanggan Setia Kami?</h2>
+                    <p class="text-sm text-slate-500 mt-2">Pendapat jujur dari mereka yang telah mempercayakan kebersihan pakaiannya kepada kami.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative">
+                        <p class="text-slate-600 text-sm italic">"Sangat terbantu dengan layanan Express 6 jam nyaAdmin Laundry. Pas ada acara mendadak, baju langsung siap, wangi dan rapi banget!"</p>
+                        <div class="flex items-center gap-3 mt-6">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150" alt="Client 1" class="w-10 h-10 rounded-full object-cover">
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-xs">Anisa Rahma</h4>
+                                <span class="text-[10px] text-amber-500">⭐⭐⭐⭐⭐ Pelanggan Rumah Tangga</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative">
+                        <p class="text-slate-600 text-sm italic">"Gratis antar jemputnya beneran amanah dan tepat waktu wilayah Bekasi Jaka Setia. Gak perlu ribet keluar rumah lagi kalau cucian menumpuk."</p>
+                        <div class="flex items-center gap-3 mt-6">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150" alt="Client 2" class="w-10 h-10 rounded-full object-cover">
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-xs">Bambang H.</h4>
+                                <span class="text-[10px] text-amber-500">⭐⭐⭐⭐⭐ Karyawan Swasta</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative">
+                        <p class="text-slate-600 text-sm italic">"Sepatu sneakers saya yang tadinya kotor banyak noda tanah langsung dibersihkan kaya baru lagi. Teknisi cuci sepatunya juara!"</p>
+                        <div class="flex items-center gap-3 mt-6">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=150" alt="Client 3" class="w-10 h-10 rounded-full object-cover">
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-xs">Citra Lestari</h4>
+                                <span class="text-[10px] text-amber-500">⭐⭐⭐⭐⭐ Mahasiswi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="maps-section" class="max-w-7xl mx-auto px-6 pb-16">
+                <div class="w-full bg-gradient-to-tr from-blue-600 to-indigo-700 rounded-3xl shadow-2xl flex flex-col justify-between text-white p-6 md:p-8 text-center">
+                    <div class="mb-4">
+                        <h3 class="text-2xl font-bold md:text-3xl">Informasi lokasi alamat</h3>
+                        <p class="text-blue-50 mt-1 text-sm md:text-base">Jl. depok, 2026</p>
+                    </div>
+                    
+                    <div class="w-full rounded-2xl overflow-hidden shadow-inner border border-white/20 h-[300px] md:h-[450px]">
+                        <iframe src="https://maps.google.com/maps?q=Jaka%20Setia,%20Bekasi%20Selatan&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+
+                    <div class="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-white/10 pt-4">
+                        <p class="text-emerald-300 font-bold text-sm">✓ Menerima Pembayaran QRIS Dinamis</p>
+                        <div class="bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-xs font-semibold">
+                            ⭐⭐⭐⭐⭐• Rating 4.7 (44 Ulasan Google)
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="developer-notice" class="max-w-7xl mx-auto px-6 pb-6 text-center text-xs text-slate-400">
+               Admin loundry
+            </section>
+
+            <footer id="kontak-footer" class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800 w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+                <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
+                    <div>
+                        <div class="text-xl font-black text-white tracking-tight">Admin<span class="text-amber-500">Laundry.</span></div>
+                        <p class="mt-4 text-sm text-slate-400">Solusi tepat binatu modern 24 jam wilayah Bekasi dan sekitarnya. Bersih, Cepat, dan Bergaransi.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold mb-4">Kontak Operasional</h4>
+                        <p class="text-sm">WhatsApp: +62 819-4549-7854</p>
+                        <p class="text-sm mt-2">Lokasi: Jl. depok, 2026</p>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-bold mb-4">Sistem Manajemen</h4>
+                        <p class="text-sm">Hak Cipta © 2026 Admin Laundry.</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <div id="login-gate" class="hidden fixed top-0 left-0 w-screen h-screen bg-gradient-to-tr from-slate-950 via-slate-900 to-blue-950 items-center justify-center z-50 p-4 overflow-x-hidden">
+        <div class="bg-white/95 backdrop-blur-md p-8 rounded-2xl w-full max-w-md relative overflow-x-hidden shadow-2xl border border-white/20">
+            <button onclick="tutupPintuLogin()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-xl font-bold">×</button>
+            <h2 class="text-3xl font-black text-slate-900 text-center tracking-tight">Laundry-In</h2>
+            <p class="text-sm font-medium text-blue-600 text-center mb-6">Sistem Validasi Karyawan & Pemilik</p>
+            <div class="form-group">
+                <label class="text-slate-700 font-semibold text-xs uppercase tracking-wider">Nama Pengguna (Bebas)</label>
+                <input type="text" id="gate-username" placeholder="Masukkan nama Anda..." class="mt-1 block w-full rounded-xl border-slate-200 bg-slate-50 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 transition">
+            </div>
+            <div class="form-group relative">
+                <label class="text-slate-700 font-semibold text-xs uppercase tracking-wider">Password Akun</label>
+                <input type="password" id="gate-password" placeholder="••••••••" class="mt-1 block w-full rounded-xl border-slate-200 bg-slate-50 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 transition">
+                <span onclick="togglePasswordVisibility()" class="absolute right-4 top-9 cursor-pointer text-slate-400 hover:text-slate-600 select-none text-sm" id="eye-icon">👁️</span>
+            </div>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold w-full py-3.5 rounded-xl mt-4 shadow-lg shadow-blue-500/20 active:scale-[0.98] transition" onclick="checkGateLogin()">Masuk Aplikasi</button>
+        </div>
+    </div>
+
+    <div id="admin-workspace" class="hidden w-full overflow-x-hidden">
+        <div class="mobile-fixed-nav">
+            <button class="btn-floating float-dash" onclick="triggerMobileTab('dashboard', 0)">DB</button>
+            <button class="btn-floating float-plus" onclick="triggerMobileTab('pesanan', 1)">+</button>
+            <button class="btn-floating float-exp" onclick="triggerMobileTab('pengeluaran-page', 2)">EXP</button>
+        </div>
+
+        <div class="sidebar">
+            <div>
+               <b><h2>loundry</h2></b>
+                <img src="logo.jpeg" alt="" class="logo-gambar" style="width: 80px; height: 80px; float: right; margin-left: 200px; margin-top: -60px; border-bottom-left-radius: 30%; object-fit: cover;" onerror="this.style.display='none'">
+                <div class="role-tag" id="current-role">Sesi Memuat...</div>
+            </div>
+            <button id="btn-logout-system" class="btn-role-toggle" onclick="executeLogout()">Logout Sesi</button>
+            <menu>
+                <li class="menu-item active" onclick="switchPage('dashboard', this)">Dashboard</li>
+                <li class="menu-item" onclick="switchPage('pesanan', this)">Pesanan Baru</li>
+                <li class="menu-item" onclick="switchPage('pengeluaran-page', this)">Catat Pengeluaran</li>
+            </menu>
+        </div>
+
+        <div class="main-content" id="main-content-area">
+            <div id="dashboard" class="dashboard-section active">
+                <div class="flex justify-between items-center flex-wrap gap-2 mb-4">
+                    <h1 class="text-2xl font-bold text-slate-900">Ringkasan Hari Ini</h1>
+                    <div class="flex gap-2">
+                        <button class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm font-bold px-4 py-2 rounded-xl shadow transition" onclick="kirimRekapanWhatsApp()">
+                             Kirim Rekap Ke WA Owner
+                        </button>
+                        <button class="bg-red-600 text-white hover:bg-red-700 font-bold p-2 text-xs md:text-sm rounded-xl" id="btn-reset-db" onclick="executeSystemReset()">Reset Database</button>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card" id="card-pendapatan">
+                        <h3>Total Pendapatan Bersih</h3>
+                        <p id="total-pendapatan">Rp 0</p>
+                    </div>
+                    <div class="stat-card" id="card-pengeluaran">
+                        <h3>Total Pengeluaran Toko</h3>
+                        <p id="total-pengeluaran-display">Rp 0</p>
+                    </div>
+                    <div class="stat-card border-l-4 border-red-500">
+                        <h3>Belum Dicuci</h3>
+                        <p id="count-belum">0 Order</p>
+                    </div>
+                    <div class="stat-card border-l-4 border-amber-500">
+                        <h3>Sedang Dicuci</h3>
+                        <p id="count-proses">0 Order</p>
+                    </div>
+                    <div class="stat-card border-l-4 border-sky-500">
+                        <h3>Siap Diambil</h3>
+                        <p id="count-siap">0 Order</p>
+                    </div>
+                    <div class="stat-card border-l-4 border-green-500">
+                        <h3>Selesai</h3>
+                        <p id="count-selesai">0 Order</p>
+                    </div>
+                </div>
+
+                <div class="table-section border-l-4 border-blue-500 bg-white shadow-sm rounded-xl p-5 mb-6">
+                    <h3 class="font-bold text-slate-900 text-base mb-3 flex items-center gap-2">📅 Pengaturan Jadwal Aktif Laundry</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="jadwal-mobile-row">
+                            <label>Senin - Jumat</label>
+                            <input type="text" id="setting-jadwal-weekday" class="jadwal-mobile-input" value="07:00 - 21:00">
+                        </div>
+                        <div class="jadwal-mobile-row">
+                            <label>Sabtu</label>
+                            <input type="text" id="setting-jadwal-sabtu" class="jadwal-mobile-input" value="06:00 - 22:00">
+                        </div>
+                        <div class="jadwal-mobile-row">
+                            <label>Minggu</label>
+                            <input type="text" id="setting-jadwal-minggu" class="jadwal-mobile-input" value="06:00 - 22:00">
+                        </div>
+                    </div>
+                    <button onclick="simpanJadwalToko()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg text-sm mt-3 shadow-md transition">
+                        Simpan Jam Operasional
+                    </button>
+                </div>
+
+                <div class="table-section bg-orange-50 border-l-4 border-orange-500">
+                    <h3 class="font-bold text-orange-700">Status Sesi Aktif Toko</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr class="bg-orange-100">
+                                    <th>Nama Aktif</th>
+                                    <th>Tingkat Akses</th>
+                                    <th>Otoritas Tindakan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-sesi-aktif"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h4 class="font-bold">Analisis Grafik Tren Keuangan</h4>
+                        <div class="filter-container mt-2">
+                            <button class="btn-filter active" id="filter-perjam" onclick="changeChartFilter('perjam')">Per Jam</button>
+                            <button class="btn-filter" id="filter-harian" onclick="changeChartFilter('harian')">Harian</button>
+                            <button class="btn-filter" id="filter-mingguan" onclick="changeChartFilter('mingguan')">Mingguan</button>
+                            <button class="btn-filter" id="filter-bulanan" onclick="changeChartFilter('bulanan')">Bulan Ini</button>
+                            <button class="btn-filter" id="filter-tahunan" onclick="changeChartFilter('tahunan')">Tahunan</button>
+                        </div>
+                        <div class="chart-wrapper"><canvas id="lineChartOmzet"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <h4 class="font-bold">Proporsi Keuangan Status Kerja</h4>
+                        <div class="chart-wrapper"><canvas id="pieChartLayanan"></canvas></div>
+                    </div>
+                </div>
+
+                <div class="table-section border-t-4 border-red-500">
+                    <h3 class="font-bold text-red-600">Log Proteksi: Riwayat Penghapusan Transaksi</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr class="bg-red-50">
+                                    <th>Waktu Dihapus</th>
+                                    <th>Nama Pelanggan</th>
+                                    <th>Layanan Sebelumnya</th>
+                                    <th>Total Nilai Hilang</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-log-hapus"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="table-section mt-6">
+                    <h3 class="font-bold text-lg">Antrean Cucian Aktif</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No. Tempel</th>
+                                    <th>Nama Pelanggan</th>
+                                    <th>No. WA</th>
+                                    <th>Layanan</th>
+                                    <th>Pengantaran (Klik Ganti)</th>
+                                    <th>Berat/Qty</th>
+                                    <th>Total Harga</th>
+                                    <th>Status (Klik Ganti)</th>
+                                    <th>Kirim WA</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-antrean"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pesanan" class="dashboard-section">
+                <h1 class="text-2xl font-bold mb-4">Input Pesanan Baru</h1>
+                <div class="table-section max-w-lg mx-auto">
+                    <h3 class="flex justify-between font-bold">
+                        <span>Formulir Cucian</span>
+                        <span class="text-sm text-slate-500">No. Kertas Tempel: <strong id="next-paper-number" class="text-sky-500">#1</strong></span>
+                    </h3>
+                    <div class="form-group mt-4">
+                        <label>Nama Pelanggan</label>
+                        <input type="text" id="input-nama" placeholder="Contoh: Agus Tambun">
+                    </div>
+                    <div class="form-group">
+                        <label>Nomor WhatsApp Pelanggan</label>
+                        <input type="text" id="input-phone" placeholder="Contoh: 62812...">
+                    </div>
+                    <div class="form-group">
+                        <label>Pilih Layanan</label>
+                        <select id="input-layanan" onchange="toggleCustomLayananField(); hitungKalkulator();">
+                            <option value="7000">Cuci Setrika Reguler (Rp 7.000/kg)</option>
+                            <option value="15000">Express 6 Jam (Rp 15.000/kg)</option>
+                            <option value="35000">Deep Clean Sepatu (Rp 35.000/pasang)</option>
+                            <option value="custom">-- Layanan Custom (Isi Sendiri) --</option>
+                        </select>
+                    </div>
+                    
+                    <div id="custom-layanan-wrapper" class="hidden bg-blue-50 p-4 rounded-xl mb-4 border border-blue-200">
+                        <div class="form-group">
+                            <label class="text-blue-800">Nama Layanan Custom</label>
+                            <input type="text" id="input-custom-nama" placeholder="Contoh: Cuci Karpet Jumbo">
+                        </div>
+                        <div class="form-group mb-0">
+                            <label class="text-blue-800">Harga Per Kg / Pcs (Rp)</label>
+                            <input type="number" id="input-custom-harga" placeholder="Contoh: 25000" oninput="hitungKalkulator()">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Berat (Kg) / Jumlah (Pcs)</label>
+                        <input type="number" id="input-berat" placeholder="Masukkan angka..." oninput="hitungKalkulator()">
+                    </div>
+                    <div class="kalkulator-box">
+                        <h4 class="font-bold text-sm text-slate-600">Estimasi Biaya:</h4>
+                        <p class="text-2xl font-bold text-green-600" id="live-total">Rp 0</p>
+                    </div>
+                    <div class="btn-container">
+                        <button class="btn-refresh" onclick="resetForm()">Reset</button>
+                        <button class="btn-add" onclick="tambahOrderan()">Simpan & Buat Nota (+)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pengeluaran-page" class="dashboard-section">
+                <h1 class="text-2xl font-bold mb-4">Catat Pengeluaran Toko</h1>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="table-section">
+                        <h3 class="font-bold mb-3">Form Pengeluaran</h3>
+                        <div class="form-group">
+                            <label>Nama Item / Kebutuhan</label>
+                            <input type="text" id="expense-item" placeholder="Contoh: Beli Sabun Rinso">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Biaya (Rp)</label>
+                            <input type="number" id="expense-cost" placeholder="Contoh: 45000">
+                        </div>
+                        <button class="w-full bg-red-600 text-white font-bold py-3 rounded-lg" onclick="tambahPengeluaran()">Simpan Pengeluaran</button>
+                    </div>
+                    <div class="table-section">
+                        <h3 class="font-bold mb-3">Daftar Pengeluaran Hari Ini</h3>
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr class="bg-red-50">
+                                        <th>Item</th>
+                                        <th>Biaya</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabel-pengeluaran"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-section border-t-4 border-red-700 mt-4" id="section-log-pengeluaran">
+                    <h3 class="font-bold text-red-700">Log Proteksi: Riwayat Penghapusan Pengeluaran</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr class="bg-red-50">
+                                    <th>Waktu Dihapus</th>
+                                    <th>Nama Item Pengeluaran</th>
+                                    <th>Oleh Sesi Akun</th>
+                                    <th>Nominal Biaya Dihapus</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-log-hapus-pengeluaran"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ENGINE PEMBACA & PENULIS LOCALSTORAGE (OFFLINE REPLACEMENT FOR FIREBASE)
+        function getLocalData(key, defaultVal) {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : defaultVal;
+        }
+        function setLocalData(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+        }
+
+        let orders = getLocalData('laundry_orders', []);
+        let deleteLogs = getLocalData('laundry_delete_logs', []);
+        let expenses = getLocalData('laundry_expenses', []);
+        let deleteExpenseLogs = getLocalData('laundry_delete_expense_logs', []);
+        let nextOrderNumber = getLocalData('laundry_next_number', 1);
+        let schedule = getLocalData('laundry_operational_schedule', { weekday: "07:00 - 21:00", sabtu: "06:00 - 22:00", minggu: "06:00 - 22:00" });
+
+        let currentRole = localStorage.getItem('laundry_role') || "belum_login"; 
+        let activeUserRealName = localStorage.getItem('laundry_name') || ""; 
+        let lineChart = null; 
+        let pieChart = null; 
+        let activeFilter = "perjam";
+
+        // INIT DATA BERJALAN OFF-GRID SINKRONISASI AWAL
+        window.addEventListener('DOMContentLoaded', () => {
+            syncJadwalTokoUI();
+            const el = document.getElementById('next-paper-number');
+            if(el) el.innerText = "#" + nextOrderNumber;
+
+            if (currentRole !== "belum_login") { 
+                setTimeout(() => { openDashboardSystem(false); }, 500);
+            }
+        });
+
+        function syncJadwalTokoUI() {
+            if(document.getElementById('setting-jadwal-weekday')) document.getElementById('setting-jadwal-weekday').value = schedule.weekday;
+            if(document.getElementById('setting-jadwal-sabtu')) document.getElementById('setting-jadwal-sabtu').value = schedule.sabtu;
+            if(document.getElementById('setting-jadwal-minggu')) document.getElementById('setting-jadwal-minggu').value = schedule.minggu;
+            
+            if(document.getElementById('public-jadwal-weekday')) document.getElementById('public-jadwal-weekday').innerText = schedule.weekday;
+            if(document.getElementById('public-jadwal-sabtu')) document.getElementById('public-jadwal-sabtu').innerText = schedule.sabtu;
+            if(document.getElementById('public-jadwal-minggu')) document.getElementById('public-jadwal-minggu').innerText = schedule.minggu;
+        }
+
+        window.simpanJadwalToko = function() {
+            const weekdayValue = document.getElementById('setting-jadwal-weekday').value.trim();
+            const sabtuValue = document.getElementById('setting-jadwal-sabtu').value.trim();
+            const mingguValue = document.getElementById('setting-jadwal-minggu').value.trim();
+
+            if(!weekdayValue || !sabtuValue || !mingguValue) {
+                return alert("Semua kolom jam operasional jadwal wajib diisi!");
+            }
+
+            schedule = {
+                weekday: weekdayValue,
+                sabtu: sabtuValue,
+                minggu: mingguValue,
+                updatedBy: activeUserRealName,
+                lastUpdated: new Date().toLocaleString('id-ID')
+            };
+
+            setLocalData('laundry_operational_schedule', schedule);
+            syncJadwalTokoUI();
+            alert("Berhasil! Jadwal aktif operasional laundry telah diperbarui secara lokal.");
+        }
+
+        window.lacakNotaPelanggan = function() {
+            const inputNota = document.getElementById('search-nota-input').value.trim();
+            const hasilBox = document.getElementById('hasil-lacak-box');
+            if(!inputNota) return alert("Silakan isi nomor nota terlebih dahulu!");
+            
+            let foundOrder = orders.find(o => String(o.noNota) === String(inputNota));
+
+            if(foundOrder) {
+                hasilBox.classList.remove('hidden');
+                document.getElementById('lacak-nama').innerText = "Pelanggan: " + foundOrder.nama;
+                document.getElementById('lacak-layanan').innerText = "Layanan: " + foundOrder.layanan + " (" + foundOrder.berat + " Kg/Pcs)";
+                document.getElementById('lacak-total').innerText = "Total Tagihan: Rp " + foundOrder.total.toLocaleString('id-ID');
+                
+                let pengantaranTeks = foundOrder.antar ? foundOrder.antar : "Ambil Sendiri";
+                document.getElementById('lacak-antar').innerText = "Metode Pengiriman: " + pengantaranTeks;
+                
+                const badge = document.getElementById('lacak-badge');
+                if(foundOrder.status === 'belum') {
+                    badge.innerText = "BELUM DICUCI"; badge.className = "font-bold px-3 py-1 rounded-full text-xs bg-red-100 text-red-600";
+                } else if(foundOrder.status === 'proses') {
+                    badge.innerText = "SEDANG DICUCI"; badge.className = "font-bold px-3 py-1 rounded-full text-xs bg-amber-100 text-amber-600";
+                } else if(foundOrder.status === 'siap') {
+                    badge.innerText = "SIAP DIAMBIL"; badge.className = "font-bold px-3 py-1 rounded-full text-xs bg-sky-100 text-sky-600";
+                } else {
+                    badge.innerText = "TRANSAKSI SELESAI"; badge.className = "font-bold px-3 py-1 rounded-full text-xs bg-green-100 text-green-600";
+                }
+                document.getElementById('qris-pay-wrapper').classList.remove('hidden');
+            } else {
+                hasilBox.classList.add('hidden'); alert("Maaf, Nomor Nota #" + inputNota + " tidak ditemukan.");
+            }
+        }
+
+        window.bukaPintuLogin = function() { 
+            const lg = document.getElementById('login-gate');
+            lg.classList.remove('hidden'); lg.classList.add('flex'); 
+        }
+        window.tutupPintuLogin = function() { 
+            const lg = document.getElementById('login-gate');
+            lg.classList.remove('flex'); lg.classList.add('hidden'); 
+        }
+        window.togglePasswordVisibility = function() {
+            const pwdInput = document.getElementById('gate-password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (pwdInput.type === "password") {
+                pwdInput.type = "text"; eyeIcon.textContent = "🙈";
+            } else {
+                pwdInput.type = "password"; eyeIcon.textContent = "👁️";
+            }
+        }
+
+        window.checkGateLogin = function() {
+            const userInput = document.getElementById('gate-username').value.trim();
+            const passInput = document.getElementById('gate-password').value;
+            if(!userInput || !passInput) return alert("Mohon isi Nama Pengguna dan Password!");
+
+            if(passInput === "owner2026") {
+                currentRole = "owner"; activeUserRealName = userInput + " (Owner)";
+                saveSession(); openDashboardSystem(true); return;
+            } else if(passInput === "admin2026") {
+                currentRole = "admin"; activeUserRealName = userInput + " (Admin)";
+                saveSession(); openDashboardSystem(true); return;
+            }
+            alert("Gagal! Password salah."); 
+        }
+
+        function saveSession() {
+            localStorage.setItem('laundry_role', currentRole);
+            localStorage.setItem('laundry_name', activeUserRealName);
+        }
+
+        window.openDashboardSystem = function(pakeAnimasi = false) {
+            tutupPintuLogin();
+            document.getElementById('public-page').classList.add('hidden'); 
+            document.getElementById('admin-workspace').classList.remove('hidden'); 
+            
+            const mainContentArea = document.getElementById('main-content-area');
+            if(pakeAnimasi && mainContentArea) {
+                mainContentArea.classList.remove('animasi-masuk');
+                void mainContentArea.offsetWidth; 
+                mainContentArea.classList.add('animasi-masuk');
+            }
+
+            const tagRole = document.getElementById('current-role');
+            const btnReset = document.getElementById('btn-reset-db');
+            const secLogPengeluaran = document.getElementById('section-log-pengeluaran');
+
+            tagRole.innerText = activeUserRealName;
+            if (currentRole === "owner") {
+                tagRole.style.color = "#22c55e"; 
+                if(btnReset) { btnReset.disabled = false; btnReset.style.opacity = "1"; } 
+                if(secLogPengeluaran) secLogPengeluaran.style.display = "block"; 
+            } else {
+                tagRole.style.color = "#fbbf24"; 
+                if(btnReset) { btnReset.disabled = true; btnReset.style.opacity = "0.4"; } 
+                if(secLogPengeluaran) secLogPengeluaran.style.display = "none"; 
+            }
+
+            initCharts(); renderTable(); renderExpensesTable();
+        }
+
+        window.executeLogout = function() {
+            currentRole = "belum_login"; activeUserRealName = ""; saveSession();
+            document.getElementById('gate-username').value = ""; document.getElementById('gate-password').value = "";
+            document.getElementById('admin-workspace').classList.add('hidden');
+            document.getElementById('public-page').classList.remove('hidden');
+        }
+
+        window.switchPage = function(pageId, element) {
+            document.querySelectorAll('.dashboard-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            if(element) element.classList.add('active');
+            if(pageId === 'dashboard') {
+                setTimeout(updateChartsData, 50);
+            }
+        }
+
+        window.triggerMobileTab = function(pageId, indexMenu) {
+            const menuItems = document.querySelectorAll('.sidebar menu li');
+            switchPage(pageId, menuItems.length > 0 ? menuItems[indexMenu] : null);
+            window.scrollTo({ top: 0, behavior: 'smooth' }); 
+        }
+
+        window.toggleCustomLayananField = function() {
+            const selectLayanan = document.getElementById('input-layanan').value;
+            document.getElementById('custom-layanan-wrapper').className = (selectLayanan === 'custom') ? "block bg-blue-50 p-4 rounded-xl mb-4 border border-blue-200" : "hidden";
+        }
+
+        function renderTable() {
+            const tabel = document.getElementById('tabel-antrean'); if(!tabel) return;
+            tabel.innerHTML = ""; 
+
+            orders.forEach((order) => {
+                if(!order) return;
+                let statusText = (order.status === 'proses') ? "Sedang Dicuci" : (order.status === 'siap') ? "Siap Diambil" : (order.status === 'selesai') ? "Selesai" : "Belum Dicuci";
+                let antarText = order.antar ? order.antar : "Antar Jemput";
+                let antarBadgeClass = antarText === "Antar Jemput" ? "badge-antar antar-jemput" : "badge-antar ambil-sendiri";
+                let teksWA = encodeURIComponent(`Halo Kak ${order.nama},\n\nNota Laundry Nomor Tempel: *#${order.noNota}*\nStatus cucian saat ini: *${statusText.toUpperCase()}*.`);
+                
+                tabel.innerHTML += `<tr>
+                    <td><span class="paper-number">#${order.noNota}</span></td>
+                    <td><strong>${order.nama}</strong></td>
+                    <td>${order.phone}</td>
+                    <td>${order.layanan}</td>
+                    <td><button class="${antarBadgeClass}" onclick="rotasiMetodeAntarTabel('${order.id}')">${antarText}</button></td>
+                    <td>${order.berat} Item/Kg</td>
+                    <td>Rp ${order.total.toLocaleString('id-ID')}</td>
+                    <td><button class="badge ${order.status}" onclick="rotasiStatus('${order.id}', '${order.status}')">${statusText}</button></td>
+                    <td><a href="https://api.whatsapp.com/send?phone=${order.phone}&text=${teksWA}" target="_blank" class="btn-wa">Kirim Notif</a></td>
+                    <td><button class="btn-delete" onclick="hapusOrderan('${order.id}')">Hapus</button></td>
+                </tr>`;
+            });
+            updateCounters(); renderDeleteLogs(); renderDeleteExpenseLogs(); renderSesiAktifPanel(); updateChartsData();
+        }
+
+        window.rotasiMetodeAntarTabel = function(orderId) {
+            let targetOrder = orders.find(o => String(o.id) === String(orderId));
+            if(!targetOrder) return;
+            targetOrder.antar = (targetOrder.antar === "Antar Jemput") ? "Ambil Sendiri" : "Antar Jemput";
+            setLocalData('laundry_orders', orders);
+            renderTable();
+        }
+
+        function renderSesiAktifPanel() {
+            const tabelSesi = document.getElementById('tabel-sesi-aktif'); if(!tabelSesi) return;
+            tabelSesi.innerHTML = `<tr><td><strong>${activeUserRealName}</strong></td><td><span class="text-emerald-600 font-bold">${currentRole.toUpperCase()} Sesi</span></td><td>-</td></tr>`;
+        }
+
+        function renderDeleteLogs() {
+            const tabelLog = document.getElementById('tabel-log-hapus'); if(!tabelLog) return;
+            tabelLog.innerHTML = deleteLogs.length ? "" : `<tr><td colspan="4" class="text-center text-slate-400">Belum ada data.</td></tr>`;
+            deleteLogs.forEach(log => { tabelLog.innerHTML += `<tr><td>${log.waktu}</td><td>${log.nama} (Nota #${log.noNota})</td><td>${log.layanan}</td><td class="text-red-600 font-bold">Rp ${log.total.toLocaleString('id-ID')}</td></tr>`; });
+        }
+
+        function renderDeleteExpenseLogs() {
+            const tabelLogExp = document.getElementById('tabel-log-hapus-pengeluaran'); if(!tabelLogExp) return;
+            tabelLogExp.innerHTML = deleteExpenseLogs.length ? "" : `<tr><td colspan="4" class="text-center text-slate-400">Belum ada data.</td></tr>`;
+            deleteExpenseLogs.forEach(log => { tabelLogExp.innerHTML += `<tr><td>${log.waktu}</td><td><strong>${log.item}</strong></td><td>${log.oleh}</td><td class="text-red-600 font-bold">Rp ${log.cost.toLocaleString('id-ID')}</td></tr>`; });
+        }
+
+        window.openCustomLayananField = function() {
+             toggleCustomLayananField();
+        }
+
+        window.tambahOrderan = function() {
+            const nama = document.getElementById('input-nama').value.trim();
+            const phone = document.getElementById('input-phone').value.trim();
+            const layananSelect = document.getElementById('input-layanan');
+            const berat = document.getElementById('input-berat').value;
+            
+            let layananNama = (layananSelect.value === 'custom') ? document.getElementById('input-custom-nama').value.trim() : layananSelect.options[layananSelect.selectedIndex].text.split(' (')[0];
+            if (!nama || !phone || !berat || berat <= 0) return alert("Mohon lengkapi data!");
+
+            const orderId = String(Date.now());
+            const totalHarga = hitungKalkulator();
+            const newOrder = { id: orderId, timestamp: new Date().toISOString(), noNota: nextOrderNumber, nama: nama, phone: phone, layanan: layananNama, antar: "Antar Jemput", berat: parseFloat(berat), total: totalHarga, status: 'belum' };
+
+            orders.unshift(newOrder);
+            nextOrderNumber++;
+            
+            setLocalData('laundry_orders', orders);
+            setLocalData('laundry_next_number', nextOrderNumber);
+
+            const el = document.getElementById('next-paper-number');
+            if(el) el.innerText = "#" + nextOrderNumber;
+
+            alert(`Pesanan Disimpan! Nomor #${nextOrderNumber - 1}`);
+            resetForm(); 
+            renderTable();
+            triggerMobileTab('dashboard', 0);
+        }
+
+        window.tambahPengeluaran = function() {
+            const item = document.getElementById('expense-item').value.trim();
+            const cost = parseInt(document.getElementById('expense-cost').value);
+            if(!item || !cost || cost <= 0) return alert("Isi data pengeluaran dengan benar!");
+
+            const expenseId = String(Date.now());
+            expenses.unshift({ id: expenseId, timestamp: new Date().toISOString(), item: item, cost: cost });
+            
+            setLocalData('laundry_expenses', expenses);
+            document.getElementById('expense-item').value = ""; 
+            document.getElementById('expense-cost').value = "";
+            renderExpensesTable();
+            updateCounters();
+            updateChartsData();
+        }
+
+        window.deletePengeluaran = function(expenseId) {
+            if(confirm("Hapus pengeluaran ini?")) {
+                let targetIdx = expenses.findIndex(e => String(e.id) === String(expenseId));
+                if(targetIdx === -1) return;
+                let target = expenses[targetIdx];
+                
+                deleteExpenseLogs.unshift({ sortId: Date.now(), waktu: new Date().toLocaleString('id-ID'), item: target.item, cost: target.cost, oleh: activeUserRealName });
+                expenses.splice(targetIdx, 1);
+
+                setLocalData('laundry_expenses', expenses);
+                setLocalData('laundry_delete_expense_logs', deleteExpenseLogs);
+                
+                renderExpensesTable();
+                renderDeleteExpenseLogs();
+                updateCounters();
+                updateChartsData();
+            }
+        }
+
+        function renderExpensesTable() {
+            const tabel = document.getElementById('tabel-pengeluaran'); if(!tabel) return;
+            tabel.innerHTML = expenses.length ? "" : `<tr><td colspan="3" class="text-center text-slate-400">Belum ada pengeluaran.</td></tr>`;
+            expenses.forEach((exp) => { tabel.innerHTML += `<tr><td>${exp.item}</td><td class="text-red-600 font-bold">Rp ${exp.cost.toLocaleString('id-ID')}</td><td><button class="btn-delete" onclick="deletePengeluaran('${exp.id}')">Hapus</button></td></tr>`; });
+        }
+
+        window.executeSystemReset = function() {
+            if(currentRole !== "owner") return;
+            if(confirm("Apakah Anda yakin ingin menghapus semua database permanen?")) { 
+                orders = []; expenses = []; deleteLogs = []; deleteExpenseLogs = []; nextOrderNumber = 1;
+                localStorage.removeItem('laundry_orders');
+                localStorage.removeItem('laundry_expenses');
+                localStorage.removeItem('laundry_delete_logs');
+                localStorage.removeItem('laundry_delete_expense_logs');
+                localStorage.removeItem('laundry_next_number');
+                const el = document.getElementById('next-paper-number');
+                if(el) el.innerText = "#1";
+                renderTable();
+                renderExpensesTable();
+            }
+        }
+
+        window.kirimRekapanWhatsApp = function() {
+            let omzetKotor = orders.filter(o => o.status !== 'belum').reduce((sum, o) => sum + o.total, 0);
+            let totalPengeluaran = expenses.reduce((sum, e) => sum + e.cost, 0);
+            let teksRekap = `📊 *REKAPAdmin LAUNDRY*\nKeuntungan Bersih: Rp ${(omzetKotor - totalPengeluaran).toLocaleString('id-ID')}`;
+            window.open(`https://api.whatsapp.com/send?phone=6281945497854&text=${encodeURIComponent(teksRekap)}`, '_blank');
+        }
+
+        window.rotasiStatus = function(orderId, statusSaatIni) {
+            let targetOrder = orders.find(o => String(o.id) === String(orderId));
+            if(!targetOrder) return;
+            targetOrder.status = (statusSaatIni === 'belum') ? 'proses' : (statusSaatIni === 'proses') ? 'siap' : (statusSaatIni === 'siap') ? 'selesai' : 'belum';
+            setLocalData('laundry_orders', orders);
+            renderTable();
+        }
+
+        window.hapusOrderan = function(orderId) {
+            if(confirm("Hapus pesanan ini?")) {
+                let targetIdx = orders.findIndex(o => String(o.id) === String(orderId));
+                if(targetIdx === -1) return;
+                let target = orders[targetIdx];
+
+                deleteLogs.unshift({ sortId: Date.now(), waktu: new Date().toLocaleString('id-ID'), nama: target.nama, noNota: target.noNota, layanan: target.layanan, total: target.total });
+                orders.splice(targetIdx, 1);
+
+                setLocalData('laundry_orders', orders);
+                setLocalData('laundry_delete_logs', deleteLogs);
+
+                renderTable();
+            }
+        }
+
+        function updateCounters() {
+            let omzetKotor = orders.filter(o => o && o.status !== 'belum').reduce((sum, o) => sum + o.total, 0);
+            let totalPengeluaran = expenses.reduce((sum, e) => sum + e.cost, 0);
+            
+            if(document.getElementById('count-belum')) document.getElementById('count-belum').innerText = orders.filter(o => o.status === 'belum').length + " Order";
+            if(document.getElementById('count-proses')) document.getElementById('count-proses').innerText = orders.filter(o => o.status === 'proses').length + " Order";
+            if(document.getElementById('count-siap')) document.getElementById('count-siap').innerText = orders.filter(o => o.status === 'siap').length + " Order";
+            if(document.getElementById('count-selesai')) document.getElementById('count-selesai').innerText = orders.filter(o => o.status === 'selesai').length + " Order";
+            if(document.getElementById('total-pengeluaran-display')) document.getElementById('total-pengeluaran-display').innerText = "Rp " + totalPengeluaran.toLocaleString('id-ID');
+            if(document.getElementById('total-pendapatan')) document.getElementById('total-pendapatan').innerText = "Rp " + (omzetKotor - totalPengeluaran).toLocaleString('id-ID');
+        }
+
+        window.hitungKalkulator = function() {
+            let selectLayanan = document.getElementById('input-layanan').value;
+            let tarif = (selectLayanan === 'custom') ? (parseInt(document.getElementById('input-custom-harga').value) || 0) : parseInt(selectLayanan);
+            let berat = document.getElementById('input-berat').value;
+            let total = (berat && berat > 0) ? tarif * parseFloat(berat) : 0;
+            document.getElementById('live-total').innerText = "Rp " + total.toLocaleString('id-ID');
+            return total; 
+        }
+
+        window.resetForm = function() {
+            document.getElementById('input-nama').value = ""; document.getElementById('input-phone').value = ""; document.getElementById('input-berat').value = "";
+            document.getElementById('input-layanan').value = "7000"; toggleCustomLayananField();
+            document.getElementById('live-total').innerText = "Rp 0";
+        }
+
+        function initCharts() {
+            const ctxLineEl = document.getElementById('lineChartOmzet');
+            const ctxPieEl = document.getElementById('pieChartLayanan');
+            if(!ctxLineEl || !ctxPieEl) return;
+            
+            if(lineChart) lineChart.destroy();
+            if(pieChart) pieChart.destroy();
+
+            lineChart = new Chart(ctxLineEl.getContext('2d'), { 
+                type: 'line', 
+                data: { 
+                    labels: ['Sesi Ini'], 
+                    datasets: [{ label: 'Laba Bersih (Rp)', data: [0], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] 
+                }, 
+                options: { responsive: true, maintainAspectRatio: false } 
+            });
+            
+            pieChart = new Chart(ctxPieEl.getContext('2d'), { 
+                type: 'doughnut', 
+                data: { 
+                    labels: ['Belum', 'Proses', 'Siap', 'Selesai'], 
+                    datasets: [{ data: [0,0,0,0], backgroundColor: ['#ef4444', '#f59e0b', '#0284c7', '#10b981'] }] 
+                }, 
+                options: { responsive: true, maintainAspectRatio: false } 
+            });
+
+            updateChartsData();
+        }
+
+        window.changeChartFilter = function(filterType) {
+            activeFilter = filterType;
+            document.querySelectorAll('.btn-filter').forEach(btn => btn.classList.remove('active'));
+            if(document.getElementById('filter-' + filterType)) document.getElementById('filter-' + filterType).classList.add('active'); 
+            updateChartsData(); 
+        }
+
+        function updateChartsData() {
+            if(!lineChart || !pieChart) return;
+            
+            const b = orders.filter(o => o.status === 'belum').length;
+            const p = orders.filter(o => o.status === 'proses').length;
+            const s = orders.filter(o => o.status === 'siap').length;
+            const sl = orders.filter(o => o.status === 'selesai').length;
+            
+            pieChart.data.datasets[0].data = [b, p, s, sl];
+            pieChart.update();
+
+            let omzetOrders = orders.filter(o => o.status !== 'belum');
+            let realOmzet = omzetOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+            let realExpense = expenses.reduce((sum, e) => sum + (e.cost || 0), 0);
+            let currentProfit = realOmzet - realExpense;
+
+            let labels = [];
+            let dataLaba = [];
+
+            if (activeFilter === "perjam") {
+                labels = ["Jam Ini"]; dataLaba = [currentProfit]; 
+            } else if (activeFilter === "harian") {
+                labels = ["Hari Ini"]; dataLaba = [currentProfit];
+            } else if (activeFilter === "mingguan") {
+                labels = ["Minggu Ini"]; dataLaba = [currentProfit];
+            } else if (activeFilter === "bulanan") {
+                labels = ["Bulan Ini"]; dataLaba = [currentProfit];
+            } else if (activeFilter === "tahunan") {
+                labels = ["Tahun 2026"]; dataLaba = [currentProfit];
+            }
+
+            lineChart.data.labels = labels;
+            lineChart.data.datasets[0].data = dataLaba;
+            lineChart.update();
+        }
+
+        let lastScrollPublicY = window.scrollY;
+        const publicNavbar = document.getElementById('public-navbar');
+
+        window.addEventListener('scroll', () => {
+            const currentScrollPublicY = window.scrollY;
+            if (currentScrollPublicY > lastScrollPublicY && currentScrollPublicY > 80) {
+                publicNavbar.classList.add('-translate-y-full');
+            } else {
+                publicNavbar.classList.remove('-translate-y-full');
+            }
+            lastScrollPublicY = currentScrollPublicY;
+        });
+    </script>
+</body>
+</html>
