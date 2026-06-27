@@ -176,8 +176,6 @@
             .parallax-layer { position: relative; min-height: auto; }
         }
 
-     
-
        @media (min-width: 768px) and (max-width: 1024px)   {
             .logo-gambar{
            display: none;
@@ -805,7 +803,7 @@
         </div>
     </div>
 
-    <script>
+<script>
         // ENGINE PEMBACA & PENULIS LOCALSTORAGE (OFFLINE REPLACEMENT FOR FIREBASE)
         function getLocalData(key, defaultVal) {
             const data = localStorage.getItem(key);
@@ -1245,28 +1243,81 @@
             pieChart.data.datasets[0].data = [b, p, s, sl];
             pieChart.update();
 
-            let omzetOrders = orders.filter(o => o.status !== 'belum');
-            let realOmzet = omzetOrders.reduce((sum, o) => sum + (o.total || 0), 0);
-            let realExpense = expenses.reduce((sum, e) => sum + (e.cost || 0), 0);
-            let currentProfit = realOmzet - realExpense;
-
             let labels = [];
             let dataLaba = [];
+            const now = new Date();
 
+            // PROSES DISTRIBUSI WAKTU MENJADI KUMPULAN DATA SEHINGGA GRAFIK BISA NAIK TURUN
             if (activeFilter === "perjam") {
-                labels = ["Jam Ini"]; dataLaba = [currentProfit]; 
+                for (let i = 5; i >= 0; i--) {
+                    const d = new Date(now.getTime() - i * 60 * 60 * 1000);
+                    labels.push(d.getHours().toString().padStart(2, '0') + ":00");
+                    let start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), 0, 0);
+                    let end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), 59, 59);
+                    let oSum = orders.filter(o => o.status !== 'belum' && new Date(o.timestamp) >= start && new Date(o.timestamp) <= end).reduce((sum, o) => sum + (o.total || 0), 0);
+                    let eSum = expenses.filter(e => new Date(e.timestamp) >= start && new Date(e.timestamp) <= end).reduce((sum, e) => sum + (e.cost || 0), 0);
+                    dataLaba.push(oSum - eSum);
+                }
             } else if (activeFilter === "harian") {
-                labels = ["Hari Ini"]; dataLaba = [currentProfit];
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+                    labels.push(d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' }));
+                    let start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0);
+                    let end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
+                    let oSum = orders.filter(o => o.status !== 'belum' && new Date(o.timestamp) >= start && new Date(o.timestamp) <= end).reduce((sum, o) => sum + (o.total || 0), 0);
+                    let eSum = expenses.filter(e => new Date(e.timestamp) >= start && new Date(e.timestamp) <= end).reduce((sum, e) => sum + (e.cost || 0), 0);
+                    dataLaba.push(oSum - eSum);
+                }
             } else if (activeFilter === "mingguan") {
-                labels = ["Minggu Ini"]; dataLaba = [currentProfit];
+                for (let i = 3; i >= 0; i--) {
+                    labels.push("Minggu -" + i);
+                    const start = new Date(now.getTime() - (i + 1) * 7 * 24 * 60 * 60 * 1000);
+                    const end = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+                    let oSum = orders.filter(o => o.status !== 'belum' && new Date(o.timestamp) >= start && new Date(o.timestamp) <= end).reduce((sum, o) => sum + (o.total || 0), 0);
+                    let eSum = expenses.filter(e => new Date(e.timestamp) >= start && new Date(e.timestamp) <= end).reduce((sum, e) => sum + (e.cost || 0), 0);
+                    dataLaba.push(oSum - eSum);
+                }
             } else if (activeFilter === "bulanan") {
-                labels = ["Bulan Ini"]; dataLaba = [currentProfit];
+                const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+                const currentMonth = now.getMonth();
+                for (let i = Math.max(0, currentMonth - 5); i <= currentMonth; i++) {
+                    labels.push(months[i]);
+                    let oSum = orders.filter(o => o.status !== 'belum' && new Date(o.timestamp).getMonth() === i && new Date(o.timestamp).getFullYear() === now.getFullYear()).reduce((sum, o) => sum + (o.total || 0), 0);
+                    let eSum = expenses.filter(e => new Date(e.timestamp).getMonth() === i && new Date(e.timestamp).getFullYear() === now.getFullYear()).reduce((sum, e) => sum + (e.cost || 0), 0);
+                    dataLaba.push(oSum - eSum);
+                }
             } else if (activeFilter === "tahunan") {
-                labels = ["Tahun 2026"]; dataLaba = [currentProfit];
+                const curYear = now.getFullYear();
+                for (let i = curYear - 2; i <= curYear; i++) {
+                    labels.push("Tahun " + i);
+                    let oSum = orders.filter(o => o.status !== 'belum' && new Date(o.timestamp).getFullYear() === i).reduce((sum, o) => sum + (o.total || 0), 0);
+                    let eSum = expenses.filter(e => new Date(e.timestamp).getFullYear() === i).reduce((sum, e) => sum + (e.cost || 0), 0);
+                    dataLaba.push(oSum - eSum);
+                }
+            }
+
+            // WARNA GRAFIK OTOMATIS: HIJAU JIKA NAIK, MERAH JIKA TURUN, KUNING JIKA PERTENGAHAN/FLAT
+            let strokeColor = '#f59e0b'; 
+            let bgColor = 'rgba(245, 158, 11, 0.1)';
+            if (dataLaba.length >= 2) {
+                const lastVal = dataLaba[dataLaba.length - 1];
+                const prevVal = dataLaba[dataLaba.length - 2];
+                if (lastVal > prevVal) {
+                    strokeColor = '#10b981'; // Hijau
+                    bgColor = 'rgba(16, 185, 129, 0.1)';
+                } else if (lastVal < prevVal) {
+                    strokeColor = '#ef4444'; // Merah
+                    bgColor = 'rgba(239, 68, 68, 0.1)';
+                }
+            } else if (dataLaba.length === 1) {
+                if (dataLaba[0] > 0) { strokeColor = '#10b981'; bgColor = 'rgba(16, 185, 129, 0.1)'; }
+                else if (dataLaba[0] < 0) { strokeColor = '#ef4444'; bgColor = 'rgba(239, 68, 68, 0.1)'; }
             }
 
             lineChart.data.labels = labels;
             lineChart.data.datasets[0].data = dataLaba;
+            lineChart.data.datasets[0].borderColor = strokeColor;
+            lineChart.data.datasets[0].backgroundColor = bgColor;
             lineChart.update();
         }
 
@@ -1282,6 +1333,22 @@
             }
             lastScrollPublicY = currentScrollPublicY;
         });
+
+        // 1. Menonaktifkan Klik Kanan
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        // 2. Menonaktifkan Shortcut Keyboard
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === 123) { e.preventDefault(); }
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 73) { e.preventDefault(); }
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 74) { e.preventDefault(); }
+            if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); }
+        });
+
+        
     </script>
+    
 </body>
 </html>
