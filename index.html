@@ -285,7 +285,7 @@
                             <div class="flex justify-center bg-white p-2 border border-slate-200 rounded-xl max-w-[200px] mx-auto">
                                 <img id="qris-image-src" src="sqris_toko.png" alt="QRIS QR Code" class="w-full h-auto" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AdminLaundryDemoPayment'">
                             </div>
-                            <p class="text-[11px] text-amber-600 font-medium mt-2">Silakan transfer sesuai total tagihan dan kirim bukti bayar ke WhatsApp Toko.</p>
+                            <p class="text-[11px] text-amber-600 font-medium mt-2">Silakan transfer sesuai total tagihan and kirim bukti bayar ke WhatsApp Toko.</p>
                         </div>
                     </div>
                 </div>
@@ -405,7 +405,7 @@
                             <img src="loundry2.jpg" alt="Setrika Uap" class="w-full h-48 object-cover">
                             <div class="p-5">
                                 <h4 class="font-bold text-slate-900 text-base">Setrika Boiler Uap Geser</h4>
-                                <p class="text-xs text-slate-500 mt-2">Menyetrika tanpa gosong, meluruskan kerutan pakaian tersulit sekalipun jauh lebih cepat dan rapi dibanding setrika listrik rumahan.</p>
+                                <p class="text-xs text-slate-500 mt-2">Menyetrika tanpa gosong, meluruskan kerutan pakaian tersulit sekalipun jauh lebih cepat and rapi dibanding setrika listrik rumahan.</p>
                             </div>
                         </div>
                     </div>
@@ -450,7 +450,7 @@
                 </div>
                 <div class="grid md:grid-cols-3 gap-8">
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative">
-                        <p class="text-slate-600 text-sm italic">"Sangat terbantu dengan layanan Express 6 jam nya Admin Laundry. Pas ada acara mendadak, baju langsung siap, wangi dan rapi banget!"</p>
+                        <p class="text-slate-600 text-sm italic">"Sangat terbantu dengan layanan Express 6 jam nya Admin Laundry. Pas ada acara mendadak, baju langsung siap, wangi and rapi banget!"</p>
                         <div class="flex items-center gap-3 mt-6">
                             <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=150" alt="Client 1" class="w-10 h-10 rounded-full object-cover">
                             <div>
@@ -460,7 +460,7 @@
                         </div>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 relative">
-                        <p class="text-slate-600 text-sm italic">"Gratis antar jemputnya beneran amanah dan tepat waktu wilayah Bekasi Jaka Setia. Gak perlu ribet keluar rumah lagi kalau cucian menumpuk."</p>
+                        <p class="text-slate-600 text-sm italic">"Gratis antar jemputnya beneran amanah and tepat waktu wilayah Bekasi Jaka Setia. Gak perlu ribet keluar rumah lagi kalau cucian menumpuk."</p>
                         <div class="flex items-center gap-3 mt-6">
                             <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=150" alt="Client 2" class="w-10 h-10 rounded-full object-cover">
                             <div>
@@ -510,7 +510,7 @@
                 <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
                     <div>
                         <div class="text-xl font-black text-white tracking-tight">Admin<span class="text-amber-500">Laundry.</span></div>
-                        <p class="mt-4 text-sm text-slate-400">Solusi tepat binatu modern 24 jam wilayah Bekasi dan sekitarnya. Bersih, Cepat, dan Bergaransi.</p>
+                        <p class="mt-4 text-sm text-slate-400">Solusi tepat binatu modern 24 jam wilayah Bekasi and sekitarnya. Bersih, Cepat, and Bergaransi.</p>
                     </div>
                     <div>
                         <h4 class="text-white font-bold mb-4">Kontak Operasional</h4>
@@ -683,6 +683,7 @@
                             <thead>
                                 <tr>
                                     <th>No. Tempel</th>
+                                    <th>Hari</th>
                                     <th>Nama Pelanggan</th>
                                     <th>No. WA</th>
                                     <th>Layanan</th>
@@ -813,11 +814,18 @@
             localStorage.setItem(key, JSON.stringify(value));
         }
 
-        let orders = getLocalData('laundry_orders', []);
+        // DUMMY DATA AWAL HARI SENIN & SELASA JIKA DATA MASIH KOSONG
+        let defaultOrders = [
+            { id: "s1", timestamp: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), noNota: 1, nama: "Budi (Senin)", phone: "628120000000", layanan: "Express 6 Jam", antar: "Antar Jemput", berat: 4, total: 60000, status: 'selesai', hari: 'Senin' },
+            { id: "s2", timestamp: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString(), noNota: 2, nama: "Siti (Senin)", phone: "628120000001", layanan: "Cuci Setrika Reguler", antar: "Ambil Sendiri", berat: 3, total: 21000, status: 'selesai', hari: 'Senin' },
+            { id: "sl1", timestamp: new Date().toISOString(), noNota: 3, nama: "Andi (Selasa)", phone: "628120000002", layanan: "Deep Clean Sepatu", antar: "Antar Jemput", berat: 1, total: 35000, status: 'proses', hari: 'Selasa' }
+        ];
+
+        let orders = getLocalData('laundry_orders', defaultOrders);
         let deleteLogs = getLocalData('laundry_delete_logs', []);
-        let expenses = getLocalData('laundry_expenses', []);
+        let expenses = getLocalData('laundry_expenses', [{ id: "e1", timestamp: new Date().toISOString(), item: "Beli Pewangi", cost: 15000 }]);
         let deleteExpenseLogs = getLocalData('laundry_delete_expense_logs', []);
-        let nextOrderNumber = getLocalData('laundry_next_number', 1);
+        let nextOrderNumber = getLocalData('laundry_next_number', 4);
         let schedule = getLocalData('laundry_operational_schedule', { weekday: "07:00 - 21:00", sabtu: "06:00 - 22:00", minggu: "06:00 - 22:00" });
 
         let currentRole = localStorage.getItem('laundry_role') || "belum_login"; 
@@ -1008,8 +1016,15 @@
                 let antarBadgeClass = antarText === "Antar Jemput" ? "badge-antar antar-jemput" : "badge-antar ambil-sendiri";
                 let teksWA = encodeURIComponent(`Halo Kak ${order.nama},\n\nNota Laundry Nomor Tempel: *#${order.noNota}*\nStatus cucian saat ini: *${statusText.toUpperCase()}*.`);
                 
+                // Menentukan nama hari secara otomatis jika properti 'hari' tidak ada atau kosong
+                let namaHari = order.hari;
+                if (!namaHari) {
+                    namaHari = new Date(order.timestamp).toLocaleDateString('id-ID', { weekday: 'long' });
+                }
+
                 tabel.innerHTML += `<tr>
                     <td><span class="paper-number">#${order.noNota}</span></td>
+                    <td><span class="font-semibold text-slate-700">${namaHari}</span></td>
                     <td><strong>${order.nama}</strong></td>
                     <td>${order.phone}</td>
                     <td>${order.layanan}</td>
@@ -1064,7 +1079,8 @@
 
             const orderId = String(Date.now());
             const totalHarga = hitungKalkulator();
-            const newOrder = { id: orderId, timestamp: new Date().toISOString(), noNota: nextOrderNumber, nama: nama, phone: phone, layanan: layananNama, antar: "Antar Jemput", berat: parseFloat(berat), total: totalHarga, status: 'belum' };
+            const currentDayName = new Date().toLocaleDateString('id-ID', { weekday: 'long' });
+            const newOrder = { id: orderId, timestamp: new Date().toISOString(), noNota: nextOrderNumber, nama: nama, phone: phone, layanan: layananNama, antar: "Antar Jemput", berat: parseFloat(berat), total: totalHarga, status: 'belum', hari: currentDayName };
 
             orders.unshift(newOrder);
             nextOrderNumber++;
@@ -1207,10 +1223,32 @@
             lineChart = new Chart(ctxLineEl.getContext('2d'), { 
                 type: 'line', 
                 data: { 
-                    labels: ['Sesi Ini'], 
-                    datasets: [{ label: 'Laba Bersih (Rp)', data: [0], borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3 }] 
+                    labels: ['Mulai'], 
+                    datasets: [{ 
+                        label: 'Laba Bersih Kumulatif (Rp)', 
+                        data: [0], 
+                        borderColor: '#10b981', 
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)', 
+                        fill: true, 
+                        stepped: false, // DIUBAH MENJADI FALSE AGAR TIDAK BERBENTUK TANGGA
+                        tension: 0.4,   // DIUBAH KE 0.4 AGAR MELENGKUNG MULUS SEPERTI GUNUNG
+                        pointRadius: 5, 
+                        pointHoverRadius: 7,
+                        pointBackgroundColor: '#fff',
+                        pointBorderWidth: 2
+                    }] 
                 }, 
-                options: { responsive: true, maintainAspectRatio: false } 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: function(value) { return 'Rp ' + value.toLocaleString('id-ID'); }
+                            }
+                        }
+                    }
+                } 
             });
             
             pieChart = new Chart(ctxPieEl.getContext('2d'), { 
@@ -1243,75 +1281,73 @@
             pieChart.data.datasets[0].data = [b, p, s, sl];
             pieChart.update();
 
-            let labels = [];
-            let dataLaba = [];
+            let labels = ['Awal'];
+            let dataLaba = [0];
             const now = new Date();
 
-            // PROSES DISTRIBUSI WAKTU MENJADI KUMPULAN DATA SEHINGGA GRAFIK BISA NAIK TURUN
-            if (activeFilter === "perjam") {
-                for (let i = 5; i >= 0; i--) {
-                    const d = new Date(now.getTime() - i * 60 * 60 * 1000);
-                    labels.push(d.getHours().toString().padStart(2, '0') + ":00");
-                    let start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), 0, 0);
-                    let end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), 59, 59);
-                    let oSum = orders.filter(o => o.status !== 'belum' && new Date(o.timestamp) >= start && new Date(o.timestamp) <= end).reduce((sum, o) => sum + (o.total || 0), 0);
-                    let eSum = expenses.filter(e => new Date(e.timestamp) >= start && new Date(e.timestamp) <= end).reduce((sum, e) => sum + (e.cost || 0), 0);
-                    dataLaba.push(oSum - eSum);
+            // MENGGABUNGKAN TRANSAKSI DAN PENGELUARAN SECARA KRONOLOGIS UNTUK MEMBENTUK TANGGA NAIK/TURUN DETAIL
+            let logKeuangan = [];
+
+            orders.forEach(o => {
+                if(o.status !== 'belum') {
+                    logKeuangan.push({ tipe: 'pemasukan', nilai: o.total, waktu: new Date(o.timestamp), nama: o.nama });
                 }
-            } else if (activeFilter === "harian") {
-                for (let i = 6; i >= 0; i--) {
-                    const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-                    labels.push(d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric' }));
-                    let start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0);
-                    let end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
-                    let oSum = orders.filter(o => o.status !== 'belum' && new Date(o.timestamp) >= start && new Date(o.timestamp) <= end).reduce((sum, o) => sum + (o.total || 0), 0);
-                    let eSum = expenses.filter(e => new Date(e.timestamp) >= start && new Date(e.timestamp) <= end).reduce((sum, e) => sum + (e.cost || 0), 0);
-                    dataLaba.push(oSum - eSum);
+            });
+
+            expenses.forEach(e => {
+                logKeuangan.push({ tipe: 'pengeluaran', nilai: e.cost, waktu: new Date(e.timestamp), nama: e.item });
+            });
+
+            // URUTKAN BERDASARKAN WAKTU KRONOLOGIS TRANSAKSI TERJADI
+            logKeuangan.sort((x, y) => x.waktu - y.waktu);
+
+            let saldoBerjalan = 0;
+
+            // INTEGRASI FILTER WAKTU AGAR COCOK DENGAN PRESET TOMBOL
+            logKeuangan.forEach(log => {
+                let saring = false;
+                const selisihWaktu = now - log.waktu;
+
+                if (activeFilter === "perjam" && selisihWaktu <= 6 * 60 * 60 * 1000) saring = true;
+                else if (activeFilter === "harian" && selisihWaktu <= 7 * 24 * 60 * 60 * 1000) saring = true;
+                else if (activeFilter === "mingguan" && selisihWaktu <= 30 * 24 * 60 * 60 * 1000) saring = true;
+                else if (activeFilter === "bulanan" && log.waktu.getMonth() === now.getMonth() && log.waktu.getFullYear() === now.getFullYear()) saring = true;
+                else if (activeFilter === "tahunan" && log.waktu.getFullYear() === now.getFullYear()) saring = true;
+                else if (orders.length <= 3) saring = true; // JAGA-JAGA UNTUK MENDUKUNG REALTIME SENIN SELASA DUMMY KETIKA BARU DIBUKA
+
+                if(saring) {
+                    // Hanya memformat Jam dan Menit (Contoh: 14:35) sesuai permintaan user
+                    let jamMenit = log.waktu.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+                    let timestampLabel = `${jamMenit}`;
+
+                    if(log.tipe === 'pemasukan') {
+                        saldoBerjalan += log.nilai;
+                        labels.push(`+ ${log.nama} [${timestampLabel}]`);
+                    } else {
+                        saldoBerjalan -= log.nilai;
+                        labels.push(`- ${log.nama} [${timestampLabel}]`);
+                    }
+                    dataLaba.push(saldoBerjalan);
                 }
-            } else if (activeFilter === "mingguan") {
-                for (let i = 3; i >= 0; i--) {
-                    labels.push("Minggu -" + i);
-                    const start = new Date(now.getTime() - (i + 1) * 7 * 24 * 60 * 60 * 1000);
-                    const end = new Date(now.getTime() - i * 7 * 24 * 60 * 60 * 1000);
-                    let oSum = orders.filter(o => o.status !== 'belum' && new Date(o.timestamp) >= start && new Date(o.timestamp) <= end).reduce((sum, o) => sum + (o.total || 0), 0);
-                    let eSum = expenses.filter(e => new Date(e.timestamp) >= start && new Date(e.timestamp) <= end).reduce((sum, e) => sum + (e.cost || 0), 0);
-                    dataLaba.push(oSum - eSum);
-                }
-            } else if (activeFilter === "bulanan") {
-                const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-                const currentMonth = now.getMonth();
-                for (let i = Math.max(0, currentMonth - 5); i <= currentMonth; i++) {
-                    labels.push(months[i]);
-                    let oSum = orders.filter(o => o.status !== 'belum' && new Date(o.timestamp).getMonth() === i && new Date(o.timestamp).getFullYear() === now.getFullYear()).reduce((sum, o) => sum + (o.total || 0), 0);
-                    let eSum = expenses.filter(e => new Date(e.timestamp).getMonth() === i && new Date(e.timestamp).getFullYear() === now.getFullYear()).reduce((sum, e) => sum + (e.cost || 0), 0);
-                    dataLaba.push(oSum - eSum);
-                }
-            } else if (activeFilter === "tahunan") {
-                const curYear = now.getFullYear();
-                for (let i = curYear - 2; i <= curYear; i++) {
-                    labels.push("Tahun " + i);
-                    let oSum = orders.filter(o => o.status !== 'belum' && new Date(o.timestamp).getFullYear() === i).reduce((sum, o) => sum + (o.total || 0), 0);
-                    let eSum = expenses.filter(e => new Date(e.timestamp).getFullYear() === i).reduce((sum, e) => sum + (e.cost || 0), 0);
-                    dataLaba.push(oSum - eSum);
-                }
+            });
+
+            // JIKA TIDAK ADA DATA SAMA SEKALI
+            if(dataLaba.length === 1) {
+                labels.push('Belum Ada Transaksi');
+                dataLaba.push(0);
             }
 
-            // WARNA GRAFIK OTOMATIS: HIJAU JIKA NAIK, MERAH JIKA TURUN, KUNING JIKA PERTENGAHAN/FLAT
+            // WARNA GRAFIK OTOMATIS: HIJAU JIKA SALDO AKHIR POSITIF, MERAH JIKA NEGATIF/MERUGI
             let strokeColor = '#f59e0b'; 
             let bgColor = 'rgba(245, 158, 11, 0.1)';
-            if (dataLaba.length >= 2) {
-                const lastVal = dataLaba[dataLaba.length - 1];
-                const prevVal = dataLaba[dataLaba.length - 2];
-                if (lastVal > prevVal) {
-                    strokeColor = '#10b981'; // Hijau
-                    bgColor = 'rgba(16, 185, 129, 0.1)';
-                } else if (lastVal < prevVal) {
-                    strokeColor = '#ef4444'; // Merah
-                    bgColor = 'rgba(239, 68, 68, 0.1)';
-                }
-            } else if (dataLaba.length === 1) {
-                if (dataLaba[0] > 0) { strokeColor = '#10b981'; bgColor = 'rgba(16, 185, 129, 0.1)'; }
-                else if (dataLaba[0] < 0) { strokeColor = '#ef4444'; bgColor = 'rgba(239, 68, 68, 0.1)'; }
+            const finalLaba = dataLaba[dataLaba.length - 1];
+
+            if (finalLaba > 0) {
+                strokeColor = '#10b981'; // Hijau
+                bgColor = 'rgba(16, 185, 129, 0.1)';
+            } else if (finalLaba < 0) {
+                strokeColor = '#ef4444'; // Merah
+                bgColor = 'rgba(239, 68, 68, 0.1)';
             }
 
             lineChart.data.labels = labels;
@@ -1346,9 +1382,6 @@
             if (e.ctrlKey && e.shiftKey && e.keyCode === 74) { e.preventDefault(); }
             if (e.ctrlKey && e.keyCode === 85) { e.preventDefault(); }
         });
-
-        
     </script>
-    
 </body>
 </html>
