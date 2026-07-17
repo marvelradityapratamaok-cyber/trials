@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Garansi - Admin Laundry</title>
+    <link rel="icon" href="logo.jpeg" />
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <style>
+        /* ============================================================
+           THEME — PUTIH BANGET + BIRU (sama seperti halaman profil)
+           ============================================================ */
+        :root {
+            --bg-base: #ffffff;
+            --nm-shadow: 6px 6px 18px #d8dce6, -6px -6px 18px #ffffff;
+            --nm-inset: inset 4px 4px 12px #d8dce6, inset -4px -4px 12px #ffffff;
+            --nm-inset-sm: inset 3px 3px 8px #d8dce6, inset -3px -3px 8px #ffffff;
+            --text-main: #1e3a8a;
+            --text-muted: #475569;
+            --border-rgba: rgba(0, 0, 0, 0.04);
+            --glow-light: 0 0 24px rgba(37, 99, 235, 0.12);
+            --radius-card: 28px;
+            --radius-sm: 16px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --primary-dark: #1e40af;
+            --primary-text: #2563eb;
+            --primary-bg-soft: #eff6ff;
+            --primary-border: #93c5fd;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            width: 100%;
+            padding-top: 74px;
+        }
+
+        /* ============================================================
+           VIDEO HERO
+           ============================================================ */
+        #video-hero {
+            position: relative;
+            width: 100%;
+            height: 55vh;
+            min-height: 340px;
+            max-height: 500px;
+            overflow: hidden;
+            border-radius: 0 0 48px 48px;
+            margin-bottom: 2rem;
+            box-shadow: var(--nm-shadow);
+        }
+        #video-hero video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        #video-hero .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        #video-hero .hero-overlay h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            letter-spacing: -0.02em;
+        }
+        #video-hero .hero-overlay p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            max-width: 600px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+            margin-top: 0.5rem;
+        }
+        #video-hero .hero-overlay .badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            padding: 0.4rem 1.2rem;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        @media (max-width: 640px) {
+            #video-hero {
+                height: 40vh;
+                min-height: 260px;
+                border-radius: 0 0 24px 24px;
+            }
+            #video-hero .hero-overlay h1 {
+                font-size: 2rem;
+            }
+            #video-hero .hero-overlay p {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* ============================================================
+           NEUMORPHISM & UTILITY
+           ============================================================ */
+        .nm-card {
+            background: var(--bg-base);
+            border-radius: var(--radius-card);
+            box-shadow: var(--nm-shadow);
+            border: 1px solid var(--border-rgba);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+        .nm-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--nm-shadow), var(--glow-light);
+        }
+        .nm-card-inset {
+            background: var(--bg-base);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--nm-inset);
+            border: none;
+        }
+        .nm-btn {
+            background: var(--bg-base);
+            box-shadow: var(--nm-shadow);
+            border: 1px solid var(--border-rgba);
+            transition: all var(--transition);
+            color: var(--text-main);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 700;
+        }
+        .nm-btn:hover {
+            transform: translateY(-2px);
+        }
+        .nm-btn:active {
+            box-shadow: var(--nm-inset) !important;
+            transform: translateY(0) !important;
+        }
+        .nm-input {
+            background: var(--bg-base);
+            box-shadow: var(--nm-inset-sm);
+            border: none;
+            outline: none;
+            transition: all 0.2s ease;
+            color: var(--text-main);
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: inherit;
+        }
+        .nm-input:focus {
+            box-shadow: var(--nm-inset-sm), var(--glow-light);
+        }
+
+        /* ============================================================
+           NAVBAR
+           ============================================================ */
+        #public-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+            transform: translateY(0);
+            will-change: transform;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        #public-navbar.nav-hidden {
+            transform: translateY(-100%);
+        }
+        #public-navbar.nav-scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+        }
+        #public-navbar .nav-link {
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: color 0.2s, opacity 0.2s;
+            position: relative;
+            padding-bottom: 2px;
+            text-decoration: none;
+        }
+        #public-navbar .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+            border-radius: 99px;
+        }
+        #public-navbar .nav-link:hover::after,
+        #public-navbar .nav-link.active::after {
+            width: 100%;
+        }
+        #public-navbar .nav-link:hover,
+        #public-navbar .nav-link.active {
+            color: var(--primary);
+        }
+
+        /* ============================================================
+           FLOATING ACTION BUTTON (MOBILE)
+           ============================================================ */
+        .fab-btn {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 900;
+            background: var(--bg-base);
+            box-shadow: var(--nm-shadow), var(--glow-light);
+            border: 2px solid var(--primary-border);
+            color: var(--primary);
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            z-index: 60;
+        }
+        .fab-btn:hover {
+            transform: scale(1.05);
+        }
+        .fab-btn:active {
+            transform: scale(0.95);
+        }
+
+        #client-floating-controls {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.75rem;
+        }
+        #client-mobile-nav {
+            display: none;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border-radius: 1.25rem;
+            padding: 0.5rem;
+            gap: 0.25rem;
+            text-align: center;
+            width: 10rem;
+            margin-bottom: 0.25rem;
+        }
+        #client-mobile-nav.open {
+            display: flex;
+        }
+        #client-mobile-nav a,
+        #client-mobile-nav button {
+            font-weight: 900;
+            font-size: 0.7rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            display: block;
+            text-align: left;
+            color: var(--text-main);
+            background: transparent;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        #client-mobile-nav a:hover,
+        #client-mobile-nav button:hover {
+            background: #f1f5f9;
+        }
+        #client-mobile-nav a.text-blue-600,
+        #client-mobile-nav button.text-indigo-600 {
+            color: var(--primary-text) !important;
+        }
+
+        /* ============================================================
+           SCROLLBAR
+           ============================================================ */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 1023px) {
+            #public-navbar .nav-link {
+                font-size: 0.65rem;
+            }
+        }
+        @media (min-width: 768px) {
+            #client-floating-controls {
+                display: none !important;
+            }
+        }
+
+        /* ============================================================
+           OVERRIDE TAILWIND
+           ============================================================ */
+        .text-blue-600,
+        .text-blue-700,
+        .text-blue-500,
+        .text-indigo-600,
+        .text-indigo-700,
+        .text-indigo-500 {
+            color: var(--primary-text) !important;
+        }
+        .bg-blue-100,
+        .bg-blue-50,
+        .bg-indigo-100,
+        .bg-indigo-50 {
+            background-color: var(--primary-light) !important;
+        }
+        .border-blue-200,
+        .border-blue-500,
+        .border-indigo-500 {
+            border-color: var(--primary-border) !important;
+        }
+        .bg-blue-950 {
+            background-color: var(--primary-dark) !important;
+        }
+        .hover\:text-blue-600:hover,
+        .hover\:text-indigo-600:hover {
+            color: var(--primary-text) !important;
+        }
+        .hover\:bg-blue-100:hover {
+            background-color: var(--primary-light) !important;
+        }
+        .from-blue-500 {
+            --tw-gradient-from: var(--primary) !important;
+        }
+        .to-indigo-500 {
+            --tw-gradient-to: var(--primary) !important;
+        }
+        .bg-blue-600 {
+            background-color: var(--primary) !important;
+        }
+        .border-l-4.border-blue-500 {
+            border-left-color: var(--primary) !important;
+        }
+        .shadow-blue-500\/20 {
+            --tw-shadow-color: var(--primary) !important;
+        }
+        .text-amber-600,
+        .text-orange-600,
+        .text-yellow-600 {
+            color: #d97706 !important;
+        }
+        .bg-amber-100 {
+            background-color: #fef3c7 !important;
+        }
+        .border-amber-500 {
+            border-color: #f59e0b !important;
+        }
+        .text-emerald-600 {
+            color: #059669 !important;
+        }
+        .bg-emerald-100 {
+            background-color: #d1fae5 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================================================================
+    NAVBAR
+    ================================================================ -->
+    <nav id="public-navbar" class="border-b border-slate-200 px-4 xl:px-8 py-3 flex justify-between items-center shadow-sm">
+        <!-- Logo -->
+        <div class="text-xl xl:text-2xl font-black tracking-tight cursor-pointer text-[var(--text-main)] shrink-0" onclick="window.location.href='/'">
+            Admin<span class="text-blue-600">Laundry.</span>
+        </div>
+
+        <!-- Menu utama (desktop) -->
+        <div class="hidden lg:flex items-center space-x-4 xl:space-x-6">
+           <a href="index1.html"  class="nav-link">Beranda</a>
+            <a href="index3.html" class="nav-link">Profil</a>
+            <a href="index4.html" class="nav-link">Layanan</a>
+            <a href="index5.html" class="nav-link active">Bantuan</a>
+            <a href="index7.html" class="text-red-500 hover:text-red-600 transition duration-200 font-bold text-sm active-nav"> Garansi</a>
+        </div>
+
+        <div class="flex items-center gap-3 xl:gap-5 shrink-0"></div>
+    </nav>
+
+    <!-- ================================================================
+    FLOATING ACTION BUTTON (MOBILE)
+    ================================================================ -->
+    <div id="client-floating-controls">
+        <div id="client-mobile-nav">
+           <a href="index1.html" onclick="window.location.href='/'; toggleMobileMenu();">🏠 Beranda</a>
+            <a href="index3.html" onclick="window.location.href='#profil'; toggleMobileMenu();" class="text-blue-600">📋 Profil</a>
+            <a href="index4.html" onclick="document.getElementById('layanan-section').scrollIntoView({behavior:'smooth'}); toggleMobileMenu();">🧺 Layanan</a>
+            <a href="index5.html" onclick="document.getElementById('bantuan-section').scrollIntoView({behavior:'smooth'}); toggleMobileMenu();">❓ Bantuan</a>
+             <a href="index7.html" class="text-red-500 hover:text-red-600 transition duration-200 font-bold text-sm active-nav">🛡️ Garansi</a>
+        </div>
+        <button onclick="toggleMobileMenu()" class="fab-btn" id="client-fab-btn">
+            <span id="client-fab-icon">⚡</span>
+        </button>
+    </div>
+
+    <!-- ================================================================
+    VIDEO HERO — GARANSI
+    ================================================================ -->
+    <div id="video-hero">
+        <video autoplay muted loop playsinline>
+            <source src="vidssave.com Cinematic Laundry Video 720P.mp4" type="video/mp4" />
+            <source src="https://cdn.pixabay.com/video/2024/01/15/196387-901807983_large.mp4" type="video/mp4" />
+        </video>
+        <div class="hero-overlay">
+            <span class="badge">🛡️ Jaminan Kepuasan</span>
+            <h1>Garansi Layanan</h1>
+            <p>Kami berdiri di balik setiap cucian yang kami tangani. <br class="hidden sm:inline" />Ini komitmen kami kepada Anda.</p>
+        </div>
+    </div>
+
+    <!-- ================================================================
+    KONTEN GARANSI
+    ================================================================ -->
+    <main class="max-w-7xl mx-auto px-6 py-8 space-y-20 relative z-10">
+
+        <!-- INTRO -->
+        <section class="text-center space-y-6">
+            <span class="bg-blue-100 text-blue-700 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest">Garansi</span>
+            <h2 class="text-4xl md:text-5xl font-black tracking-tight text-[var(--text-main)]">Kepuasan Anda adalah Prioritas</h2>
+            <p class="text-[var(--text-muted)] text-sm md:text-lg max-w-3xl mx-auto leading-relaxed">
+                Admin Laundry memberikan garansi penuh atas setiap layanan yang kami berikan. Jika Anda tidak puas dengan hasil cucian,
+                atau ada masalah dengan pakaian Anda, kami akan memperbaikinya atau memberikan kompensasi sesuai dengan kebijakan garansi
+                yang berlaku. Kami percaya bahwa kepercayaan pelanggan adalah aset paling berharga.
+            </p>
+        </section>
+
+        <!-- 3 PILAR GARANSI -->
+        <section class="grid md:grid-cols-3 gap-6">
+            <div class="nm-card p-8 text-center">
+                <div class="text-5xl mb-4">✅</div>
+                <h3 class="font-black text-xl">100% Kepuasan</h3>
+                <p class="text-sm text-[var(--text-muted)] mt-2 leading-relaxed">
+                    Jika cucian Anda tidak bersih atau tidak wangi sesuai harapan, kami akan mencucinya ulang tanpa biaya tambahan.
+                    Kepuasan Anda adalah ukuran kualitas kami.
+                </p>
+            </div>
+            <div class="nm-card p-8 text-center">
+                <div class="text-5xl mb-4">🔄</div>
+                <h3 class="font-black text-xl">Perbaikan &amp; Penggantian</h3>
+                <p class="text-sm text-[var(--text-muted)] mt-2 leading-relaxed">
+                    Jika pakaian Anda rusak karena kesalahan kami (robek, pudar, atau hilang), kami akan memperbaikinya atau mengganti
+                    dengan nilai yang setara sesuai ketentuan.
+                </p>
+            </div>
+            <div class="nm-card p-8 text-center">
+                <div class="text-5xl mb-4">⏱️</div>
+                <h3 class="font-black text-xl">Tepat Waktu</h3>
+                <p class="text-sm text-[var(--text-muted)] mt-2 leading-relaxed">
+                    Jika pesanan Anda terlambat dari waktu yang dijanjikan, Anda berhak mendapatkan potongan harga 20% untuk pesanan
+                    berikutnya. Waktu Anda berharga bagi kami.
+                </p>
+            </div>
+        </section>
+
+        <!-- KETENTUAN GARANSI -->
+        <section>
+            <div class="text-center mb-12">
+                <span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 px-4 py-1.5 rounded-full">Ketentuan</span>
+                <h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Syarat &amp; Ketentuan Garansi</h2>
+                <p class="text-sm text-[var(--text-muted)] max-w-2xl mx-auto mt-2">
+                    Agar garansi dapat berlaku, pastikan Anda memahami dan memenuhi ketentuan di bawah ini.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Kolom kiri: Apa yang dicover -->
+                <div class="nm-card p-8 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">✅</span>
+                        <h3 class="font-black text-xl">Garansi Mencakup</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm text-[var(--text-muted)]">
+                        <li class="flex items-start gap-3">
+                            <span class="text-emerald-600 font-bold mt-0.5">✓</span>
+                            <span><strong class="text-[var(--text-main)]">Hasil cucian tidak bersih</strong> — noda membandel yang tidak hilang atau bau tidak sedap setelah proses pencucian.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-emerald-600 font-bold mt-0.5">✓</span>
+                            <span><strong class="text-[var(--text-main)]">Kerusakan akibat proses</strong> — pakaian robek, luntur, atau aksesori lepas yang disebabkan oleh kesalahan teknis kami.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-emerald-600 font-bold mt-0.5">✓</span>
+                            <span><strong class="text-[var(--text-main)]">Kehilangan barang</strong> — jika ada pakaian atau aksesori yang hilang selama proses pencucian.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-emerald-600 font-bold mt-0.5">✓</span>
+                            <span><strong class="text-[var(--text-main)]">Keterlambatan pengiriman</strong> — pesanan tidak sampai pada waktu yang telah disepakati (melebihi 2 jam dari estimasi).</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-emerald-600 font-bold mt-0.5">✓</span>
+                            <span><strong class="text-[var(--text-main)]">Kesalahan penimbangan</strong> — jika berat cucian yang ditagih tidak sesuai dengan berat aktual.</span>
+                        </li>
+                    </ul>
+                    <div class="mt-2 p-4 bg-emerald-50 rounded-xl border border-emerald-200 text-xs text-emerald-800">
+                        <span class="font-black">💡 Masa berlaku garansi:</span> 3 × 24 jam setelah cucian diterima pelanggan.
+                    </div>
+                </div>
+
+                <!-- Kolom kanan: Yang tidak dicover -->
+                <div class="nm-card p-8 space-y-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🚫</span>
+                        <h3 class="font-black text-xl">Tidak Dicover</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm text-[var(--text-muted)]">
+                        <li class="flex items-start gap-3">
+                            <span class="text-red-500 font-bold mt-0.5">✕</span>
+                            <span><strong class="text-[var(--text-main)]">Kerusakan yang sudah ada sebelumnya</strong> — pakaian yang sudah robek, bernoda, atau rusak sebelum diserahkan ke laundry.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-red-500 font-bold mt-0.5">✕</span>
+                            <span><strong class="text-[var(--text-main)]">Pakaian dengan instruksi khusus</strong> — jika pelanggan tidak memberikan informasi tentang bahan sensitif atau perlakuan khusus.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-red-500 font-bold mt-0.5">✕</span>
+                            <span><strong class="text-[var(--text-main)]">Penyusutan normal</strong> — perubahan ukuran akibat proses pencucian standar yang wajar terjadi pada bahan tertentu.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-red-500 font-bold mt-0.5">✕</span>
+                            <span><strong class="text-[var(--text-main)]">Klaim tanpa bukti</strong> — pelanggan tidak dapat menunjukkan tanda terima atau bukti serah terima.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-red-500 font-bold mt-0.5">✕</span>
+                            <span><strong class="text-[var(--text-main)]">Force majeure</strong> — bencana alam, kebakaran, atau kejadian di luar kendali manusia.</span>
+                        </li>
+                    </ul>
+                    <div class="mt-2 p-4 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-800">
+                        <span class="font-black">⚠️ Catatan penting:</span> Garansi tidak berlaku jika pelanggan tidak melakukan pengecekan saat penerimaan cucian.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROSES KLAIM GARANSI -->
+        <section>
+            <div class="text-center mb-12">
+                <span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 px-4 py-1.5 rounded-full">Prosedur</span>
+                <h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Bagaimana Cara Klaim Garansi?</h2>
+                <p class="text-sm text-[var(--text-muted)] max-w-2xl mx-auto mt-2">
+                    Ikuti langkah-langkah di bawah ini untuk mengajukan klaim garansi dengan mudah dan cepat.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="nm-card p-6 text-center">
+                    <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 text-xl font-black flex items-center justify-center mx-auto mb-3">1</div>
+                    <h4 class="font-black text-sm">Cek &amp; Foto</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                        Periksa cucian Anda segera setelah diterima. Jika ada masalah, foto sebagai bukti dan catat nomor order Anda.
+                    </p>
+                </div>
+                <div class="nm-card p-6 text-center">
+                    <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 text-xl font-black flex items-center justify-center mx-auto mb-3">2</div>
+                    <h4 class="font-black text-sm">Hubungi CS</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                        Hubungi Customer Service kami via WhatsApp atau telepon dalam waktu 3×24 jam setelah penerimaan.
+                    </p>
+                </div>
+                <div class="nm-card p-6 text-center">
+                    <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 text-xl font-black flex items-center justify-center mx-auto mb-3">3</div>
+                    <h4 class="font-black text-sm">Verifikasi</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                        Tim kami akan memverifikasi keluhan Anda dan memutuskan apakah klaim memenuhi syarat garansi.
+                    </p>
+                </div>
+                <div class="nm-card p-6 text-center">
+                    <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 text-xl font-black flex items-center justify-center mx-auto mb-3">4</div>
+                    <h4 class="font-black text-sm">Solusi</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                        Kami akan memberikan solusi: cuci ulang gratis, perbaikan, penggantian nilai, atau potongan harga sesuai ketentuan.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <a href="#kontak-garansi" class="nm-btn inline-block px-8 py-3 rounded-xl text-blue-600 font-black text-sm tracking-wide">
+                    📞 Hubungi CS Sekarang
+                </a>
+            </div>
+        </section>
+
+        <!-- TABEL KOMPENSASI -->
+        <section>
+            <div class="text-center mb-12">
+                <span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 px-4 py-1.5 rounded-full">Kompensasi</span>
+                <h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Bentuk Kompensasi</h2>
+                <p class="text-sm text-[var(--text-muted)] max-w-2xl mx-auto mt-2">
+                    Jika klaim garansi Anda disetujui, berikut adalah bentuk kompensasi yang dapat kami berikan.
+                </p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <div class="nm-card p-0 overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-blue-50 border-b border-blue-100">
+                            <tr>
+                                <th class="text-left px-6 py-4 font-black text-blue-700 text-xs uppercase tracking-wider">Jenis Masalah</th>
+                                <th class="text-left px-6 py-4 font-black text-blue-700 text-xs uppercase tracking-wider">Kompensasi</th>
+                                <th class="text-left px-6 py-4 font-black text-blue-700 text-xs uppercase tracking-wider">Syarat</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-[var(--text-main)]">Cucian tidak bersih / berbau</td>
+                                <td class="px-6 py-4 text-[var(--text-muted)]">Cuci ulang gratis + ongkos antar jemput</td>
+                                <td class="px-6 py-4 text-[var(--text-muted)]">Dilaporkan dalam 3×24 jam</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-[var(--text-main)]">Pakaian rusak / robek</td>
+                                <td class="px-6 py-4 text-[var(--text-muted)]">Perbaikan gratis atau penggantian nilai (maks. Rp 200.000)</td>
+                                <td class="px-6 py-4 text-[var(--text-muted)]">Ada bukti foto &amp; tanda terima</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-[var(--text-main)]">Kehilangan pakaian / aksesori</td>
+                                <td class="px-6 py-4 text-[var(--text-muted)]">Penggantian penuh sesuai harga pasar</td>
+                                <td class="px-6 py-4 text-[var(--text-muted)]">Dilaporkan maks. 1×24 jam</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-[var(--text-main)]">Keterlambatan &gt; 2 jam</td>
+                                <td class="px-6 py-4 text-[var(--text-muted)]">Potongan 20% untuk pesanan berikutnya</td>
+                                <td class="px-6 py-4 text-[var(--text-muted)]">Konfirmasi via WhatsApp</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 font-medium text-[var(--text-main)]">Kesalahan penimbangan</td>
+                                <td class="px-6 py-4 text-[var(--text-muted)]">Selisih biaya dikembalikan</td>
+                                <td class="px-6 py-4 text-[var(--text-muted)]">Timbang ulang di depan petugas</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <p class="text-[10px] text-[var(--text-muted)] text-center mt-4 italic">
+                * Kebijakan kompensasi dapat berubah sewaktu-waktu dan berlaku untuk klaim yang memenuhi syarat.
+            </p>
+        </section>
+
+        <!-- FAQ GARANSI -->
+        <section>
+            <div class="text-center mb-12">
+                <span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 px-4 py-1.5 rounded-full">FAQ</span>
+                <h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Pertanyaan Umum</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="nm-card p-6 space-y-2">
+                    <h4 class="font-black text-sm flex items-center gap-2">❓ Apakah garansi berlaku untuk semua layanan?</h4>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                        Ya, garansi berlaku untuk semua layanan kami, termasuk cuci reguler, express, dry clean, dan deep clean sepatu,
+                        selama memenuhi ketentuan yang berlaku.
+                    </p>
+                </div>
+                <div class="nm-card p-6 space-y-2">
+                    <h4 class="font-black text-sm flex items-center gap-2">❓ Berapa lama masa berlaku garansi?</h4>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                        Masa berlaku garansi adalah <strong>3 × 24 jam</strong> sejak cucian diterima oleh pelanggan. Klaim di luar
+                        masa tersebut tidak dapat diproses.
+                    </p>
+                </div>
+                <div class="nm-card p-6 space-y-2">
+                    <h4 class="font-black text-sm flex items-center gap-2">❓ Bagaimana jika saya tidak punya bukti foto?</h4>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                        Foto sangat membantu proses verifikasi, namun jika tidak ada, kami tetap dapat memproses klaim dengan
+                        pemeriksaan fisik di workshop kami. Namun, bukti foto mempercepat proses.
+                    </p>
+                </div>
+                <div class="nm-card p-6 space-y-2">
+                    <h4 class="font-black text-sm flex items-center gap-2">❓ Apakah ada biaya untuk klaim garansi?</h4>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                        Tidak ada biaya apapun untuk mengajukan klaim garansi. Semua biaya ditanggung sepenuhnya oleh Admin Laundry
+                        jika klaim terbukti sah.
+                    </p>
+                </div>
+                <div class="nm-card p-6 space-y-2">
+                    <h4 class="font-black text-sm flex items-center gap-2">❓ Apa yang terjadi jika garansi ditolak?</h4>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                        Jika klaim tidak memenuhi syarat, tim CS kami akan menjelaskan alasannya secara jelas dan memberikan
+                        rekomendasi solusi alternatif.
+                    </p>
+                </div>
+                <div class="nm-card p-6 space-y-2">
+                    <h4 class="font-black text-sm flex items-center gap-2">❓ Bagaimana cara melacak status klaim saya?</h4>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                        Anda akan mendapatkan notifikasi via WhatsApp atau email dari tim CS kami setiap ada perkembangan klaim.
+                        Anda juga dapat menghubungi kami kapan saja.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- KONTAK GARANSI -->
+        <section id="kontak-garansi" class="grid md:grid-cols-2 gap-10">
+            <div class="nm-card p-8 space-y-4">
+                <h3 class="text-2xl font-black">Hubungi Tim Garansi</h3>
+                <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                    Jika Anda memiliki pertanyaan lebih lanjut atau ingin mengajukan klaim, tim garansi kami siap membantu Anda
+                    melalui saluran di bawah ini.
+                </p>
+                <div class="space-y-3 text-sm">
+                    <div><span class="font-black">📞 WhatsApp Garansi</span><br><span class="text-[var(--text-muted)]">+62 819-4549-7854</span></div>
+                    <div><span class="font-black">✉️ Email Klaim</span><br><span class="text-[var(--text-muted)]">klaim@adminlaundry.com</span></div>
+                    <div><span class="font-black">🕒 Jam Layanan Garansi</span><br><span class="text-[var(--text-muted)]">Senin-Jumat: 08:00 - 20:00<br>Sabtu: 08:00 - 17:00</span></div>
+                </div>
+                <button onclick="alert('WhatsApp akan terbuka')" class="w-full nm-btn font-black py-3 rounded-xl text-blue-600 text-sm tracking-wide">
+                    💬 Klaim via WhatsApp
+                </button>
+            </div>
+
+            <div class="nm-card p-8 space-y-4">
+                <h3 class="text-2xl font-black">Formulir Klaim Cepat</h3>
+                <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                    Isi formulir di bawah ini dan tim kami akan menghubungi Anda dalam waktu kurang dari 2 jam kerja.
+                </p>
+                <div class="space-y-4">
+                    <input type="text" placeholder="Nama lengkap" class="nm-input w-full px-4 py-3 rounded-xl text-sm" />
+                    <input type="text" placeholder="Nomor WhatsApp" class="nm-input w-full px-4 py-3 rounded-xl text-sm" />
+                    <input type="text" placeholder="Nomor Order (contoh: #AL-2026-001)" class="nm-input w-full px-4 py-3 rounded-xl text-sm" />
+                    <select class="nm-input w-full px-4 py-3 rounded-xl text-sm appearance-none">
+                        <option value="">Jenis masalah</option>
+                        <option>Cucian tidak bersih / berbau</option>
+                        <option>Pakaian rusak / robek</option>
+                        <option>Kehilangan pakaian</option>
+                        <option>Keterlambatan</option>
+                        <option>Kesalahan penimbangan</option>
+                        <option>Lainnya</option>
+                    </select>
+                    <textarea rows="3" placeholder="Deskripsikan masalah secara detail..." class="nm-input w-full px-4 py-3 rounded-xl text-sm"></textarea>
+                    <button onclick="alert('Formulir klaim telah dikirim! Tim kami akan menghubungi Anda segera.')" class="w-full nm-btn font-black py-3 rounded-xl text-blue-600 text-sm tracking-wide">
+                        Kirim Klaim
+                    </button>
+                </div>
+                <p class="text-[10px] text-[var(--text-muted)] text-center mt-2">
+                    * Dengan mengirimkan formulir, Anda menyetujui kebijakan privasi dan ketentuan garansi kami.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================================================================
+    FOOTER
+    ================================================================ -->
+    <footer class="bg-black text-zinc-400 py-12 mt-20 px-6 border-t relative z-10">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-xs md:text-sm">
+            <div>
+                <h3 class="text-white font-black text-2xl">AdminLaundry.</h3>
+                <p class="text-zinc-500">Sistem binatu cloud terpercaya sejak 2020.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-black">Kontak</h4>
+                <p>WA: +62 819-4549-7854</p>
+                <p>Email: info@adminlaundry.com</p>
+            </div>
+            <div>
+                <h4 class="text-white font-black">Navigasi</h4>
+                <a href="#" onclick="window.location.href='/' " class="block hover:text-white transition">Beranda</a>
+                <a href="#" onclick="window.location.href='profil.html'" class="block hover:text-white transition">Profil</a>
+                <a href="#" onclick="window.location.href='garansi.html'" class="block hover:text-white transition text-red-400">Garansi</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-6 pt-4 border-t border-zinc-800 text-center text-[10px] text-zinc-600">
+            &copy; 2026 Admin Laundry. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- ================================================================
+    JAVASCRIPT
+    ================================================================ -->
+    <script>
+        // ================================================================
+        // SMART NAVBAR
+        // ================================================================
+        let lastScrollY = 0;
+
+        function initSmartNavbar() {
+            const navbar = document.getElementById('public-navbar');
+            if (!navbar) return;
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        const currentScrollY = window.scrollY;
+                        if (currentScrollY > 20) navbar.classList.add('nav-scrolled');
+                        else navbar.classList.remove('nav-scrolled');
+                        if (currentScrollY > 80) {
+                            if (currentScrollY > lastScrollY) navbar.classList.add('nav-hidden');
+                            else navbar.classList.remove('nav-hidden');
+                        } else navbar.classList.remove('nav-hidden');
+                        lastScrollY = currentScrollY;
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+        }
+
+        // ================================================================
+        // MOBILE FAB TOGGLE
+        // ================================================================
+        function toggleMobileMenu() {
+            const menu = document.getElementById('client-mobile-nav');
+            const icon = document.getElementById('client-fab-icon');
+            if (!menu || !icon) return;
+            const isOpen = menu.classList.contains('open');
+            menu.classList.toggle('open');
+            icon.innerText = isOpen ? '⚡' : '✕';
+        }
+
+        // ================================================================
+        // DOM READY
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initSmartNavbar();
+
+            // Tutup mobile menu saat klik di luar
+            document.addEventListener('click', function(e) {
+                const container = document.getElementById('client-floating-controls');
+                const menu = document.getElementById('client-mobile-nav');
+                const fab = document.querySelector('.fab-btn');
+                if (!container || !menu || !fab) return;
+                if (!container.contains(e.target) && menu.classList.contains('open')) {
+                    menu.classList.remove('open');
+                    document.getElementById('client-fab-icon').innerText = '⚡';
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

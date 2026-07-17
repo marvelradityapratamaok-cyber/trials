@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Bantuan - Admin Laundry</title>
+    <link rel="icon" href="logo.jpeg" />
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <style>
+        /* ============================================================
+           THEME — PUTIH BANGET + BIRU
+           ============================================================ */
+        :root {
+            --bg-base: #ffffff;
+            --nm-shadow: 6px 6px 18px #d8dce6, -6px -6px 18px #ffffff;
+            --nm-inset: inset 4px 4px 12px #d8dce6, inset -4px -4px 12px #ffffff;
+            --nm-inset-sm: inset 3px 3px 8px #d8dce6, inset -3px -3px 8px #ffffff;
+            --text-main: #1e3a8a;
+            --text-muted: #475569;
+            --border-rgba: rgba(0, 0, 0, 0.04);
+            --glow-light: 0 0 24px rgba(37, 99, 235, 0.12);
+            --radius-card: 28px;
+            --radius-sm: 16px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --primary-dark: #1e40af;
+            --primary-text: #2563eb;
+            --primary-bg-soft: #eff6ff;
+            --primary-border: #93c5fd;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        /* ============================================================
+           RESET & BASE
+           ============================================================ */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            width: 100%;
+            padding-top: 74px;
+        }
+
+        /* ============================================================
+           VIDEO HERO — TIDAK FIXED, HANYA DI HEADER
+           ============================================================ */
+        #video-hero {
+            position: relative;
+            width: 100%;
+            height: 65vh;
+            min-height: 400px;
+            max-height: 600px;
+            overflow: hidden;
+            border-radius: 0 0 48px 48px;
+            margin-bottom: 2rem;
+            box-shadow: var(--nm-shadow);
+        }
+        #video-hero video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        #video-hero .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        #video-hero .hero-overlay h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            letter-spacing: -0.02em;
+        }
+        #video-hero .hero-overlay p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            max-width: 600px;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+            margin-top: 0.5rem;
+        }
+        #video-hero .hero-overlay .badge {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(8px);
+            padding: 0.4rem 1.2rem;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        @media (max-width: 640px) {
+            #video-hero {
+                height: 50vh;
+                min-height: 300px;
+                border-radius: 0 0 24px 24px;
+            }
+            #video-hero .hero-overlay h1 {
+                font-size: 2rem;
+            }
+            #video-hero .hero-overlay p {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* ============================================================
+           NEUMORPHISM & UTILITY
+           ============================================================ */
+        .nm-card {
+            background: var(--bg-base);
+            border-radius: var(--radius-card);
+            box-shadow: var(--nm-shadow);
+            border: 1px solid var(--border-rgba);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+        .nm-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--nm-shadow), var(--glow-light);
+        }
+        .nm-card-inset {
+            background: var(--bg-base);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--nm-inset);
+            border: none;
+        }
+        .nm-btn {
+            background: var(--bg-base);
+            box-shadow: var(--nm-shadow);
+            border: 1px solid var(--border-rgba);
+            transition: all var(--transition);
+            color: var(--text-main);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 700;
+        }
+        .nm-btn:hover {
+            transform: translateY(-2px);
+        }
+        .nm-btn:active {
+            box-shadow: var(--nm-inset) !important;
+            transform: translateY(0) !important;
+        }
+        .nm-input {
+            background: var(--bg-base);
+            box-shadow: var(--nm-inset-sm);
+            border: none;
+            outline: none;
+            transition: all 0.2s ease;
+            color: var(--text-main);
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: inherit;
+        }
+        .nm-input:focus {
+            box-shadow: var(--nm-inset-sm), var(--glow-light);
+        }
+
+        /* ============================================================
+           NAVBAR (tanpa tombol Masuk Admin)
+           ============================================================ */
+        #public-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+            transform: translateY(0);
+            will-change: transform;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid #e2e8f0;
+        }
+        #public-navbar.nav-hidden {
+            transform: translateY(-100%);
+        }
+        #public-navbar.nav-scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+        }
+        #public-navbar .nav-link {
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: color 0.2s, opacity 0.2s;
+            position: relative;
+            padding-bottom: 2px;
+            text-decoration: none;
+        }
+        #public-navbar .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+            border-radius: 99px;
+        }
+        #public-navbar .nav-link:hover::after,
+        #public-navbar .nav-link.active::after {
+            width: 100%;
+        }
+        #public-navbar .nav-link:hover,
+        #public-navbar .nav-link.active {
+            color: var(--primary);
+        }
+
+        /* ============================================================
+           FLOATING ACTION BUTTON (MOBILE)
+           ============================================================ */
+        .fab-btn {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 900;
+            background: var(--bg-base);
+            box-shadow: var(--nm-shadow), var(--glow-light);
+            border: 2px solid var(--primary-border);
+            color: var(--primary);
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            z-index: 60;
+        }
+        .fab-btn:hover {
+            transform: scale(1.05);
+        }
+        .fab-btn:active {
+            transform: scale(0.95);
+        }
+
+        #client-floating-controls {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.75rem;
+        }
+        #client-mobile-nav {
+            display: none;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border-radius: 1.25rem;
+            padding: 0.5rem;
+            gap: 0.25rem;
+            text-align: center;
+            width: 10rem;
+            margin-bottom: 0.25rem;
+        }
+        #client-mobile-nav.open {
+            display: flex;
+        }
+        #client-mobile-nav a,
+        #client-mobile-nav button {
+            font-weight: 900;
+            font-size: 0.7rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.75rem;
+            display: block;
+            text-align: left;
+            color: var(--text-main);
+            background: transparent;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        #client-mobile-nav a:hover,
+        #client-mobile-nav button:hover {
+            background: #f1f5f9;
+        }
+        #client-mobile-nav a.text-blue-600,
+        #client-mobile-nav button.text-indigo-600 {
+            color: var(--primary-text) !important;
+        }
+
+        /* ============================================================
+           SCROLLBAR
+           ============================================================ */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 1023px) {
+            #public-navbar .nav-link {
+                font-size: 0.65rem;
+            }
+        }
+        @media (min-width: 768px) {
+            #client-floating-controls {
+                display: none !important;
+            }
+        }
+
+        /* ============================================================
+           OVERRIDE TAILWIND TEXT/BG COLORS → BIRU
+           ============================================================ */
+        .text-blue-600,
+        .text-blue-700,
+        .text-blue-500,
+        .text-indigo-600,
+        .text-indigo-700,
+        .text-indigo-500 {
+            color: var(--primary-text) !important;
+        }
+        .bg-blue-100,
+        .bg-blue-50,
+        .bg-indigo-100,
+        .bg-indigo-50 {
+            background-color: var(--primary-light) !important;
+        }
+        .border-blue-200,
+        .border-blue-500,
+        .border-indigo-500 {
+            border-color: var(--primary-border) !important;
+        }
+        .bg-blue-950 {
+            background-color: var(--primary-dark) !important;
+        }
+        .hover\:text-blue-600:hover,
+        .hover\:text-indigo-600:hover {
+            color: var(--primary-text) !important;
+        }
+        .hover\:bg-blue-100:hover {
+            background-color: var(--primary-light) !important;
+        }
+        .from-blue-500 {
+            --tw-gradient-from: var(--primary) !important;
+        }
+        .to-indigo-500 {
+            --tw-gradient-to: var(--primary) !important;
+        }
+        .bg-blue-600 {
+            background-color: var(--primary) !important;
+        }
+        .border-l-4.border-blue-500 {
+            border-left-color: var(--primary) !important;
+        }
+        .shadow-blue-500\/20 {
+            --tw-shadow-color: var(--primary) !important;
+        }
+        .text-amber-600,
+        .text-orange-600,
+        .text-yellow-600 {
+            color: #d97706 !important;
+        }
+        .bg-amber-100 {
+            background-color: #fef3c7 !important;
+        }
+        .border-amber-500 {
+            border-color: #f59e0b !important;
+        }
+
+        /* ============================================================
+           FAQ LIST — dengan nomor urut dan toggle
+           ============================================================ */
+        .faq-list {
+            counter-reset: faq-counter;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .faq-item {
+            counter-increment: faq-counter;
+            margin-bottom: 1.5rem;
+        }
+        .faq-item .faq-question {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            user-select: none;
+            padding: 0.75rem 1rem;
+            background: var(--bg-base);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--nm-inset-sm);
+            transition: all var(--transition);
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-rgba);
+        }
+        .faq-item .faq-question::before {
+            content: counter(faq-counter) ".";
+            font-weight: 900;
+            color: var(--primary);
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+            min-width: 1.8rem;
+        }
+        .faq-item .faq-question:hover {
+            color: var(--primary);
+            border-color: var(--primary-border);
+            box-shadow: var(--nm-shadow), var(--glow-light);
+        }
+        .faq-item .faq-question .icon {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .faq-item .faq-question.active .icon {
+            transform: rotate(180deg);
+        }
+        .faq-item .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            padding: 0 1rem 0 3rem;
+            background: var(--bg-base);
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+        }
+        .faq-item .faq-answer.open {
+            max-height: 600px;
+            opacity: 1;
+            padding: 1rem 1rem 1.5rem 3rem;
+            border-bottom: 1px solid var(--border-rgba);
+            box-shadow: var(--nm-inset-sm);
+            margin-top: 0.25rem;
+        }
+        .faq-item .faq-answer p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+        .faq-item .faq-answer ul {
+            margin-top: 0.5rem;
+            padding-left: 1.5rem;
+            list-style: disc;
+            color: var(--text-muted);
+        }
+        .faq-item .faq-answer ul li {
+            margin-bottom: 0.3rem;
+        }
+
+        @media (max-width: 640px) {
+            .faq-item .faq-answer.open {
+                padding-left: 1.5rem;
+            }
+            .faq-item .faq-question {
+                font-size: 0.85rem;
+                padding: 0.6rem 0.8rem;
+            }
+        }
+
+        /* ============================================================
+           CHAT BUBBLE ANIMATION
+           ============================================================ */
+        @keyframes pulse-dot {
+            0%,
+            60%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            30% {
+                transform: scale(1.4);
+                opacity: 1;
+            }
+        }
+        .chat-dot {
+            animation: pulse-dot 1.4s infinite ease-in-out;
+        }
+        .chat-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .chat-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        /* ============================================================
+           TOAST
+           ============================================================ */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-width: 380px;
+            width: 100%;
+            pointer-events: none;
+        }
+        .toast-container .toast-item {
+            pointer-events: auto;
+        }
+        .toast-item {
+            background: var(--bg-base);
+            box-shadow: var(--nm-shadow), 0 10px 30px rgba(0, 0, 0, 0.10);
+            border-radius: var(--radius-sm);
+            padding: 0.9rem 1.2rem;
+            border-left: 4px solid var(--primary);
+            animation: slideIn 0.4s ease forwards;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .toast-item.success {
+            border-left-color: var(--success);
+        }
+        .toast-item.error {
+            border-left-color: var(--danger);
+        }
+        .toast-item.warning {
+            border-left-color: var(--warning);
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+        }
+        .toast-item.removing {
+            animation: slideOut 0.3s ease forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ================================================================
+    NAVBAR (tanpa tombol Masuk Admin)
+    ================================================================ -->
+    <nav id="public-navbar" class="border-b border-slate-200 px-4 xl:px-8 py-3 flex justify-between items-center shadow-sm">
+        <!-- Logo -->
+        <div class="text-xl xl:text-2xl font-black tracking-tight cursor-pointer text-[var(--text-main)] shrink-0" onclick="window.location.href='/'">
+            Admin<span class="text-blue-600">Laundry.</span>
+        </div>
+
+        <!-- Menu utama (desktop) -->
+        <div class="hidden lg:flex items-center space-x-4 xl:space-x-6">
+            <a href="index1.html" class="nav-link" id="nav-public">Beranda</a>
+            <a href="index3.html" class="nav-link" id="nav-profil">Profil</a>
+            <a href="index4.html"  class="nav-link">Layanan</a>
+            <a href="index5.html"  class="nav-link active" id="nav-bantuan">Bantuan</a>
+               <a href="index7.html" class="text-red-500 hover:text-red-600 transition duration-200 font-bold text-sm active-nav"> Garansi</a>
+        </div>
+
+        <div class="flex items-center gap-3 xl:gap-5 shrink-0"></div>
+    </nav>
+
+    <!-- ================================================================
+    FLOATING ACTION BUTTON (MOBILE)
+    ================================================================ -->
+    <div id="client-floating-controls">
+        <div id="client-mobile-nav">
+         <a href="index1.html" onclick="window.location.href='/'; toggleMobileMenu();">🏠 Beranda</a>
+            <a href="index3.html" onclick="window.location.href='#profil'; toggleMobileMenu();" class="text-blue-600">📋 Profil</a>
+            <a href="index4.html" onclick="document.getElementById('layanan-section').scrollIntoView({behavior:'smooth'}); toggleMobileMenu();">🧺 Layanan</a>
+            <a href="index5.html" onclick="document.getElementById('bantuan-section').scrollIntoView({behavior:'smooth'}); toggleMobileMenu();">❓ Bantuan</a>
+             <a href="index7.html" class="text-red-500 hover:text-red-600 transition duration-200 font-bold text-sm active-nav">🛡️ Garansi</a>
+        </div>
+        <button onclick="toggleMobileMenu()" class="fab-btn" id="client-fab-btn">
+            <span id="client-fab-icon">⚡</span>
+        </button>
+    </div>
+
+    <!-- ================================================================
+    VIDEO HERO — BANTUAN
+    ================================================================ -->
+    <div id="video-hero">
+        <video autoplay muted loop playsinline>
+            <source src="vidssave.com Cinematic Laundry Video 720P.mp4" type="video/mp4" />
+            <source src="https://cdn.pixabay.com/video/2024/01/15/196387-901807983_large.mp4" type="video/mp4" />
+        </video>
+        <div class="hero-overlay">
+            <span class="badge">💬 Pusat Bantuan</span>
+            <h1>Ada yang Bisa Kami Bantu?</h1>
+            <p>Temukan jawaban cepat, panduan lengkap, atau hubungi tim support kami yang siap membantu 24/7.</p>
+        </div>
+    </div>
+
+    <!-- ================================================================
+    KONTEN BANTUAN
+    ================================================================ -->
+    <main class="max-w-7xl mx-auto px-6 py-8 space-y-20 relative z-10">
+
+        <!-- ========== KATEGORI BANTUAN CEPAT ========== -->
+        <section>
+            <div class="text-center mb-12">
+                <span class="bg-blue-100 text-blue-700 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest">Kategori</span>
+                <h2 class="text-3xl md:text-4xl font-black tracking-tight text-[var(--text-main)] mt-2">Pilih Topik Bantuan</h2>
+                <p class="text-[var(--text-muted)] text-sm max-w-2xl mx-auto mt-2">Pilih kategori di bawah ini untuk menemukan informasi yang Anda butuhkan dengan cepat.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="#faq-umum" class="nm-card p-6 text-center hover:no-underline hover:text-inherit">
+                    <div class="text-5xl mb-3">📋</div>
+                    <h4 class="font-black text-sm">FAQ Umum</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1">Pertanyaan yang sering ditanyakan pelanggan</p>
+                </a>
+                <a href="#pemesanan" class="nm-card p-6 text-center hover:no-underline hover:text-inherit">
+                    <div class="text-5xl mb-3">🛒</div>
+                    <h4 class="font-black text-sm">Pemesanan</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1">Cara order, tracking, dan pembayaran</p>
+                </a>
+                <a href="#layanan" class="nm-card p-6 text-center hover:no-underline hover:text-inherit">
+                    <div class="text-5xl mb-3">🧺</div>
+                    <h4 class="font-black text-sm">Layanan &amp; Harga</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1">Jenis layanan, biaya, dan estimasi waktu</p>
+                </a>
+                <a href="#kontak-darurat" class="nm-card p-6 text-center hover:no-underline hover:text-inherit">
+                    <div class="text-5xl mb-3">🆘</div>
+                    <h4 class="font-black text-sm">Kontak Darurat</h4>
+                    <p class="text-xs text-[var(--text-muted)] mt-1">Hubungi kami segera untuk masalah mendesak</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- ========== LACAK STATUS CUCIAN (FIREBASE) — LANGSUNG TANPA SEARCH BAR ========== -->
+        <section id="lacak-section" class="py-8 max-w-2xl mx-auto">
+            <div class="nm-card p-8 md:p-10 text-center space-y-6">
+                <h2 class="text-2xl md:text-3xl font-black tracking-tight text-[var(--text-main)]">🔍 Lacak Status Cucian</h2>
+                <p class="text-sm text-[var(--text-muted)]">Masukkan nomor nota untuk melihat status terkini dari database realtime.</p>
+                <div class="pt-2 flex flex-col sm:flex-row gap-5">
+                    <input type="number" id="search-nota-input" placeholder="Contoh: 1" class="nm-input w-full px-6 py-4 rounded-2xl text-sm font-semibold" />
+                    <button onclick="lacakNotaPelanggan()" class="nm-btn font-black px-8 py-4 rounded-2xl text-blue-600 whitespace-nowrap text-sm tracking-wide">Cek Status</button>
+                </div>
+                <div id="hasil-lacak-box" class="hidden mt-8 text-left nm-card-inset p-6 md:p-8 border border-blue-200/40 space-y-6">
+                    <div class="flex justify-between items-start flex-wrap gap-4">
+                        <div>
+                            <h4 class="font-black text-xl" id="lacak-nama">-</h4>
+                            <p class="text-sm font-bold text-blue-600" id="lacak-layanan">-</p>
+                            <p class="text-xs text-[var(--text-muted)]" id="lacak-antar">-</p>
+                        </div>
+                        <span id="lacak-badge" class="font-black text-xs px-5 py-2.5 rounded-full shadow-inner bg-slate-200 text-slate-800">Memuat...</span>
+                    </div>
+                    <div class="pt-6 border-t flex justify-between">
+                        <span class="font-bold">Total Tagihan:</span>
+                        <span class="text-2xl font-black text-emerald-600" id="lacak-total">Rp 0</span>
+                    </div>
+                    <div id="qris-pay-wrapper" class="pt-6 border-t text-center">
+                        <p class="text-xs font-black uppercase tracking-widest">Scan QRIS</p>
+                        <div class="p-4 bg-white inline-block rounded-2xl shadow-md">
+                            <img id="qris-image-src" src="sqris_toko.png" alt="QRIS" class="w-44 h-44 object-contain mx-auto" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=AdminLaundryDemoPayment'" />
+                        </div>
+                    </div>
+                </div>
+                <div id="lacak-not-found" class="hidden mt-4 text-red-500 font-bold text-sm">❌ Nomor nota tidak ditemukan. Pastikan Anda memasukkan nomor yang benar.</div>
+            </div>
+        </section>
+
+        <!-- ========== FAQ UMUM (dynamic from Firebase) — TAMPILAN LIST ========== -->
+        <section id="faq-umum">
+            <div class="text-center mb-12">
+                <span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 px-4 py-1.5 rounded-full">FAQ</span>
+                <h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Pertanyaan yang Sering Diajukan</h2>
+                <p class="text-sm text-[var(--text-muted)] max-w-2xl mx-auto mt-2">Klik pertanyaan untuk melihat jawabannya. Data diperbarui langsung dari database.</p>
+            </div>
+            <div class="max-w-4xl mx-auto" id="faq-container">
+                <!-- Akan diisi oleh JavaScript dengan list bernomor -->
+                <div class="text-center py-8 text-slate-400 text-sm">Memuat FAQ...</div>
+            </div>
+        </section>
+
+        <!-- ========== PANDUAN PEMESANAN ========== -->
+        <section id="pemesanan">
+            <div class="text-center mb-12">
+                <span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 px-4 py-1.5 rounded-full">Panduan</span>
+                <h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Cara Memesan di Admin Laundry</h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="nm-card p-6 text-center">
+                    <div class="w-14 h-14 rounded-full bg-blue-100 mx-auto flex items-center justify-center text-3xl font-black text-blue-600">1</div>
+                    <h4 class="font-black text-lg mt-4">Pilih Layanan</h4>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">Pilih jenis layanan yang Anda butuhkan: reguler, express, deep clean sepatu, bed cover, atau lainnya. Sesuaikan dengan kebutuhan Anda.</p>
+                </div>
+                <div class="nm-card p-6 text-center">
+                    <div class="w-14 h-14 rounded-full bg-blue-100 mx-auto flex items-center justify-center text-3xl font-black text-blue-600">2</div>
+                    <h4 class="font-black text-lg mt-4">Isi Detail Pemesanan</h4>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">Masukkan berat cucian (estimasi), alamat, tanggal antar jemput, dan catatan khusus (opsional). Kami akan mengonfirmasi via WhatsApp.</p>
+                </div>
+                <div class="nm-card p-6 text-center">
+                    <div class="w-14 h-14 rounded-full bg-blue-100 mx-auto flex items-center justify-center text-3xl font-black text-blue-600">3</div>
+                    <h4 class="font-black text-lg mt-4">Konfirmasi &amp; Bayar</h4>
+                    <p class="text-sm text-[var(--text-muted)] leading-relaxed">Tim kami akan mengirimkan total biaya dan jadwal. Lakukan pembayaran melalui metode yang tersedia, dan cucian Anda akan segera dijemput.</p>
+                </div>
+            </div>
+            <div class="text-center mt-8">
+                <button onclick="alert('Halaman pemesanan akan segera hadir!')" class="nm-btn px-8 py-4 rounded-xl text-blue-600 text-sm font-black">Mulai Pesan Sekarang →</button>
+            </div>
+        </section>
+
+        <!-- ========== LAYANAN & HARGA ========== -->
+        <section id="layanan">
+            <div class="text-center mb-12">
+                <span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 px-4 py-1.5 rounded-full">Harga</span>
+                <h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Daftar Layanan &amp; Biaya</h2>
+                <p class="text-sm text-[var(--text-muted)] max-w-2xl mx-auto mt-2">Harga sudah termasuk deterjen, pewangi, dan setrika. Berat minimum 2 kg per pesanan.</p>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-blue-50">
+                            <th class="text-left p-4 font-black text-blue-700 border-b border-blue-200">Layanan</th>
+                            <th class="text-left p-4 font-black text-blue-700 border-b border-blue-200">Harga / kg</th>
+                            <th class="text-left p-4 font-black text-blue-700 border-b border-blue-200">Estimasi Waktu</th>
+                            <th class="text-left p-4 font-black text-blue-700 border-b border-blue-200">Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr class="hover:bg-blue-50/40 transition">
+                            <td class="p-4 font-semibold">🧺 Laundry Reguler</td>
+                            <td class="p-4 text-[var(--text-muted)]">Rp 8.000</td>
+                            <td class="p-4 text-[var(--text-muted)]">1×24 jam</td>
+                            <td class="p-4 text-[var(--text-muted)] text-xs">Cuci, kering, setrika, wangi</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50/40 transition">
+                            <td class="p-4 font-semibold">⚡ Express 6 Jam</td>
+                            <td class="p-4 text-[var(--text-muted)]">Rp 12.000</td>
+                            <td class="p-4 text-[var(--text-muted)]">6 jam</td>
+                            <td class="p-4 text-[var(--text-muted)] text-xs">Tambahan 50% dari reguler</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50/40 transition">
+                            <td class="p-4 font-semibold">👟 Deep Clean Sepatu</td>
+                            <td class="p-4 text-[var(--text-muted)]">Rp 35.000 / pasang</td>
+                            <td class="p-4 text-[var(--text-muted)]">1×24 jam</td>
+                            <td class="p-4 text-[var(--text-muted)] text-xs">Termasuk penghilang bau &amp; noda membandel</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50/40 transition">
+                            <td class="p-4 font-semibold">🛏️ Bed Cover &amp; Selimut</td>
+                            <td class="p-4 text-[var(--text-muted)]">Rp 25.000 / buah</td>
+                            <td class="p-4 text-[var(--text-muted)]">2×24 jam</td>
+                            <td class="p-4 text-[var(--text-muted)] text-xs;">Cuci khusus + sterilisasi uap</td>
+                        </tr>
+                        <tr class="hover:bg-blue-50/40 transition">
+                            <td class="p-4 font-semibold">👔 Setrika Kering</td>
+                            <td class="p-4 text-[var(--text-muted)]">Rp 5.000 / potong</td>
+                            <td class="p-4 text-[var(--text-muted)]">4 jam</td>
+                            <td class="p-4 text-[var(--text-muted)] text-xs;">Khusus setrika tanpa cuci</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-xs text-[var(--text-muted)] mt-4 text-center">* Harga dapat berubah sewaktu-waktu. Diskon khusus untuk pelanggan setia dan pemesanan di atas 10 kg.</p>
+        </section>
+
+        <!-- ========== KONTAK DARURAT & TICKET ========== -->
+        <section id="kontak-darurat" class="grid md:grid-cols-2 gap-10">
+            <div class="nm-card p-8 space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl">🆘</span>
+                    <h3 class="text-2xl font-black">Kontak Darurat</h3>
+                </div>
+                <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                    Untuk masalah mendesak atau keluhan yang membutuhkan penanganan cepat, hubungi kami melalui saluran di bawah ini.
+                    Tim support kami siap membantu 24 jam.
+                </p>
+                <div class="space-y-4 text-sm">
+                    <div class="flex items-start gap-3">
+                        <span class="text-xl">📞</span>
+                        <div>
+                            <span class="font-black">Hotline Darurat</span><br />
+                            <span class="text-[var(--text-muted)]">+62 812-3456-7890 (24 Jam)</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="text-xl">💬</span>
+                        <div>
+                            <span class="font-black">WhatsApp Support</span><br />
+                            <span class="text-[var(--text-muted)]">+62 819-4549-7854 (Respons &lt; 15 menit)</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="text-xl">✉️</span>
+                        <div>
+                            <span class="font-black">Email Keluhan</span><br />
+                            <span class="text-[var(--text-muted)]">keluhan@adminlaundry.com</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl mt-4">
+                    <p class="text-xs text-red-700 font-bold">⚠️ Untuk kehilangan atau kerusakan barang, segera hubungi hotline darurat dan kirim foto bukti ke WhatsApp kami.</p>
+                </div>
+            </div>
+
+            <!-- TICKET SUPPORT -->
+            <div class="nm-card p-8 space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl">🎫</span>
+                    <h3 class="text-2xl font-black">Buat Tiket Support</h3>
+                </div>
+                <p class="text-sm text-[var(--text-muted)] leading-relaxed">
+                    Jika masalah tidak terlalu mendesak, Anda bisa membuat tiket support dan tim kami akan merespon dalam &lt; 2 jam kerja.
+                </p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">Nama Lengkap</label>
+                        <input type="text" id="ticket-nama" placeholder="Nama Anda" class="nm-input w-full px-4 py-3 rounded-xl text-sm mt-1" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">Email / WhatsApp</label>
+                        <input type="text" id="ticket-kontak" placeholder="Email atau nomor WA" class="nm-input w-full px-4 py-3 rounded-xl text-sm mt-1" />
+                    </div>
+                    <div>
+                        <label class="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">Kategori Masalah</label>
+                        <select id="ticket-kategori" class="nm-input w-full px-4 py-3 rounded-xl text-sm mt-1 appearance-none">
+                            <option>Pemesanan &amp; Pembayaran</option>
+                            <option>Kualitas Cucian</option>
+                            <option>Kehilangan / Kerusakan</option>
+                            <option>Antar Jemput</option>
+                            <option>Lainnya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-black uppercase tracking-wider text-[var(--text-muted)]">Deskripsi Masalah</label>
+                        <textarea id="ticket-pesan" rows="3" placeholder="Ceritakan masalah Anda secara detail ..." class="nm-input w-full px-4 py-3 rounded-xl text-sm mt-1"></textarea>
+                    </div>
+                    <button onclick="kirimTiketSupport()" class="w-full nm-btn font-black py-3 rounded-xl text-blue-600 text-sm tracking-wide">Kirim Tiket</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== CHAT LANGSUNG ========== -->
+        <section>
+            <div class="nm-card p-8 text-center">
+                <div class="flex items-center justify-center gap-2 mb-4">
+                    <span class="text-4xl">💬</span>
+                    <h3 class="text-2xl font-black">Chat Langsung dengan Tim Kami</h3>
+                </div>
+                <p class="text-sm text-[var(--text-muted)] max-w-2xl mx-auto leading-relaxed">
+                    Butuh jawaban instan? Klik tombol di bawah untuk memulai percakapan dengan customer service kami melalui WhatsApp.
+                    Kami biasanya merespon dalam waktu kurang dari 5 menit.
+                </p>
+                <div class="flex justify-center gap-3 mt-6 flex-wrap">
+                    <a href="https://wa.me/6281945497854" target="_blank" class="nm-btn px-8 py-4 rounded-xl text-green-600 text-sm font-black inline-flex items-center gap-2">
+                        <span class="text-xl">📱</span> Chat WhatsApp
+                    </a>
+                    <button onclick="alert('Fitur live chat sedang dalam pengembangan. Untuk saat ini, gunakan WhatsApp atau email.')" class="nm-btn px-8 py-4 rounded-xl text-blue-600 text-sm font-black inline-flex items-center gap-2">
+                        <span class="text-xl">🖥️</span> Live Chat (Beta)
+                    </button>
+                </div>
+                <div class="mt-6 flex items-center justify-center gap-1 text-[var(--text-muted)] text-xs">
+                    <span class="chat-dot inline-block w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span class="chat-dot inline-block w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span class="chat-dot inline-block w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span class="ml-2">Tim support online — siap membantu Anda</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================================================================
+    FOOTER
+    ================================================================ -->
+    <footer class="bg-black text-zinc-400 py-12 mt-20 px-6 border-t relative z-10">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-xs md:text-sm">
+            <div>
+                <h3 class="text-white font-black text-2xl">AdminLaundry.</h3>
+                <p class="text-zinc-500">Sistem binatu cloud terpercaya sejak 2020.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-black">Kontak</h4>
+                <p>WA: +62 819-4549-7854</p>
+                <p>Email: info@adminlaundry.com</p>
+            </div>
+            <div>
+                <h4 class="text-white font-black">Navigasi</h4>
+                <a href="#" onclick="window.location.href='/' " class="block hover:text-white transition">Beranda</a>
+                <a href="#" onclick="window.location.href='profil.html'" class="block hover:text-white transition">Profil</a>
+                <a href="#" onclick="window.location.href='bantuan.html'" class="block hover:text-white transition">Bantuan</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-6 pt-4 border-t border-zinc-800 text-center text-[10px] text-zinc-600">
+            &copy; 2026 Admin Laundry. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- ================================================================
+    JAVASCRIPT — FIREBASE + LOGIKA BANTUAN
+    ================================================================ -->
+    <script>
+        // ================================================================
+        // GLOBALS
+        // ================================================================
+        window.orders = [];
+        window.faqs = [];
+        window.nextOrderNumber = 1;
+        let lastScrollY = 0;
+
+        // ================================================================
+        // FIREBASE INIT (module)
+        // ================================================================
+        (function initFirebase() {
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.textContent = `
+                import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+                import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+
+                const config = {
+                    apiKey: "AIzaSyBDll9PY0pQSY6YBEE5Bv4Lnq-hkMO35WA",
+                    authDomain: "loundry1-3d8e4.firebaseapp.com",
+                    databaseURL: "https://loundry1-3d8e4-default-rtdb.asia-southeast1.firebasedatabase.app",
+                    projectId: "loundry1-3d8e4",
+                    storageBucket: "loundry1-3d8e4.firebasestorage.app",
+                    messagingSenderId: "538574456576",
+                    appId: "1:538574456576:web:fec75cfe112aab624315e5",
+                    measurementId: "G-P4FCTGWQTS"
+                };
+                const app = initializeApp(config);
+                const db = getDatabase(app);
+                window.firebaseDb = db;
+                window.dbRef = ref;
+                window.dbOnValue = onValue;
+
+                // 1. Listen to orders (for lacak status)
+                window.dbOnValue(ref(db, 'laundry_orders'), (snap) => {
+                    window.orders = snap.val() ? Object.values(snap.val()) : [];
+                });
+
+                // 2. Listen to next number
+                window.dbOnValue(ref(db, 'laundry_next_number'), (snap) => {
+                    if (snap.exists()) window.nextOrderNumber = snap.val();
+                });
+
+                // 3. Listen to FAQs (for dynamic display)
+                window.dbOnValue(ref(db, 'laundry_faqs'), (snap) => {
+                    if (snap.exists()) {
+                        window.faqs = Object.values(snap.val());
+                    } else {
+                        // Fallback default FAQs — jawaban lengkap & informatif
+                        window.faqs = [
+                            {
+                                id: '1',
+                                question: 'Kapan Admin Laundry pertama kali berdiri?',
+                                answer: 'Admin Laundry resmi berdiri pada <strong>1 Januari 2020</strong>. Awalnya kami hanya memiliki 1 mesin cuci dan melayani lingkungan sekitar dengan sistem antar jemput sederhana. Seiring berjalannya waktu, kami terus berkembang dan kini memiliki 5 mesin cuci profesional, 2 mesin pengering, dan setrika uap berteknologi tinggi. Kami bangga telah melayani lebih dari 500 pelanggan di Bekasi dan sekitarnya.'
+                            },
+                            {
+                                id: '2',
+                                question: 'Berapa estimasi waktu pengerjaan cucian?',
+                                answer: 'Kami menyediakan dua pilihan waktu:<br><ul><li><strong>Reguler (1×24 jam)</strong> — cocok untuk kebutuhan harian, cucian siap diambil keesokan harinya.</li><li><strong>Express (6 jam)</strong> — untuk situasi darurat, dengan biaya tambahan 50% dari harga reguler.</li></ul>Untuk cucian besar seperti bed cover atau karpet, estimasi waktu menjadi 2×24 jam karena proses pencucian dan pengeringan yang lebih lama. Kami selalu berusaha tepat waktu sesuai janji.'
+                            },
+                            {
+                                id: '3',
+                                question: 'Bagaimana cara mengetahui jumlah antrian saat ini?',
+                                answer: 'Anda bisa mengecek jumlah antrian secara realtime melalui fitur <strong>Lacak Status Cucian</strong> di halaman ini. Cukup masukkan nomor nota yang kami berikan, maka akan muncul detail pesanan Anda termasuk posisi antrian. Selain itu, kami juga mengirimkan notifikasi WhatsApp setiap kali status cucian Anda berubah. Jika Anda ingin mengetahui antrian secara umum, Anda bisa menghubungi customer service kami melalui WhatsApp di +62 819-4549-7854.'
+                            },
+                            {
+                                id: '4',
+                                question: 'Apa saja layanan yang tersedia dan berapa harganya?',
+                                answer: 'Kami menyediakan berbagai layanan binatu dengan harga terjangkau:<br><ul><li><strong>Laundry Reguler</strong> — Rp 8.000/kg, 1×24 jam.</li><li><strong>Express 6 Jam</strong> — Rp 12.000/kg, selesai dalam 6 jam.</li><li><strong>Deep Clean Sepatu</strong> — Rp 35.000/pasang, 1×24 jam.</li><li><strong>Bed Cover & Selimut</strong> — Rp 25.000/buah, 2×24 jam.</li><li><strong>Setrika Kering</strong> — Rp 5.000/potong, 4 jam.</li></ul>Harga sudah termasuk deterjen, pewangi, dan setrika. Berat minimum pemesanan adalah 2 kg. Untuk informasi lebih detail, silakan lihat tabel layanan di halaman ini.'
+                            },
+                            {
+                                id: '5',
+                                question: 'Apakah ada garansi jika pakaian rusak atau hilang?',
+                                answer: 'Ya, kami memberikan <strong>garansi 100%</strong> untuk setiap cucian. Jika terjadi kerusakan atau kehilangan yang disebabkan oleh kelalaian tim kami, kami akan mengganti dengan nilai yang setara atau memberikan cuci ulang gratis. Proses klaim dapat dilakukan maksimal 2×24 jam setelah serah terima dengan menyertakan foto bukti. Kami sangat mengutamakan kepercayaan pelanggan dan selalu berusaha memberikan pelayanan terbaik.'
+                            },
+                            {
+                                id: '6',
+                                question: 'Bagaimana cara melacak pesanan saya?',
+                                answer: 'Setelah Anda memesan, kami akan memberikan <strong>nomor nota</strong> yang bisa digunakan untuk melacak status cucian. Anda bisa menggunakan fitur <strong>Lacak Status Cucian</strong> di halaman ini atau melalui link tracking yang kami kirimkan via WhatsApp. Status akan diperbarui secara realtime: <strong>Belum Dicuci → Sedang Dicuci → Siap Diambil → Selesai</strong>. Anda juga akan menerima notifikasi otomatis setiap kali status berubah.'
+                            },
+                            {
+                                id: '7',
+                                question: 'Apakah ada biaya antar jemput?',
+                                answer: '<strong>Gratis!</strong> Kami menyediakan layanan antar jemput gratis untuk semua pelanggan di wilayah <strong>Bekasi, Harapan Indah, Kemang Pratama, dan Pondok Gede</strong>. Untuk luar area tersebut, akan dikenakan biaya tambahan yang disesuaikan dengan jarak. Tim kami akan mengonfirmasi biaya antar jemput sebelum proses penjemputan dilakukan.'
+                            },
+                            {
+                                id: '8',
+                                question: 'Metode pembayaran apa saja yang tersedia?',
+                                answer: 'Kami menerima berbagai metode pembayaran untuk memudahkan Anda:<br><ul><li><strong>QRIS</strong> — semua E-Wallet (OVO, GoPay, ShopeePay, DANA, dll).</li><li><strong>Transfer Bank</strong> — BCA, Mandiri, BNI.</li><li><strong>Tunai</strong> — saat pengantaran cucian.</li></ul>Pembayaran digital akan mendapatkan konfirmasi otomatis dan notifikasi ke WhatsApp Anda. Kami juga menyediakan fitur pembayaran di tempat bagi yang lebih nyaman.'
+                            },
+                            {
+                                id: '9',
+                                question: 'Apakah saya bisa meminta layanan khusus (misal: pewangi tertentu)?',
+                                answer: 'Tentu! Kami menyediakan <strong>layanan kustomisasi</strong> seperti:<br><ul><li>Pewangi pilihan (lavender, melati, atau original).</li><li>Deterjen hypoallergenic untuk kulit sensitif.</li><li>Layanan setrika khusus (misal: setrika kering, setrika uap).</li><li>Packing khusus untuk pakaian yang akan disimpan.</li></ul>Anda bisa menuliskan catatan khusus saat memesan melalui formulir atau menghubungi CS kami. Kami akan berusaha memenuhi permintaan Anda sebaik mungkin.'
+                            },
+                            {
+                                id: '10',
+                                question: 'Apakah ada program loyalitas atau diskon untuk pelanggan setia?',
+                                answer: 'Ya! Kami memiliki program <strong>Reward Check-in</strong> yang sangat menguntungkan:<br><ul><li>Setiap 10 kali pemesanan, Anda mendapatkan <strong>1 kali cuci gratis</strong> (maks. 5 kg).</li><li>Pelanggan baru mendapatkan <strong>diskon 10%</strong> untuk pemesanan pertama.</li><li>Promo spesial setiap bulan (ikuti media sosial kami).</li><li>Diskon tambahan untuk pemesanan di atas 10 kg.</li></ul>Jangan lupa untuk melakukan check-in setiap kali Anda memesan untuk mengumpulkan poin reward!'
+                            }
+                        ];
+                    }
+                    renderFAQs(window.faqs, false);
+                });
+            `;
+            document.head.appendChild(script);
+        })();
+
+        // ================================================================
+        // RENDER FAQ — TAMPILAN LIST BERNOMOR
+        // ================================================================
+        function renderFAQs(faqsToRender, openAll = false) {
+            const container = document.getElementById('faq-container');
+            if (!container) return;
+
+            if (!faqsToRender || faqsToRender.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">Tidak ada pertanyaan yang ditemukan.</div>`;
+                return;
+            }
+
+            let html = `<ul class="faq-list">`;
+            faqsToRender.forEach((faq) => {
+                const openClass = openAll ? 'open' : '';
+                const activeClass = openAll ? 'active' : '';
+                html += `
+                    <li class="faq-item">
+                        <div class="faq-question ${activeClass}" onclick="toggleFaq(this)">
+                            <span>${faq.question}</span>
+                            <span class="icon">▼</span>
+                        </div>
+                        <div class="faq-answer ${openClass}">
+                            <p>${faq.answer}</p>
+                        </div>
+                    </li>
+                `;
+            });
+            html += `</ul>`;
+
+            container.innerHTML = html;
+
+            if (!openAll) {
+                const firstQuestion = container.querySelector('.faq-question');
+                if (firstQuestion) {
+                    setTimeout(() => {
+                        toggleFaq(firstQuestion);
+                    }, 300);
+                }
+            } else {
+                document.querySelectorAll('.faq-question').forEach(q => q.classList.add('active'));
+            }
+        }
+
+        // ================================================================
+        // TOAST
+        // ================================================================
+        function showToast(message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+            const el = document.createElement('div');
+            el.className = `toast-item ${type}`;
+            el.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${message}</span>`;
+            container.appendChild(el);
+            setTimeout(() => { el.classList.add('removing');
+                setTimeout(() => el.remove(), 300); }, duration);
+        }
+
+        // ================================================================
+        // SMART NAVBAR
+        // ================================================================
+        function initSmartNavbar() {
+            const navbar = document.getElementById('public-navbar');
+            if (!navbar) return;
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        const currentScrollY = window.scrollY;
+                        if (currentScrollY > 20) navbar.classList.add('nav-scrolled');
+                        else navbar.classList.remove('nav-scrolled');
+                        if (currentScrollY > 80) {
+                            if (currentScrollY > lastScrollY) navbar.classList.add('nav-hidden');
+                            else navbar.classList.remove('nav-hidden');
+                        } else navbar.classList.remove('nav-hidden');
+                        lastScrollY = currentScrollY;
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+        }
+
+        // ================================================================
+        // MOBILE MENU
+        // ================================================================
+        function toggleMobileMenu() {
+            const menu = document.getElementById('client-mobile-nav');
+            const icon = document.getElementById('client-fab-icon');
+            if (!menu || !icon) return;
+            const isOpen = menu.classList.contains('open');
+            menu.classList.toggle('open');
+            icon.innerText = isOpen ? '⚡' : '✕';
+        }
+
+        // ================================================================
+        // FAQ TOGGLE (accordion)
+        // ================================================================
+        function toggleFaq(el) {
+            const parent = el.closest('.faq-item');
+            if (!parent) return;
+            const answer = parent.querySelector('.faq-answer');
+            if (!answer) return;
+            const isOpen = answer.classList.contains('open');
+
+            document.querySelectorAll('.faq-answer').forEach(a => {
+                a.classList.remove('open');
+                const q = a.closest('.faq-item')?.querySelector('.faq-question');
+                if (q) q.classList.remove('active');
+            });
+
+            if (!isOpen) {
+                answer.classList.add('open');
+                el.classList.add('active');
+            }
+        }
+
+        // ================================================================
+        // LACAK NOTA — FIREBASE REALTIME
+        // ================================================================
+        function lacakNotaPelanggan() {
+            const val = document.getElementById('search-nota-input').value.trim();
+            const box = document.getElementById('hasil-lacak-box');
+            const notFound = document.getElementById('lacak-not-found');
+            if (!val) {
+                showToast('Masukkan nomor nota!', 'warning');
+                return;
+            }
+
+            const item = window.orders.find(o => String(o.noNota) === String(val));
+
+            if (item && box) {
+                box.classList.remove('hidden');
+                notFound.classList.add('hidden');
+
+                document.getElementById('lacak-nama').innerText = '👤 ' + item.nama;
+                document.getElementById('lacak-layanan').innerText = '🧺 ' + (item.layanan || 'Reguler') + ' — ' + (item
+                    .berat || '0') + ' kg/pcs';
+                document.getElementById('lacak-total').innerText = 'Rp ' + (item.total || 0).toLocaleString('id-ID');
+                document.getElementById('lacak-antar').innerText = '🚚 ' + (item.antar || 'Antar Jemput') +
+                    ' • Metode: ' + (item.metode || 'Tunai');
+
+                const tglSelesaiText = item.tanggalSelesai ? ` (${item.tanggalSelesai})` : '';
+                const badge = document.getElementById('lacak-badge');
+                if (badge) {
+                    const statusMap = {
+                        'belum': { label: '⏳ BELUM DICUCI', cls: 'bg-red-100 text-red-700 border-red-200' },
+                        'proses': { label: '🔄 SEDANG DICUCI', cls: 'bg-amber-100 text-amber-700 border-amber-200' },
+                        'siap': { label: '✅ SIAP DIAMBIL', cls: 'bg-sky-100 text-sky-700 border-sky-200' },
+                        'selesai': { label: '🎉 SELESAI' + tglSelesaiText,
+                        cls: 'bg-emerald-100 text-emerald-700 border-emerald-200' }
+                    };
+                    const st = statusMap[item.status] || statusMap['belum'];
+                    badge.innerText = st.label;
+                    badge.className =
+                        `font-black text-xs px-5 py-2.5 rounded-full shadow-inner border ${st.cls}`;
+                }
+
+                document.getElementById('qris-pay-wrapper').classList.remove('hidden');
+                showToast(`✅ Data nota #${val} ditemukan!`, 'success');
+            } else {
+                if (box) box.classList.add('hidden');
+                notFound.classList.remove('hidden');
+                showToast(`❌ Nomor nota #${val} tidak ditemukan.`, 'error');
+            }
+        }
+
+        // ================================================================
+        // KIRIM TIKET SUPPORT
+        // ================================================================
+        function kirimTiketSupport() {
+            const nama = document.getElementById('ticket-nama').value.trim();
+            const kontak = document.getElementById('ticket-kontak').value.trim();
+            const kategori = document.getElementById('ticket-kategori').value;
+            const pesan = document.getElementById('ticket-pesan').value.trim();
+            if (!nama || !kontak || !pesan) {
+                showToast('Lengkapi semua kolom tiket!', 'warning');
+                return;
+            }
+            showToast(`✅ Tiket dari ${nama} berhasil dikirim! Tim kami akan menghubungi Anda dalam < 2 jam.`, 'success');
+            document.getElementById('ticket-nama').value = '';
+            document.getElementById('ticket-kontak').value = '';
+            document.getElementById('ticket-pesan').value = '';
+        }
+
+        // ================================================================
+        // DOM READY
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initSmartNavbar();
+
+            document.addEventListener('click', function(e) {
+                const container = document.getElementById('client-floating-controls');
+                const menu = document.getElementById('client-mobile-nav');
+                const fab = document.querySelector('.fab-btn');
+                if (!container || !menu || !fab) return;
+                if (!container.contains(e.target) && menu.classList.contains('open')) {
+                    menu.classList.remove('open');
+                    document.getElementById('client-fab-icon').innerText = '⚡';
+                }
+            });
+
+            document.getElementById('search-nota-input').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') lacakNotaPelanggan();
+            });
+
+            const qrisImg = document.getElementById('qris-image-src');
+            if (qrisImg && !qrisImg.src) {
+                qrisImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=AdminLaundryPayment';
+            }
+
+            console.log('✅ Halaman Bantuan siap — tanpa search bar, langsung Lacak Status dan FAQ list.');
+        });
+
+        // ================================================================
+        // EXPOSE FUNCTIONS
+        // ================================================================
+        window.toggleMobileMenu = toggleMobileMenu;
+        window.toggleFaq = toggleFaq;
+        window.lacakNotaPelanggan = lacakNotaPelanggan;
+        window.kirimTiketSupport = kirimTiketSupport;
+        window.showToast = showToast;
+        window.renderFAQs = renderFAQs;
+    </script>
+
+</body>
+</html>

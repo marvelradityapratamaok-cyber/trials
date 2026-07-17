@@ -1,0 +1,2829 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Admin Laundry Pro</title>
+    <link rel="icon" href="logo.jpeg" />
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
+    </script>
+    <style>
+        /* ============================================================
+           THEME VARIABLES
+           ============================================================ */
+        :root {
+            --bg-base: #f4f6fa;
+            --nm-shadow: 8px 8px 20px #d1d5db, -8px -8px 20px #ffffff;
+            --nm-inset: inset 5px 5px 14px #d1d5db, inset -5px -5px 14px #ffffff;
+            --nm-inset-sm: inset 3px 3px 8px #d1d5db, inset -3px -3px 8px #ffffff;
+            --text-main: #1e3a8a; /* biru tua untuk mode cerah */
+            --text-muted: #475569;
+            --border-rgba: rgba(0, 0, 0, 0.04);
+            --glow-light: 0 0 24px rgba(37, 99, 235, 0.12);
+            --radius-card: 28px;
+            --radius-sm: 16px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+            /* Warna aksen : BIRU untuk mode cerah */
+            --primary: #2563eb;
+            --primary-light: #dbeafe;
+            --primary-dark: #1e40af;
+            --primary-text: #2563eb;
+            --primary-bg-soft: #eff6ff;
+            --primary-border: #93c5fd;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        .dark {
+            --bg-base: #0c0e14;
+            --nm-shadow: 8px 8px 20px #06080c, -8px -8px 20px #1a1d26;
+            --nm-inset: inset 5px 5px 14px #06080c, inset -5px -5px 14px #1a1d26;
+            --nm-inset-sm: inset 3px 3px 8px #06080c, inset -3px -3px 8px #1a1d26;
+            --text-main: #93c5fd; /* biru muda untuk mode gelap */
+            --text-muted: #94a3b8;
+            --border-rgba: rgba(255, 255, 255, 0.04);
+            --glow-light: 0 0 24px rgba(74, 222, 128, 0.15);
+
+            /* Warna aksen : HIJAU MUDA untuk mode gelap */
+            --primary: #4ade80;
+            --primary-light: #dcfce7;
+            --primary-dark: #166534;
+            --primary-text: #4ade80;
+            --primary-bg-soft: #052e16;
+            --primary-border: #86efac;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+
+        /* ============================================================
+           OVERRIDE TAILWIND UTILITY CLASSES UNTUK THEME
+           ============================================================ */
+        .text-blue-600,
+        .text-blue-700,
+        .text-blue-500,
+        .text-indigo-600,
+        .text-indigo-700,
+        .text-indigo-500 {
+            color: var(--primary-text) !important;
+        }
+        .bg-blue-100,
+        .bg-blue-50,
+        .bg-indigo-100,
+        .bg-indigo-50 {
+            background-color: var(--primary-light) !important;
+        }
+        .border-blue-200,
+        .border-blue-500,
+        .border-indigo-500 {
+            border-color: var(--primary-border) !important;
+        }
+        .bg-blue-950 {
+            background-color: var(--primary-dark) !important;
+        }
+        .hover\:text-blue-600:hover,
+        .hover\:text-indigo-600:hover {
+            color: var(--primary-text) !important;
+        }
+        .hover\:bg-blue-100:hover {
+            background-color: var(--primary-light) !important;
+        }
+        .from-blue-500 {
+            --tw-gradient-from: var(--primary) !important;
+        }
+        .to-indigo-500 {
+            --tw-gradient-to: var(--primary) !important;
+        }
+        .bg-blue-600 {
+            background-color: var(--primary) !important;
+        }
+        .border-l-4.border-blue-500 {
+            border-left-color: var(--primary) !important;
+        }
+        .shadow-blue-500\/20 {
+            --tw-shadow-color: var(--primary) !important;
+        }
+
+        /* Warna untuk elemen promo (oranye) tetap */
+        .text-amber-600,
+        .text-orange-600,
+        .text-yellow-600 {
+            color: #d97706 !important;
+        }
+        .bg-amber-100 {
+            background-color: #fef3c7 !important;
+        }
+        .border-amber-500 {
+            border-color: #f59e0b !important;
+        }
+
+        /* ============================================================
+           NEUMORPHISM & UTILITY
+           ============================================================ */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            width: 100%;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .nm-card {
+            background: var(--bg-base);
+            border-radius: var(--radius-card);
+            box-shadow: var(--nm-shadow);
+            border: 1px solid var(--border-rgba);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+        .nm-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--nm-shadow), var(--glow-light);
+        }
+        .nm-card-inset {
+            background: var(--bg-base);
+            border-radius: var(--radius-sm);
+            box-shadow: var(--nm-inset);
+            border: none;
+        }
+        .nm-card-inset-sm {
+            background: var(--bg-base);
+            border-radius: 12px;
+            box-shadow: var(--nm-inset-sm);
+            border: none;
+        }
+        .nm-btn {
+            background: var(--bg-base);
+            box-shadow: var(--nm-shadow);
+            border: 1px solid var(--border-rgba);
+            transition: all var(--transition);
+            color: var(--text-main);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 700;
+        }
+        .nm-btn:hover {
+            transform: translateY(-2px);
+        }
+        .nm-btn:active,
+        .nm-btn.active {
+            box-shadow: var(--nm-inset) !important;
+            transform: translateY(0) !important;
+        }
+        .nm-input,
+        select,
+        textarea {
+            background: var(--bg-base);
+            box-shadow: var(--nm-inset-sm);
+            border: none;
+            outline: none;
+            transition: all 0.2s ease;
+            color: var(--text-main);
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: inherit;
+        }
+        .nm-input:focus,
+        select:focus,
+        textarea:focus {
+            box-shadow: var(--nm-inset-sm), var(--glow-light);
+        }
+        .btn-filter {
+            background: transparent;
+            box-shadow: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            padding: 0.2rem 0.7rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 0.6rem;
+            border: none;
+            color: var(--text-muted);
+        }
+        .btn-filter.active {
+            background: var(--bg-base);
+            box-shadow: var(--nm-inset-sm) !important;
+            color: var(--primary);
+        }
+        .dark .btn-filter.active {
+            color: var(--primary);
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e1;
+            transition: .4s;
+            border-radius: 34px;
+            box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.08);
+        }
+        .slider::before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+        }
+        input:checked+.slider {
+            background-color: var(--primary);
+            box-shadow: var(--glow-light);
+        }
+        input:checked+.slider::before {
+            transform: translateX(22px);
+        }
+        .glow-box {
+            box-shadow: var(--nm-shadow), var(--glow-light);
+        }
+        #public-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, box-shadow 0.3s ease;
+            transform: translateY(0);
+            will-change: transform;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(244, 246, 250, 0.82);
+        }
+        .dark #public-navbar {
+            background: rgba(12, 14, 20, 0.85);
+        }
+        #public-navbar.nav-hidden {
+            transform: translateY(-100%);
+        }
+        #public-navbar.nav-scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+        }
+        .dark #public-navbar.nav-scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        #public-navbar .nav-link {
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: color 0.2s, opacity 0.2s;
+            position: relative;
+            padding-bottom: 2px;
+        }
+        #public-navbar .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+            border-radius: 99px;
+        }
+        #public-navbar .nav-link:hover::after,
+        #public-navbar .nav-link.active::after {
+            width: 100%;
+        }
+        #public-navbar .nav-link:hover {
+            color: var(--primary);
+        }
+        .dark #public-navbar .nav-link:hover {
+            color: var(--primary);
+        }
+        #public-navbar .nav-link.active {
+            color: var(--primary);
+        }
+        .dark #public-navbar .nav-link.active {
+            color: var(--primary);
+        }
+        .sb-fixed {
+            width: 270px;
+            background: var(--bg-base);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-right: 1px solid var(--border-rgba);
+            z-index: 100;
+            transition: all 0.3s ease;
+            padding: 1.8rem 1.2rem;
+            overflow-y: auto;
+        }
+        .work-content {
+            margin-left: 270px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+            max-width: calc(100% - 270px);
+            padding: 1.5rem 2rem 6rem 2rem;
+        }
+        .db-page {
+            display: none;
+            width: 100%;
+            overflow: visible;
+            animation: pageFade 0.35s ease forwards;
+        }
+        .db-page.active {
+            display: block;
+        }
+        @keyframes pageFade {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @media (max-width:1023px) {
+            .sb-fixed {
+                display: none !important;
+            }
+            .work-content {
+                margin-left: 0;
+                padding: 1rem 0.75rem 7rem 0.75rem;
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 10px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #3f3f46;
+        }
+        .slider-wrap {
+            width: 100%;
+            height: 52vh;
+            overflow: hidden;
+            position: relative;
+            border-radius: 0 0 36px 36px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+        .slider-track {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            animation: slideAnim 18s infinite ease-in-out;
+        }
+        .slide-node {
+            width: 33.333%;
+            height: 100%;
+            position: relative;
+        }
+        .slide-node img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        @keyframes slideAnim {
+            0%,
+            28% {
+                transform: translateX(0%);
+            }
+            33%,
+            61% {
+                transform: translateX(-33.333%);
+            }
+            66%,
+            95% {
+                transform: translateX(-66.666%);
+            }
+            100% {
+                transform: translateX(0%);
+            }
+        }
+        .mq-container {
+            overflow: hidden;
+            width: 100%;
+            display: flex;
+            padding: 1.8rem 0;
+        }
+        .mq-content {
+            display: flex;
+            width: max-content;
+            gap: 2rem;
+            animation: mqLoop 30s linear infinite;
+            will-change: transform;
+            padding-left: 1.5rem;
+        }
+        @keyframes mqLoop {
+            0% {
+                transform: translate3d(0, 0, 0);
+            }
+            100% {
+                transform: translate3d(-50%, 0, 0);
+            }
+        }
+        /* ============================================================
+           PROMO MARQUEE (diskon oranye berjalan)
+           ============================================================ */
+        .promo-marquee {
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            background: linear-gradient(90deg, #fef3c7, #fde68a);
+            border-top: 2px solid #f59e0b;
+            border-bottom: 2px solid #f59e0b;
+            padding: 0.5rem 0;
+        }
+        .dark .promo-marquee {
+            background: linear-gradient(90deg, #451a03, #78350f);
+            border-color: #d97706;
+        }
+        .promo-marquee-content {
+            display: inline-block;
+            animation: marqueeScroll 25s linear infinite;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #92400e;
+        }
+        .dark .promo-marquee-content {
+            color: #fcd34d;
+        }
+        @keyframes marqueeScroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+        .promo-marquee-content span {
+            padding: 0 2.5rem;
+        }
+        /* ============================================================
+           GATE & TOAST
+           ============================================================ */
+        .gate-popup-overlay {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .gate-popup-overlay.flex {
+            opacity: 1;
+            visibility: visible;
+        }
+        .gate-popup-content {
+            transform: translateY(40px) scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .gate-popup-overlay.flex .gate-popup-content {
+            transform: translateY(0) scale(1);
+        }
+        .fab-btn {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 900;
+            background: var(--bg-base);
+            box-shadow: var(--nm-shadow), var(--glow-light);
+            border: 2px solid var(--primary-border);
+            color: var(--primary);
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            z-index: 60;
+        }
+        .fab-btn:hover {
+            transform: scale(1.05);
+        }
+        .fab-btn:active {
+            transform: scale(0.95);
+        }
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-width: 380px;
+            width: 100%;
+            pointer-events: none;
+        }
+        .toast-container .toast-item {
+            pointer-events: auto;
+        }
+        .toast-item {
+            background: var(--bg-base);
+            box-shadow: var(--nm-shadow), 0 10px 30px rgba(0, 0, 0, 0.10);
+            border-radius: var(--radius-sm);
+            padding: 0.9rem 1.2rem;
+            border-left: 4px solid var(--primary);
+            animation: slideIn 0.4s ease forwards;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .toast-item.success {
+            border-left-color: var(--success);
+        }
+        .toast-item.error {
+            border-left-color: var(--danger);
+        }
+        .toast-item.warning {
+            border-left-color: var(--warning);
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+        }
+        .toast-item.removing {
+            animation: slideOut 0.3s ease forwards;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 900;
+            line-height: 1.2;
+            transition: all 0.3s ease;
+        }
+        @media (min-width:768px) {
+            .stat-number {
+                font-size: 2.6rem;
+            }
+        }
+        .fade-up {
+            animation: fadeUp 0.7s ease forwards;
+        }
+        .fade-up-delay-1 {
+            animation-delay: 0.08s;
+            opacity: 0;
+        }
+        .fade-up-delay-2 {
+            animation-delay: 0.16s;
+            opacity: 0;
+        }
+        .fade-up-delay-3 {
+            animation-delay: 0.24s;
+            opacity: 0;
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(28px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(37, 99, 235, 0.10);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        details summary {
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem 0;
+            font-weight: 700;
+        }
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+        details[open] summary::after {
+            content: "−";
+            font-size: 1.4rem;
+            color: var(--text-muted);
+        }
+        details:not([open]) summary::after {
+            content: "+";
+            font-size: 1.4rem;
+            color: var(--text-muted);
+        }
+        .faq-content {
+            padding: 0.5rem 0 1.2rem 0;
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            line-height: 1.6;
+        }
+        #admin-notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-width: 380px;
+            width: 100%;
+            pointer-events: none;
+        }
+        #admin-notification .toast-item {
+            pointer-events: auto;
+        }
+        .page-section {
+            display: none;
+            animation: pageFade 0.35s ease forwards;
+        }
+        .page-section.active {
+            display: block;
+        }
+        #profil-content {
+            padding-top: 74px;
+        }
+        #back-to-top {
+            position: fixed;
+            bottom: 6rem;
+            right: 1.5rem;
+            z-index: 40;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8) translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+            cursor: pointer;
+            padding: 0.75rem 1rem;
+            border-radius: 50%;
+            box-shadow: var(--nm-shadow), var(--glow-light);
+            background: var(--bg-base);
+            border: 1px solid var(--border-rgba);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            font-weight: 900;
+            line-height: 1;
+            width: 3.25rem;
+            height: 3.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateY(0);
+        }
+        #back-to-top:hover {
+            transform: scale(1.05);
+        }
+        #back-to-top:active {
+            transform: scale(0.9);
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.8rem 1rem;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition);
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+        .menu-item:hover {
+            color: var(--primary);
+            background: var(--primary-bg-soft);
+        }
+        .menu-item.active {
+            background: var(--bg-base);
+            box-shadow: var(--nm-inset-sm);
+            color: var(--primary);
+        }
+        .dark .menu-item.active {
+            color: var(--primary);
+        }
+        .menu-item .icon {
+            width: 1.6rem;
+            height: 1.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        @media (max-width:640px) {
+            .slider-wrap {
+                height: 38vh;
+            }
+            .slider-wrap h2 {
+                font-size: 1.4rem !important;
+            }
+            #public-navbar .nav-link {
+                font-size: 0.65rem;
+            }
+            .nm-card {
+                border-radius: 18px;
+            }
+            .stat-number {
+                font-size: 1.4rem;
+            }
+        }
+        .reward-badge {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: #fff;
+            padding: 0.2rem 0.7rem;
+            border-radius: 99px;
+            font-size: 0.6rem;
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .upload-zone {
+            border: 2px dashed var(--primary-border);
+            border-radius: var(--radius-sm);
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: var(--primary-bg-soft);
+        }
+        .upload-zone.dragover {
+            border-color: var(--primary);
+            background: var(--primary-bg-soft);
+        }
+        .discount-badge {
+            background: var(--bg-base);
+            box-shadow: var(--nm-inset-sm);
+            padding: 0.3rem 0.8rem;
+            border-radius: 99px;
+            font-weight: 900;
+            font-size: 0.7rem;
+            color: var(--primary);
+        }
+        .promo-banner {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: #fff;
+            border-radius: var(--radius-sm);
+            padding: 1rem 1.5rem;
+            text-align: center;
+            font-weight: 700;
+            box-shadow: var(--glow-light);
+            margin: 1rem 0;
+        }
+        .promo-banner .countdown {
+            font-size: 1.2rem;
+            letter-spacing: 0.05em;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0.2rem 0.8rem;
+            border-radius: 99px;
+            display: inline-block;
+            margin-top: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== TOAST & NOTIFIKASI ===== -->
+    <div class="toast-container" id="toast-container"></div>
+    <div id="admin-notification"></div>
+
+    <!-- ================================================================
+    PUBLIC PAGE
+    ================================================================ -->
+    <div id="public-page" class="w-full overflow-x-hidden">
+
+        <!-- FLOATING MOBILE MENU -->
+        <div class="fixed bottom-6 right-6 flex flex-col items-end gap-3 z-50 md:hidden" id="client-floating-controls">
+            <div class="hidden flex-col bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 shadow-2xl rounded-2xl p-2 gap-1 text-center w-36 mb-1" id="client-mobile-nav">
+                <a href="#" onclick="showPage('public'); toggleClientMobileMenu();" class="font-black text-[11px] py-2 px-3 rounded-xl block text-blue-600 tracking-wide uppercase hover:bg-slate-100 dark:hover:bg-zinc-900 text-left">Home</a>
+                <a href="#" onclick="showPage('profil'); toggleClientMobileMenu();" class="font-black text-[11px] py-2 px-3 rounded-xl block text-[var(--text-main)] tracking-wide uppercase hover:bg-slate-100 dark:hover:bg-zinc-900 text-left">Profil</a>
+                <a href="#" onclick="document.getElementById('lacak-section').scrollIntoView({behavior:'smooth'}); toggleClientMobileMenu();" class="font-black text-[11px] py-2 px-3 rounded-xl block text-[var(--text-main)] tracking-wide uppercase hover:bg-slate-100 dark:hover:bg-zinc-900 text-left">Lacak</a>
+                <a href="#" onclick="document.getElementById('layanan-section').scrollIntoView({behavior:'smooth'}); toggleClientMobileMenu();" class="font-black text-[11px] py-2 px-3 rounded-xl block text-[var(--text-main)] tracking-wide uppercase hover:bg-slate-100 dark:hover:bg-zinc-900 text-left">Layanan</a>
+                <button onclick="bukaPintuReward(); toggleClientMobileMenu();" class="font-black text-[11px] py-2 px-3 rounded-xl block text-indigo-600 dark:text-indigo-400 tracking-wide uppercase hover:bg-slate-100 dark:hover:bg-zinc-900 text-left w-full">Reward</button>
+            </div>
+            <button onclick="toggleClientMobileMenu()" class="fab-btn" id="client-fab-btn"><span id="client-fab-icon">⚡</span></button>
+        </div>
+
+        <!-- DESKTOP REWARD FLOAT -->
+        <div class="fixed bottom-6 right-6 hidden md:flex flex-col items-end gap-3 z-50" id="client-desktop-reward-float">
+            <button onclick="bukaPintuReward()" class="nm-btn font-black p-4 rounded-full text-indigo-600 dark:text-indigo-400 tracking-wide uppercase flex items-center justify-center border-2 border-indigo-500/30 scale-110 shadow-lg group relative overflow-visible bg-[var(--bg-base)]" style="box-shadow:var(--nm-shadow), var(--glow-light);">
+                <span class="text-xl">🎁</span>
+                <span class="absolute right-full mr-3 bg-indigo-600 text-white font-black text-[10px] px-3 py-1 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap shadow-md">KLAIM REWARD</span>
+            </button>
+        </div>
+
+        <!-- ===== NAVBAR ===== -->
+        <nav id="public-navbar" class="border-b border-slate-200 dark:border-zinc-800 px-4 xl:px-8 py-3 flex justify-between items-center shadow-sm">
+            <div class="text-xl xl:text-2xl font-black tracking-tight cursor-pointer text-[var(--text-main)] shrink-0" onclick="showPage('public')">Admin<span class="text-blue-600">Laundry.</span></div>
+            <div class="hidden lg:flex items-center space-x-4 xl:space-x-6">
+                <a href="#" onclick="showPage('public')" class="nav-link active" id="nav-public">Beranda</a>
+                <a href="#" onclick="showPage('profil')" class="nav-link" id="nav-profil">Profil</a>
+                <a href="#" onclick="document.getElementById('layanan-section').scrollIntoView({behavior:'smooth'})" class="nav-link">Layanan</a>
+                <a href="#" onclick="document.getElementById('faq-section').scrollIntoView({behavior:'smooth'})" class="nav-link">FAQ</a>
+                <a href="#" onclick="document.getElementById('kontak-footer').scrollIntoView({behavior:'smooth'})" class="nav-link">Kontak</a>
+                <button onclick="bukaPintuReward()" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 transition duration-200 font-bold text-sm">Reward</button>
+                <button onclick="showGaransiPage()" class="text-red-500 hover:text-red-600 transition duration-200 font-bold text-sm">Garansi</button>
+            </div>
+            <div class="flex items-center gap-3 xl:gap-5 shrink-0">
+                <div class="flex items-center gap-1.5">
+                    <span class="text-[10px] font-black tracking-wider text-slate-700 dark:text-zinc-300 transition hidden sm:inline">Terang</span>
+                    <label class="switch"><input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkModeGeser()" /><span class="slider"></span></label>
+                    <span class="text-[10px] font-black tracking-wider text-slate-700 dark:text-blue-400 transition hidden sm:inline">Gelap</span>
+                </div>
+                <button onclick="bukaPintuLogin()" class="nm-btn font-black px-4 py-2 rounded-full text-xs text-blue-600 whitespace-nowrap tracking-wide">Masuk Admin</button>
+            </div>
+        </nav>
+
+        <!-- ===== PUBLIC CONTENT ===== -->
+        <div id="public-main-content" class="pt-[72px] w-full overflow-x-hidden">
+
+            <!-- HERO SLIDER -->
+            <div class="slider-wrap"><div class="slider-track">
+                    <div class="slide-node"><img id="hero-img-1" src="loundry.jpg" alt="Slide 1" onerror="this.src='https://images.unsplash.com/photo-1545173168-9f1947e80154?q=80&w=1200'" /><div class="absolute inset-0 bg-slate-900/45 flex items-center px-8 md:px-20 text-white"><div class="space-y-4"><span class="bg-amber-500 text-slate-950 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md inline-block mb-2">Promo Premium</span><h2 class="text-3xl md:text-6xl font-black drop-shadow-lg leading-tight tracking-wide">Cuci Kiloan Higienis <br class="hidden md:block" /> & Bergaransi</h2></div></div></div>
+                    <div class="slide-node"><img id="hero-img-2" src="loundry1.jpg" alt="Slide 2" onerror="this.src='https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?q=80&w=1200'" /><div class="absolute inset-0 bg-slate-900/45 flex items-center px-8 md:px-20 text-white"><div class="space-y-4"><span class="bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md inline-block mb-2">Express Mode</span><h2 class="text-3xl md:text-6xl font-black drop-shadow-lg leading-tight tracking-wide">Kilat 6 Jam Langsung <br class="hidden md:block" /> Bersih & Rapi</h2></div></div></div>
+                    <div class="slide-node"><img id="hero-img-3" src="loundry2.jpg" alt="Slide 3" onerror="this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=1200'" /><div class="absolute inset-0 bg-slate-900/45 flex items-center px-8 md:px-20 text-white"><div class="space-y-4"><span class="bg-emerald-600 text-white px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider shadow-md inline-block mb-2">Free Delivery</span><h2 class="text-3xl md:text-6xl font-black drop-shadow-lg leading-tight tracking-wide">Gratis Antar Jemput <br class="hidden md:block" /> Area Bekasi</h2></div></div></div>
+                </div></div>
+
+            <!-- ===== PROMO MARQUEE (DISKON ORANYE BERJALAN) ===== -->
+            <div class="promo-marquee" style="margin-top: 20px;">
+                <div class="promo-marquee-content" id="promo-marquee-track">
+                    <span id="promo-marquee-text">Diskon 15% untuk semua layanan! 🎉</span>
+                    <span id="promo-marquee-text-clone">Diskon 15% untuk semua layanan! 🎉</span>
+                </div>
+            </div>
+
+            <!-- STATS -->
+            <section class="py-8 max-w-7xl mx-auto px-6" <img src="loundry.jpg" alt="">><div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    <div class="nm-card p-6 text-center fade-up fade-up-delay-1"><div class="stat-number text-blue-600 dark:text-blue-400" id="stat-cucian">0</div><p class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mt-1">Cucian Selesai</p></div>
+                    <div class="nm-card p-6 text-center fade-up fade-up-delay-2"><div class="stat-number text-emerald-600 dark:text-emerald-400" id="stat-pelanggan">0</div><p class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mt-1">Pelanggan</p></div>
+                    <div class="nm-card p-6 text-center fade-up fade-up-delay-3"><div class="stat-number text-amber-600 dark:text-amber-400" id="stat-express">0</div><p class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mt-1">Express</p></div>
+                    <div class="nm-card p-6 text-center fade-up fade-up-delay-3"><div class="stat-number text-indigo-600 dark:text-indigo-400" id="stat-reward">0</div><p class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest mt-1">Reward</p></div>
+                </div></section>
+
+            <!-- LACAK -->
+            <section id="lacak-section" class="py-8 max-w-7xl mx-auto px-6">
+                <div class="nm-card p-8 md:p-12 max-w-2xl mx-auto text-center space-y-6">
+                    <h2 class="text-2xl md:text-3xl font-black tracking-tight text-[var(--text-main)]">Lacak Status Cucian</h2>
+                    <p class="text-sm text-[var(--text-muted)]">Masukkan nomor nota untuk melihat status terkini.</p>
+                    <div class="pt-2 flex flex-col sm:flex-row gap-5">
+                        <input type="number" id="search-nota-input" placeholder="Contoh: 1" class="nm-input w-full px-6 py-4 rounded-2xl text-sm font-semibold" />
+                        <button onclick="lacakNotaPelanggan()" class="nm-btn font-black px-8 py-4 rounded-2xl text-blue-600 whitespace-nowrap text-sm tracking-wide">Cek</button>
+                    </div>
+                    <div id="hasil-lacak-box" class="hidden mt-8 text-left nm-card-inset p-6 md:p-8 border border-blue-200/40 space-y-6">
+                        <div class="flex justify-between items-start flex-wrap gap-4"><div><h4 class="font-black text-xl" id="lacak-nama">-</h4><p class="text-sm font-bold text-blue-600" id="lacak-layanan">-</p><p class="text-xs text-[var(--text-muted)]" id="lacak-antar">-</p></div><span id="lacak-badge" class="font-black text-xs px-5 py-2.5 rounded-full shadow-inner bg-slate-200 text-slate-800 dark:bg-zinc-800 dark:text-zinc-200">Memuat...</span></div>
+                        <div class="pt-6 border-t flex justify-between"><span class="font-bold">Total Tagihan:</span><span class="text-2xl font-black text-emerald-600" id="lacak-total">Rp 0</span></div>
+                        <div id="qris-pay-wrapper" class="hidden pt-6 border-t text-center"><p class="text-xs font-black uppercase tracking-widest">Scan QRIS</p><div class="p-4 bg-white inline-block rounded-2xl shadow-md"><img id="qris-image-src" src="sqris_toko.png" alt="QRIS" class="w-44 h-44 object-contain mx-auto" onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=AdminLaundryDemoPayment'" /></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- KALKULATOR -->
+            <section id="kalkulator-section" class="py-12 max-w-2xl mx-auto px-6">
+                <div class="nm-card p-8 md:p-10 space-y-6">
+                    <div class="text-center"><h2 class="text-2xl md:text-3xl font-black tracking-tight text-[var(--text-main)]">Kalkulator Estimasi Harga</h2><p class="text-sm text-[var(--text-muted)]">Pilih layanan dan masukkan berat untuk estimasi.</p></div>
+                    <div class="space-y-4">
+                        <div><label class="text-xs font-black text-[var(--text-muted)] block mb-1">Pilih Layanan</label><select id="kalkulator-layanan" onchange="hitungKalkulatorPublik()" class="nm-input w-full px-4 py-3 rounded-xl text-sm font-semibold"><option value="7000">Reguler (Rp 7.000 / kg)</option><option value="15000">Express (Rp 15.000 / kg)</option><option value="35000">Sepatu (Rp 35.000 / pasang)</option><option value="25000">Bed Cover (Rp 25.000 / pcs)</option></select></div>
+                        <div><label class="text-xs font-black text-[var(--text-muted)] block mb-1">Berat / Jumlah</label><input type="number" id="kalkulator-berat" placeholder="Masukkan berat (kg) atau jumlah" oninput="hitungKalkulatorPublik()" class="nm-input w-full px-4 py-3 rounded-xl text-sm font-semibold" /></div>
+                        <div class="nm-card-inset p-6 text-center"><span class="text-[10px] text-slate-400 uppercase font-black tracking-widest">Estimasi Total</span><p id="kalkulator-hasil" class="text-3xl font-black text-emerald-600 dark:text-emerald-400">Rp 0</p></div>
+                        <a href="https://web.whatsapp.com/" target="_blank" class="w-full nm-btn font-black py-4 rounded-2xl text-center text-sm text-blue-600 block">Pesan Sekarang via WhatsApp</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BERANDA -->
+            <section id="beranda-section" class="py-12 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6 fade-up fade-up-delay-1">
+                    <span class="bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest">Premium 24/7</span>
+                    <h1 class="text-4xl md:text-5xl font-black leading-tight text-[var(--text-main)]">Pakaian Bersih Rapi <br class="hidden md:block" />Tanpa Lelah</h1>
+                    <p class="text-[var(--text-muted)] text-sm md:text-base leading-relaxed">Sistem manajemen binatu modern dengan pemantauan realtime, garansi higienis, dan gratis antar jemput area Bekasi.</p>
+                    <div class="pt-2 flex flex-wrap gap-4"><a href="https://web.whatsapp.com/" target="_blank" class="nm-btn text-emerald-600 font-black px-6 py-4 rounded-2xl text-xs md:text-sm">Hubungi WhatsApp</a><a href="#layanan-section" class="nm-btn font-black px-6 py-4 rounded-2xl text-xs md:text-sm">Daftar Tarif</a></div>
+                </div>
+                <div class="grid grid-cols-2 gap-6 p-2">
+                    <div class="nm-card p-6 text-center"><div class="text-3xl mb-1">🧼</div><h3 class="font-black text-base">Detergen Khusus</h3><p class="text-xs text-[var(--text-muted)]">Serat kain aman</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-3xl mb-1">⚡</div><h3 class="font-black text-base">Express 6 Jam</h3><p class="text-xs text-[var(--text-muted)]">Super cepat</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-3xl mb-1">🚚</div><h3 class="font-black text-base">Gratis Ongkir</h3><p class="text-xs text-[var(--text-muted)]">Radius 5 KM</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-3xl mb-1">🛡️</div><h3 class="font-black text-base">Asuransi Hilang</h3><p class="text-xs text-[var(--text-muted)]">Amanah 100%</p></div>
+                </div>
+            </section>
+
+            <!-- TENTANG DETAIL -->
+            <section id="tentang-detail-section" class="py-20 max-w-7xl mx-auto px-6">
+                <div class="text-center max-w-xl mx-auto mb-16"><span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 dark:bg-blue-950/60 px-4 py-1.5 rounded-full">Sejarah</span><h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Perjalanan Kami</h2></div>
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6">
+                        <div class="nm-card p-6"><div class="flex items-center gap-4"><span class="text-3xl">🚀</span><div><h4 class="font-black">2020 — Awal Berdiri</h4><p class="text-xs text-[var(--text-muted)]">Memulai dengan 1 mesin cuci.</p></div></div></div>
+                        <div class="nm-card p-6"><div class="flex items-center gap-4"><span class="text-3xl">📈</span><div><h4 class="font-black">2022 — Ekspansi</h4><p class="text-xs text-[var(--text-muted)]">3 mesin front-load + antar jemput.</p></div></div></div>
+                        <div class="nm-card p-6"><div class="flex items-center gap-4"><span class="text-3xl">☁️</span><div><h4 class="font-black">2024 — Digitalisasi</h4><p class="text-xs text-[var(--text-muted)]">Sistem cloud dengan tracking realtime.</p></div></div></div>
+                        <div class="nm-card p-6"><div class="flex items-center gap-4"><span class="text-3xl">🏆</span><div><h4 class="font-black">2026 — Terpercaya</h4><p class="text-xs text-[var(--text-muted)]">500+ pelanggan, rating 4.9/5.</p></div></div></div>
+                    </div>
+                    <div class="nm-card p-8 text-center"><div class="grid grid-cols-2 gap-4"><div><div class="text-4xl font-black text-blue-600">500+</div><p class="text-xs">Pelanggan</p></div><div><div class="text-4xl font-black text-emerald-600">1000+</div><p class="text-xs">Order</p></div><div><div class="text-4xl font-black text-amber-600">4.9</div><p class="text-xs">Rating</p></div><div><div class="text-4xl font-black text-indigo-600">24/7</div><p class="text-xs">Online</p></div></div></div>
+                </div>
+            </section>
+
+            <!-- KEUNGGULAN -->
+            <section id="keunggulan-section" class="py-20 max-w-7xl mx-auto px-6">
+                <div class="text-center max-w-xl mx-auto mb-16"><span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 dark:bg-blue-950/60 px-4 py-1.5 rounded-full">Mengapa Kami</span><h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">8 Keunggulan</h2></div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">🧺</div><h4 class="font-black">Ekstra Bersih</h4><p class="text-xs text-[var(--text-muted)]">Pewangi tahan 7 hari</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">🔬</div><h4 class="font-black">Sterilisasi Uap</h4><p class="text-xs text-[var(--text-muted)]">99,9% bakteri mati</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">📱</div><h4 class="font-black">Tracking Realtime</h4><p class="text-xs text-[var(--text-muted)]">Pantau status</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">🕐</div><h4 class="font-black">Tepat Waktu</h4><p class="text-xs text-[var(--text-muted)]">Express 6 jam</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">♻️</div><h4 class="font-black">Ramah Lingkungan</h4><p class="text-xs text-[var(--text-muted)]">Deterjen biodegradable</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">🤝</div><h4 class="font-black">Garansi 100%</h4><p class="text-xs text-[var(--text-muted)]">Kepuasan terjamin</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">🚚</div><h4 class="font-black">Gratis Antar Jemput</h4><p class="text-xs text-[var(--text-muted)]">Area Bekasi</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">💳</div><h4 class="font-black">Bayar Mudah</h4><p class="text-xs text-[var(--text-muted)]">QRIS, Transfer, Tunai</p></div>
+                </div>
+            </section>
+
+            <!-- STANDAR PERALATAN -->
+            <section id="standar-peralatan-section" class="py-16 max-w-7xl mx-auto px-6">
+                <div class="text-center max-w-xl mx-auto mb-16"><span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 dark:bg-blue-950/60 px-4 py-1.5 rounded-full">Alur Profesional</span><h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Standar Peralatan</h2></div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="nm-card p-8"><div class="w-14 h-14 rounded-2xl nm-card-inset flex items-center justify-center text-blue-600 font-black text-2xl">01</div><h4 class="font-black text-lg mt-4">Mesin Front Load</h4><p class="text-xs text-[var(--text-muted)]">Kapasitas 20 kg, motor inverter.</p></div>
+                    <div class="nm-card p-8"><div class="w-14 h-14 rounded-2xl nm-card-inset flex items-center justify-center text-blue-600 font-black text-2xl">02</div><h4 class="font-black text-lg mt-4">Setrika Uap Boiler</h4><p class="text-xs text-[var(--text-muted)]">Menghilangkan kerutan 3x lebih cepat.</p></div>
+                    <div class="nm-card p-8"><div class="w-14 h-14 rounded-2xl nm-card-inset flex items-center justify-center text-blue-600 font-black text-2xl">03</div><h4 class="font-black text-lg mt-4">Detergen Antiseptik</h4><p class="text-xs text-[var(--text-muted)]">Ramah lingkungan, halal.</p></div>
+                </div>
+            </section>
+
+            <!-- GALERI -->
+            <section id="galeri-section" class="py-20 bg-zinc-500/5 border-y">
+                <div class="max-w-7xl mx-auto px-6"><div class="text-center max-w-xl mx-auto mb-16"><span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 dark:bg-blue-950/60 px-4 py-1.5 rounded-full">Portofolio</span><h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Galeri</h2></div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="nm-card overflow-hidden cursor-pointer" onclick="bukaLightbox(this)"><img src="loundry.jpg" class="w-full h-48 object-cover hover:scale-105 transition" onerror="this.src='https://images.unsplash.com/photo-1545173168-9f1947e80154?q=80&w=400'" /></div>
+                        <div class="nm-card overflow-hidden cursor-pointer" onclick="bukaLightbox(this)"><img src="loundry1.jpg" class="w-full h-48 object-cover hover:scale-105 transition" onerror="this.src='https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?q=80&w=400'" /></div>
+                        <div class="nm-card overflow-hidden cursor-pointer" onclick="bukaLightbox(this)"><img src="loundry2.jpg" class="w-full h-48 object-cover hover:scale-105 transition" onerror="this.src='https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=80&w=400'" /></div>
+                        <div class="nm-card overflow-hidden cursor-pointer" onclick="bukaLightbox(this)"><img src="loundry3.jpg" class="w-full h-48 object-cover hover:scale-105 transition" onerror="this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=400'" /></div>
+                    </div></div>
+            </section>
+
+            <!-- LAYANAN -->
+            <section id="layanan-section" class="py-20 max-w-7xl mx-auto px-6">
+                <div class="text-center max-w-xl mx-auto mb-16"><h2 class="text-3xl font-black tracking-tight text-[var(--text-main)]">Menu Layanan</h2><p class="text-sm text-[var(--text-muted)]">Tarif transparan, semua termasuk pewangi.</p></div>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="nm-card overflow-hidden"><img src="loundry.jpg" class="w-full h-48 object-cover" onerror="this.src='https://images.unsplash.com/photo-1545173168-9f1947e80154?q=80&w=600'" /><div class="p-6"><h3 class="font-black">Reguler</h3><p class="text-xs text-[var(--text-muted)]">1x24 jam</p><div class="text-2xl font-black text-blue-600">Rp 7.000 <span class="text-xs font-normal">/ kg</span></div></div></div>
+                    <div class="nm-card overflow-hidden"><img src="loundry2.jpg" class="w-full h-48 object-cover" onerror="this.src='https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?q=80&w=600'" /><div class="p-6"><h3 class="font-black">Express</h3><p class="text-xs text-[var(--text-muted)]">6 jam selesai</p><div class="text-2xl font-black text-blue-600">Rp 15.000 <span class="text-xs font-normal">/ kg</span></div></div></div>
+                    <div class="nm-card overflow-hidden"><img src="loundry3.jpg" class="w-full h-48 object-cover" onerror="this.src='https://images.unsplash.com/photo-1604328698692-f76ea9498e76?q=80&w=600'" /><div class="p-6"><h3 class="font-black">Deep Clean Sepatu</h3><p class="text-xs text-[var(--text-muted)]">Hasil seperti baru</p><div class="text-2xl font-black text-blue-600">Rp 35.000 <span class="text-xs font-normal">/ pasang</span></div></div></div>
+                    <div class="nm-card overflow-hidden"><img src="loundry2.jpg" class="w-full h-48 object-cover" onerror="this.src='https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?q=80&w=600'" /><div class="p-6"><h3 class="font-black">Bed Cover</h3><p class="text-xs text-[var(--text-muted)]">Kapasitas besar</p><div class="text-2xl font-black text-blue-600">Rp 25.000 <span class="text-xs font-normal">/ pcs</span></div></div></div>
+                </div>
+                <div class="mt-16 nm-card p-6 md:p-10"><div class="flex flex-col lg:flex-row justify-between gap-8"><div><h3 class="font-black text-xl">Jam Operasional</h3><p class="text-xs text-[var(--text-muted)]">Sinkron langsung dari dashboard.</p></div><div class="grid grid-cols-3 gap-6"><div class="nm-card-inset p-5"><span class="text-xs font-black uppercase">Senin-Jumat</span><span id="public-jadwal-weekday" class="block font-black">07:00 - 21:00</span></div><div class="nm-card-inset p-5"><span class="text-xs font-black uppercase">Sabtu</span><span id="public-jadwal-sabtu" class="block font-black">06:00 - 22:00</span></div><div class="nm-card-inset p-5"><span class="text-xs font-black uppercase text-blue-500">Minggu</span><span id="public-jadwal-minggu" class="block font-black text-blue-600">06:00 - 22:00</span></div></div></div></div>
+            </section>
+
+            <!-- PROMO SECTION (tetap dengan countdown, tapi tanpa banner oranye di atas) -->
+            <section id="promo-section" class="py-20 bg-gradient-to-br from-blue-50/40 to-indigo-50/40 border-y">
+                <div class="max-w-7xl mx-auto px-6">
+                    <div id="public-promo-detail" class="text-center">
+                        <span class="text-xs font-black text-amber-600 uppercase tracking-widest bg-amber-100 dark:bg-amber-950/60 px-4 py-1.5 rounded-full">Hemat</span>
+                        <h2 id="public-promo-title" class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Promo Spesial</h2>
+                        <p id="public-promo-message" class="text-sm text-[var(--text-muted)] mt-2">Diskon 15% untuk semua layanan! Berlaku hingga 31 Des 2026.</p>
+                        <div class="mt-4 nm-card p-6 text-center max-w-lg mx-auto"><p class="text-xs font-black uppercase tracking-widest">Promo berakhir dalam</p><div class="flex justify-center gap-4 text-2xl font-black text-blue-600 mt-2" id="countdown-promo"><span><span id="cd-days">00</span><span class="text-xs block">Hari</span></span><span><span id="cd-hours">00</span><span class="text-xs block">Jam</span></span><span><span id="cd-minutes">00</span><span class="text-xs block">Menit</span></span><span><span id="cd-seconds">00</span><span class="text-xs block">Detik</span></span></div></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TESTIMONI -->
+            <section id="testimoni-section" class="py-14 bg-slate-100 dark:bg-zinc-900 border-y overflow-hidden">
+                <div class="max-w-7xl mx-auto px-6 text-center mb-8"><h3 class="text-2xl font-black">Testimoni</h3></div>
+                <div class="mq-container"><div id="marquee-track-testi" class="mq-content">
+                        <div class="nm-card p-6 w-[320px]"><p class="italic text-[var(--text-muted)]">"Express 6 jam nolong banget!"</p><h5 class="font-black text-xs text-blue-600">— Rian</h5></div>
+                        <div class="nm-card p-6 w-[320px]"><p class="italic text-[var(--text-muted)]">"Timbangan transparan, ga dimainin."</p><h5 class="font-black text-xs text-blue-600">— Siska</h5></div>
+                        <div class="nm-card p-6 w-[320px]"><p class="italic text-[var(--text-muted)]">"Sepatu kotor jadi kaya baru."</p><h5 class="font-black text-xs text-blue-600">— Dedi</h5></div>
+                        <div class="nm-card p-6 w-[320px]"><p class="italic text-[var(--text-muted)]">"Langganan keluarga, ramah & cepat."</p><h5 class="font-black text-xs text-blue-600">— Ibu Ani</h5></div>
+                    </div></div>
+            </section>
+
+            <!-- BLOG -->
+            <section id="blog-section" class="py-20 bg-slate-100 dark:bg-zinc-900/50 border-y">
+                <div class="max-w-7xl mx-auto px-6"><div class="text-center max-w-xl mx-auto mb-16"><span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 dark:bg-blue-950/60 px-4 py-1.5 rounded-full">Tips</span><h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Tips Perawatan</h2></div>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="nm-card p-6"><div class="text-4xl">👕</div><h4 class="font-black text-lg">Cegah Luntur</h4><p class="text-xs text-[var(--text-muted)]">Rendam dengan air garam 30 menit.</p><button onclick="showToast('Baca selengkapnya', 'info')" class="nm-btn font-black px-4 py-2 rounded-xl text-xs text-blue-600">Baca</button></div>
+                        <div class="nm-card p-6"><div class="text-4xl">🧴</div><h4 class="font-black text-lg">Pilih Deterjen</h4><p class="text-xs text-[var(--text-muted)]">Cair untuk halus, bubuk untuk noda.</p><button onclick="showToast('Baca selengkapnya', 'info')" class="nm-btn font-black px-4 py-2 rounded-xl text-xs text-blue-600">Baca</button></div>
+                        <div class="nm-card p-6"><div class="text-4xl">👟</div><h4 class="font-black text-lg">Sepatu Putih</h4><p class="text-xs text-[var(--text-muted)]">Gunakan pasta gigi untuk karet.</p><button onclick="showToast('Baca selengkapnya', 'info')" class="nm-btn font-black px-4 py-2 rounded-xl text-xs text-blue-600">Baca</button></div>
+                    </div></div>
+            </section>
+
+            <!-- FAQ -->
+            <section id="faq-section" class="py-20 max-w-4xl mx-auto px-6">
+                <div class="text-center max-w-xl mx-auto mb-16"><span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 dark:bg-blue-950/60 px-4 py-1.5 rounded-full">Tanya Jawab</span><h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">FAQ</h2></div>
+                <div class="nm-card p-6 md:p-10 space-y-2 divide-y">
+                    <details><summary class="font-black">Berapa lama pengerjaan?</summary><div class="faq-content">Reguler 1x24 jam, Express 6 jam.</div></details>
+                    <details><summary class="font-black">Ada gratis antar jemput?</summary><div class="faq-content">Ya, radius 5 km dari workshop Bekasi.</div></details>
+                    <details><summary class="font-black">Bagaimana cara lacak?</summary><div class="faq-content">Gunakan nomor nota di halaman Lacak.</div></details>
+                    <details><summary class="font-black">Bagaimana jika ada keluhan?</summary><div class="faq-content">Hubungi WhatsApp maksimal 2x24 jam setelah ambil.</div></details>
+                    <details><summary class="font-black">Bisa pesan online?</summary><div class="faq-content">Ya, via WhatsApp atau datang langsung.</div></details>
+                    <details><summary class="font-black">Ada diskon pelanggan setia?</summary><div class="faq-content">Program check-in 10x untuk voucher 15%.</div></details>
+                </div>
+            </section>
+
+            <!-- PARTNER -->
+            <section id="partner-section" class="py-16 bg-slate-100 dark:bg-zinc-900/50 border-y">
+                <div class="max-w-7xl mx-auto px-6 text-center">
+                    <h3 class="text-2xl font-black text-[var(--text-main)] mb-6">Dipercaya Oleh</h3>
+                    <div class="grid grid-cols-3 md:grid-cols-6 gap-6 items-center">
+                        <div class="nm-card-inset p-4 text-center font-black text-xs text-[var(--text-muted)]">🏨 Hotel Mewah</div>
+                        <div class="nm-card-inset p-4 text-center font-black text-xs text-[var(--text-muted)]">👔 Kantor Pusat</div>
+                        <div class="nm-card-inset p-4 text-center font-black text-xs text-[var(--text-muted)]">🏫 Sekolah Dasar</div>
+                        <div class="nm-card-inset p-4 text-center font-black text-xs text-[var(--text-muted)]">🍽️ Restoran</div>
+                        <div class="nm-card-inset p-4 text-center font-black text-xs text-[var(--text-muted)]">💼 Startup</div>
+                        <div class="nm-card-inset p-4 text-center font-black text-xs text-[var(--text-muted)]">👨‍👩‍👧‍👦 Keluarga</div>
+                    </div>
+                    <div class="max-w-4xl mx-auto text-center px-6"><br><h2 class="text-3xl md:text-4xl font-black">Siap Merapikan Pakaian?</h2><p class="text-[var(--text-muted)] text-sm">Daftarkan cucian sekarang, garansi 100%.</p><div class="flex flex-wrap justify-center gap-4 pt-4"><a href="https://web.whatsapp.com/" target="_blank" class="nm-btn font-black px-8 py-4 rounded-2xl text-sm text-emerald-600">Pesan Sekarang</a><a href="#layanan-section" class="nm-btn font-black px-8 py-4 rounded-2xl text-sm">Lihat Tarif</a></div></div>
+                    <br>
+                    <div class="nm-card p-8 text-center max-w-xl mx-auto"><h3 class="font-black text-lg">Alamat Workshop</h3><p class="text-xs md:text-sm text-[var(--text-muted)]">Jl. Depok 2026, Bekasi</p><p class="text-xs mt-2">📞 +62 819-4549-7854</p><a href="https://maps.google.com" target="_blank" class="inline-block nm-btn font-black px-6 py-3.5 rounded-xl text-xs text-blue-600 mt-4">Buka Maps</a></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ===== GARANSI ===== -->
+        <div id="public-garansi-content" class="hidden min-h-[60vh] max-w-3xl mx-auto px-6 py-24">
+            <div class="nm-card p-8 md:p-12 space-y-6"><h2 class="text-2xl md:text-3xl font-black">Syarat & Ketentuan Garansi</h2><div class="space-y-4"><h4 class="font-black">A. Hak Keluhan</h4><ol class="list-decimal list-inside space-y-2 text-xs md:text-sm text-[var(--text-muted)]"><li>Klaim maksimal 2x24 jam setelah serah terima.</li><li>Sertakan foto bukti.</li><li>Garansi cuci ulang gratis atau kompensasi 5x lipat.</li></ol></div><div class="space-y-4"><h4 class="font-black">B. Batasan Layanan</h4><ol class="list-decimal list-inside space-y-2 text-xs md:text-sm text-[var(--text-muted)]"><li>Tidak bertanggung jawab atas luntur alami.</li><li>Barang berharga di kantong bukan tanggung jawab kami.</li><li>Nota tidak diambil 30 hari di luar tanggung jawab.</li></ol></div><div class="pt-6 flex gap-4"><button onclick="backToMainPublic()" class="nm-btn font-black px-6 py-3.5 rounded-xl text-xs">Kembali</button><a href="https://web.whatsapp.com/" target="_blank" class="nm-btn font-black px-6 py-3.5 rounded-xl text-xs text-red-500">Hubungi QC</a></div></div>
+        </div>
+
+        <!-- ===== PROFIL & KONTAK (PAGE TERPISAH) ===== -->
+        <div id="profil-content" class="page-section pt-[72px] w-full overflow-x-hidden">
+            <section class="py-20 bg-gradient-to-br from-blue-50/40 to-indigo-50/40 dark:from-blue-950/10 dark:to-indigo-950/10 border-y border-blue-200/20">
+                <div class="max-w-6xl mx-auto px-6 text-center"><h1 class="text-4xl md:text-5xl font-black tracking-tight text-[var(--text-main)]">Tentang Admin Laundry</h1><p class="text-[var(--text-muted)] text-sm md:text-base mt-4 max-w-2xl mx-auto">Kami adalah penyedia jasa binatu profesional dengan standar higienis tertinggi dan teknologi cloud.</p></div>
+            </section>
+
+            <!-- VISI & MISI -->
+            <section class="py-20 max-w-7xl mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div class="nm-card p-8 space-y-4"><div class="text-5xl">🎯</div><h2 class="text-2xl font-black">Visi</h2><p class="text-[var(--text-muted)] text-sm">Menjadi penyedia jasa laundry terpercaya dan terintegrasi secara digital di Indonesia.</p></div>
+                    <div class="nm-card p-8 space-y-4"><div class="text-5xl">🚀</div><h2 class="text-2xl font-black">Misi</h2><ul class="text-[var(--text-muted)] text-sm space-y-2 list-disc pl-5"><li>Layanan berkualitas tinggi dengan harga terjangkau.</li><li>Adopsi teknologi digital untuk kemudahan pelanggan.</li><li>Menjaga kebersihan dengan standar profesional.</li><li>Ramah lingkungan dengan deterjen biodegradable.</li></ul></div>
+                </div>
+            </section>
+
+            <!-- TIM -->
+            <section class="py-20 bg-zinc-500/5 border-y">
+                <div class="max-w-7xl mx-auto px-6 text-center"><h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mb-12">Tim Kami</h2><div class="grid sm:grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="nm-card p-6 text-center"><div class="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-950/60 mx-auto flex items-center justify-center text-3xl">👤</div><h4 class="font-black mt-3">Andi Pratama</h4><p class="text-xs text-[var(--text-muted)]">Founder & CEO</p></div>
+                        <div class="nm-card p-6 text-center"><div class="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-950/60 mx-auto flex items-center justify-center text-3xl">👩</div><h4 class="font-black mt-3">Siti Rahma</h4><p class="text-xs text-[var(--text-muted)]">Manajer Operasional</p></div>
+                        <div class="nm-card p-6 text-center"><div class="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-950/60 mx-auto flex items-center justify-center text-3xl">👨</div><h4 class="font-black mt-3">Budi Santoso</h4><p class="text-xs text-[var(--text-muted)]">Kepala Teknisi</p></div>
+                        <div class="nm-card p-6 text-center"><div class="w-20 h-20 rounded-full bg-blue-100 dark:bg-blue-950/60 mx-auto flex items-center justify-center text-3xl">👩</div><h4 class="font-black mt-3">Dewi Lestari</h4><p class="text-xs text-[var(--text-muted)]">Customer Service</p></div>
+                    </div></div>
+            </section>
+
+            <!-- PENGHARGAAN -->
+            <section class="py-20 max-w-7xl mx-auto px-6">
+                <div class="text-center max-w-xl mx-auto mb-16"><span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 dark:bg-blue-950/60 px-4 py-1.5 rounded-full">Penghargaan</span><h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Yang Telah Kami Raih</h2></div>
+                <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">🏆</div><h4 class="font-black">Laundry Terbaik 2024</h4><p class="text-xs text-[var(--text-muted)]">Bekasi Business Awards</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">⭐</div><h4 class="font-black">Rating 4.9/5</h4><p class="text-xs text-[var(--text-muted)]">Google Maps & Tokopedia</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-5xl mb-2">🌿</div><h4 class="font-black">Eco-Friendly 2025</h4><p class="text-xs text-[var(--text-muted)]">Sertifikasi Lingkungan</p></div>
+                </div>
+            </section>
+
+            <!-- FORM KONTAK -->
+            <section class="py-20 bg-zinc-500/5 border-y">
+                <div class="max-w-3xl mx-auto px-6"><div class="text-center mb-12"><span class="text-xs font-black text-blue-600 uppercase tracking-widest bg-blue-100 dark:bg-blue-950/60 px-4 py-1.5 rounded-full">Hubungi Kami</span><h2 class="text-3xl font-black tracking-tight text-[var(--text-main)] mt-2">Kirim Pesan</h2></div>
+                    <div class="nm-card p-8 md:p-10 space-y-6">
+                        <div><label class="text-xs font-black text-[var(--text-muted)] block mb-1">Nama Lengkap</label><input type="text" id="contact-name" placeholder="Nama Anda" class="nm-input w-full px-4 py-3 rounded-xl text-sm" /></div>
+                        <div><label class="text-xs font-black text-[var(--text-muted)] block mb-1">Email</label><input type="email" id="contact-email" placeholder="email@anda.com" class="nm-input w-full px-4 py-3 rounded-xl text-sm" /></div>
+                        <div><label class="text-xs font-black text-[var(--text-muted)] block mb-1">Pesan</label><textarea id="contact-message" rows="4" placeholder="Tulis pesan Anda..." class="nm-input w-full px-4 py-3 rounded-xl text-sm"></textarea></div>
+                        <button onclick="kirimPesanKontak()" class="w-full nm-btn font-black py-4 rounded-xl text-blue-600 text-sm tracking-wide uppercase">Kirim Pesan</button>
+                    </div></div>
+            </section>
+
+            <!-- INFO KONTAK -->
+            <section class="py-20 max-w-7xl mx-auto px-6">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="nm-card p-6 text-center"><div class="text-4xl mb-2">📍</div><h4 class="font-black">Alamat</h4><p class="text-xs text-[var(--text-muted)]">Jl. Depok 2026, Bekasi</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-4xl mb-2">📞</div><h4 class="font-black">Telepon</h4><p class="text-xs text-[var(--text-muted)]">+62 819-4549-7854</p></div>
+                    <div class="nm-card p-6 text-center"><div class="text-4xl mb-2">✉️</div><h4 class="font-black">Email</h4><p class="text-xs text-[var(--text-muted)]">info@adminlaundry.com</p></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- FOOTER -->
+        <footer id="kontak-footer" class="bg-black text-zinc-400 py-16 mt-20 px-6 border-t">
+            <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-10 text-xs md:text-sm">
+                <div><h3 class="text-white font-black text-2xl">AdminLaundry.</h3><p class="text-zinc-500">Sistem binatu cloud terpercaya sejak 2020.</p></div>
+                <div><h4 class="text-white font-black">Kontak</h4><p>WA: +62 819-4549-7854</p><p>Email: info@adminlaundry.com</p></div>
+                <div><h4 class="text-white font-black">Navigasi</h4><a href="#" onclick="showPage('public')" class="block hover:text-white transition">Beranda</a><a href="#" onclick="showPage('profil')" class="block hover:text-white transition">Profil</a></div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ===== BACK TO TOP ===== -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Kembali ke atas">↑</button>
+
+    <!-- ===== LIGHTBOX ===== -->
+    <div id="lightbox-modal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[999] hidden items-center justify-center p-4" onclick="tutupLightbox()">
+        <div class="relative max-w-4xl w-full" onclick="event.stopPropagation()">
+            <img id="lightbox-img" src="" class="w-full h-auto max-h-[80vh] object-contain rounded-2xl shadow-2xl" />
+            <button onclick="tutupLightbox()" class="absolute -top-12 right-0 text-white text-4xl font-black">×</button>
+        </div>
+    </div>
+
+    <!-- ===== POPUPS ===== -->
+    <div id="reward-gate" class="gate-popup-overlay fixed inset-0 bg-black/70 backdrop-blur-md items-center justify-center z-50 p-4">
+        <div class="gate-popup-content nm-card p-8 md:p-10 w-full max-w-md relative glow-box">
+            <button onclick="tutupPintuReward()" class="absolute top-4 right-5 font-black text-slate-400 text-2xl">×</button>
+            <div class="text-center"><span class="bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 text-xs font-black px-4 py-1.5 rounded-full">Loyalitas</span><h2 class="text-2xl font-black mt-2">Check-In 10x</h2><p class="text-xs text-[var(--text-muted)]">Dapatkan voucher diskon <span id="reward-discount-display">15%</span>.</p></div>
+            <div class="mt-4"><label class="text-xs font-black">Nama:</label><input type="text" id="reward-client-name" placeholder="Nama lengkap..." class="nm-input w-full px-5 py-3 rounded-xl text-xs mt-1" oninput="renderCheckinGrid()" /></div>
+            <div class="grid grid-cols-5 gap-3 my-5" id="grid-checkin-nodes"></div>
+            <div class="space-y-4"><button id="btn-action-checkin" onclick="lakukanCheckinHarian()" class="w-full nm-btn font-black py-4 rounded-xl text-blue-600 text-xs">Check-In</button><button id="btn-claim-reward" disabled onclick="kirimDataKlaimReward()" class="w-full nm-btn font-black py-4 rounded-xl text-emerald-600 opacity-40 cursor-not-allowed text-xs">Klaim Reward</button></div>
+            <p class="text-[10px] text-center text-slate-400 mt-2">* Check-in hanya bisa dilakukan 1x per hari per nama. Klaim reward hanya sekali.</p>
+        </div>
+    </div>
+
+    <div id="login-gate" class="gate-popup-overlay fixed inset-0 bg-black/70 backdrop-blur-md items-center justify-center z-50 p-4">
+        <div class="gate-popup-content nm-card p-8 md:p-10 w-full max-w-sm relative">
+            <button onclick="tutupPintuLogin()" class="absolute top-4 right-5 font-black text-slate-400 text-2xl">×</button>
+            <div class="text-center"><h3 class="text-2xl font-black">Akses Admin</h3><p class="text-xs text-blue-600 font-black uppercase">Verifikasi Kasir</p></div>
+            <div class="mt-4 space-y-4">
+                <div><label class="text-xs font-black">Nama Operator</label><input type="text" id="gate-username" placeholder="Nama..." class="nm-input w-full px-4 py-3 rounded-xl text-sm mt-1" /></div>
+                <div class="relative"><label class="text-xs font-black">Kunci Akses</label><input type="password" id="gate-password" placeholder="••••••••" class="nm-input w-full px-4 py-3 rounded-xl text-sm mt-1" /><span onclick="togglePasswordVisibility()" class="absolute right-4 top-10 cursor-pointer text-slate-400" id="eye-icon">👁️</span></div>
+                <button onclick="checkGateLogin()" class="w-full nm-btn font-black py-3.5 rounded-xl text-blue-600 text-sm uppercase">Login</button>
+                <p class="text-center text-[10px] text-[var(--text-muted)]">Gunakan <span class="text-blue-600 font-bold">owner2026</span> atau <span class="text-blue-600 font-bold">admin2026</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+    ADMIN WORKSPACE
+    ================================================================ -->
+    <div id="admin-workspace" class="hidden w-full overflow-x-hidden">
+        <!-- MOBILE FAB -->
+        <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 lg:hidden" id="admin-floating-nav-wrapper">
+            <div class="hidden flex-col bg-white dark:bg-zinc-950 border shadow-2xl rounded-2xl p-2 gap-1 text-center w-40 mb-1" id="admin-mobile-nav">
+                <button onclick="switchPage('dashboard', this); toggleAdminMobileMenu();" class="menu-item-mobile active text-[11px] font-black py-2 px-3 rounded-xl flex items-center gap-2 text-blue-600 hover:bg-slate-100 w-full"><span class="icon">📊</span>Dashboard</button>
+                <button onclick="switchPage('pesanan', this); toggleAdminMobileMenu();" class="menu-item-mobile text-[11px] font-black py-2 px-3 rounded-xl flex items-center gap-2 text-slate-500 hover:bg-slate-100 w-full"><span class="icon">📝</span>Order</button>
+                <button onclick="switchPage('pengeluaran-page', this); toggleAdminMobileMenu();" class="menu-item-mobile text-[11px] font-black py-2 px-3 rounded-xl flex items-center gap-2 text-slate-500 hover:bg-slate-100 w-full"><span class="icon">💸</span>Biaya</button>
+                <button onclick="switchPage('arsip-page', this); toggleAdminMobileMenu();" class="menu-item-mobile text-[11px] font-black py-2 px-3 rounded-xl flex items-center gap-2 text-slate-500 hover:bg-slate-100 w-full"><span class="icon">🗄️</span>Arsip</button>
+                <button onclick="switchPage('laporan-page', this); toggleAdminMobileMenu();" class="menu-item-mobile text-[11px] font-black py-2 px-3 rounded-xl flex items-center gap-2 text-slate-500 hover:bg-slate-100 w-full"><span class="icon">📈</span>Laporan</button>
+                <button onclick="switchPage('pelanggan-page', this); toggleAdminMobileMenu();" class="menu-item-mobile text-[11px] font-black py-2 px-3 rounded-xl flex items-center gap-2 text-slate-500 hover:bg-slate-100 w-full"><span class="icon">👥</span>Pelanggan</button>
+                <button onclick="switchPage('layanan-populer-page', this); toggleAdminMobileMenu();" class="menu-item-mobile text-[11px] font-black py-2 px-3 rounded-xl flex items-center gap-2 text-slate-500 hover:bg-slate-100 w-full"><span class="icon">🏷️</span>Populer</button>
+                <button onclick="switchPage('inventaris-page', this); toggleAdminMobileMenu();" class="menu-item-mobile text-[11px] font-black py-2 px-3 rounded-xl flex items-center gap-2 text-slate-500 hover:bg-slate-100 w-full"><span class="icon">📦</span>Inventaris</button>
+                <button onclick="switchPage('reward-config-page', this); toggleAdminMobileMenu();" class="menu-item-mobile text-[11px] font-black py-2 px-3 rounded-xl flex items-center gap-2 text-indigo-600 hover:bg-slate-100 w-full"><span class="icon">🎁</span>Reward Config</button>
+                <hr /><button onclick="executeLogout(); toggleAdminMobileMenu();" class="text-[11px] font-black py-2 px-3 rounded-xl flex items-center gap-2 text-red-500 hover:bg-red-50 w-full"><span class="icon">🚪</span>Keluar</button>
+            </div>
+            <button onclick="toggleAdminMobileMenu()" class="fab-btn" id="admin-fab-btn"><span id="admin-fab-icon">⚡</span></button>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sb-fixed flex flex-col justify-between shadow-xl">
+            <div class="space-y-5">
+                <div class="flex items-center justify-between"><h2 class="text-2xl font-black">Workspace</h2><img src="logo.jpeg" class="w-12 h-12 rounded-xl object-cover shadow-md" onerror="this.style.display='none'" /></div>
+                <div id="current-role" class="text-[11px] font-black px-4 py-1.5 rounded-full bg-slate-200 dark:bg-zinc-800">Sesi Memuat...</div>
+                <menu class="space-y-2">
+                    <li class="menu-item active" onclick="switchPage('dashboard', this)"><span class="icon">📊</span>Dashboard</li>
+                    <li class="menu-item" onclick="switchPage('pesanan', this)"><span class="icon">📝</span>Input Order</li>
+                    <li class="menu-item" onclick="switchPage('pengeluaran-page', this)"><span class="icon">💸</span>Pengeluaran</li>
+                    <li class="menu-item" onclick="switchPage('arsip-page', this)"><span class="icon">🗄️</span>Arsip</li>
+                    <li class="menu-item" onclick="switchPage('laporan-page', this)"><span class="icon">📈</span>Laporan</li>
+                    <li class="menu-item" onclick="switchPage('pelanggan-page', this)"><span class="icon">👥</span>Pelanggan</li>
+                    <li class="menu-item" onclick="switchPage('layanan-populer-page', this)"><span class="icon">🏷️</span>Populer</li>
+                    <li class="menu-item" onclick="switchPage('inventaris-page', this)"><span class="icon">📦</span>Inventaris</li>
+                    <li class="menu-item" onclick="switchPage('reward-config-page', this)"><span class="icon">🎁</span>Reward Config</li>
+                </menu>
+            </div>
+            <button onclick="executeLogout()" class="nm-btn font-black py-3.5 rounded-2xl text-xs text-red-500 w-full hover:text-red-600">🚪 Keluar</button>
+        </div>
+
+        <!-- WORKSPACE CONTENT -->
+        <div class="work-content w-full overflow-x-hidden space-y-12">
+
+            <!-- DASHBOARD -->
+            <div id="dashboard" class="db-page active w-full space-y-10">
+                <div class="flex justify-between flex-wrap gap-6 border-b pb-5"><div><h1 class="text-2xl md:text-3xl font-black">Ringkasan Finansial</h1><p class="text-xs text-[var(--text-muted)]">Data sinkron realtime dari Firebase.</p></div><div class="flex gap-4 flex-wrap"><button onclick="unduhRekapanExcel()" class="nm-btn font-black px-5 py-3.5 rounded-xl text-xs text-emerald-600">📥 Excel</button><button onclick="eksporPDF()" class="nm-btn font-black px-5 py-3.5 rounded-xl text-xs text-red-500">📄 PDF</button><button id="btn-reset-db" onclick="executeSystemReset()" class="nm-btn font-black px-5 py-3.5 rounded-xl text-xs text-red-500">🔄 Reset</button></div></div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+                    <div class="nm-card p-5"><h3 class="text-[10px] uppercase font-black text-slate-400">Laba</h3><p id="total-pendapatan" class="text-sm lg:text-lg font-black text-emerald-600">Rp 0</p></div>
+                    <div class="nm-card p-5"><h3 class="text-[10px] uppercase font-black text-slate-400">Pengeluaran</h3><p id="total-pengeluaran-display" class="text-sm lg:text-lg font-black text-red-500">Rp 0</p></div>
+                    <div class="nm-card p-5 border-l-4 border-red-500"><h3 class="text-[10px] uppercase font-black text-slate-400">Belum</h3><p id="count-belum" class="text-sm font-black">0</p></div>
+                    <div class="nm-card p-5 border-l-4 border-amber-500"><h3 class="text-[10px] uppercase font-black text-slate-400">Proses</h3><p id="count-proses" class="text-sm font-black">0</p></div>
+                    <div class="nm-card p-5 border-l-4 border-sky-500"><h3 class="text-[10px] uppercase font-black text-slate-400">Siap</h3><p id="count-siap" class="text-sm font-black">0</p></div>
+                    <div class="nm-card p-5 border-l-4 border-emerald-500"><h3 class="text-[10px] uppercase font-black text-slate-400">Selesai</h3><p id="count-selesai" class="text-sm font-black">0</p></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div class="nm-card p-5 border-l-4 border-blue-500"><h3 class="text-[10px] uppercase font-black text-slate-400">Pendapatan Hari Ini</h3><p id="today-income" class="text-xl font-black text-blue-600">Rp 0</p></div><div class="nm-card p-5 border-l-4 border-red-400"><h3 class="text-[10px] uppercase font-black text-slate-400">Pengeluaran Hari Ini</h3><p id="today-expense" class="text-xl font-black text-red-500">Rp 0</p></div><div class="nm-card p-5 border-l-4 border-emerald-500"><h3 class="text-[10px] uppercase font-black text-slate-400">Laba Hari Ini</h3><p id="today-profit" class="text-xl font-black text-emerald-600">Rp 0</p></div></div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4"><div class="nm-card p-4 text-center"><div class="text-2xl font-black text-blue-600" id="stat-rata-harian">Rp 0</div><p class="text-[10px] text-[var(--text-muted)]">Rata-rata Harian</p></div><div class="nm-card p-4 text-center"><div class="text-2xl font-black text-amber-600" id="stat-order-terbanyak">0</div><p class="text-[10px] text-[var(--text-muted)]">Order Terbanyak</p></div><div class="nm-card p-4 text-center"><div class="text-2xl font-black text-emerald-600" id="stat-total-pelanggan">0</div><p class="text-[10px] text-[var(--text-muted)]">Total Pelanggan</p></div><div class="nm-card p-4 text-center"><div class="text-2xl font-black text-purple-600" id="stat-total-item">0</div><p class="text-[10px] text-[var(--text-muted)]">Total Item (kg)</p></div></div>
+
+                <div class="nm-card p-6 space-y-3"><div class="flex justify-between"><h3 class="font-black text-sm uppercase">Target Harian</h3><span class="text-xs font-black text-blue-600" id="target-progress-text">Rp 0 / Rp 1.000.000</span></div><div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden"><div id="target-progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-3 rounded-full transition-all duration-500" style="width:0%"></div></div><div class="flex justify-between text-[10px] text-slate-400"><span>0%</span><span id="target-status-text">Atur target</span><span>100%</span></div><div class="pt-2 flex gap-3 flex-wrap"><input type="number" id="input-target-harian" placeholder="Target nominal" class="nm-input w-full sm:w-64 px-4 py-2 rounded-xl text-xs" /><button onclick="aturTargetHarian()" class="nm-btn font-black px-5 py-2 rounded-xl text-xs text-blue-600">Set</button></div></div>
+
+                <!-- REWARD DASHBOARD -->
+                <div class="nm-card p-6 border-l-4 border-indigo-600">
+                    <div class="flex justify-between items-center flex-wrap gap-3"><h3 class="font-black text-sm uppercase">Reward Check-in & Klaim</h3><span class="reward-badge">Aktif</span></div>
+                    <div class="overflow-x-auto"><table class="w-full text-left min-w-[500px]"><thead><tr class="text-slate-400 border-b text-xs font-bold uppercase"><th class="py-3 px-3">Waktu</th><th class="py-3 px-3">Nama</th><th class="py-3 px-3">Status</th></tr></thead><tbody id="tabel-pemenang-reward" class="divide-y text-xs font-semibold"><tr><td colspan="3" class="text-slate-400 py-6 text-center">Menunggu...</td></tr></tbody></table></div>
+                    <div class="mt-4 pt-4 border-t"><h4 class="text-xs font-black uppercase text-slate-400">Statistik Check-in per Nama</h4><div id="checkin-stats" class="text-xs font-semibold mt-2 space-y-1"></div></div>
+                </div>
+
+                <div class="nm-card p-6 space-y-5"><h3 class="font-black text-sm uppercase">Konfigurasi Jam</h3><div class="grid grid-cols-1 sm:grid-cols-3 gap-6"><div><label class="text-[11px] font-black text-slate-400 uppercase">Senin-Jumat</label><input type="text" id="setting-jadwal-weekday" class="nm-input w-full px-4 py-3 rounded-xl text-xs mt-1" /></div><div><label class="text-[11px] font-black text-slate-400 uppercase">Sabtu</label><input type="text" id="setting-jadwal-sabtu" class="nm-input w-full px-4 py-3 rounded-xl text-xs mt-1" /></div><div><label class="text-[11px] font-black text-slate-400 uppercase">Minggu</label><input type="text" id="setting-jadwal-minggu" class="nm-input w-full px-4 py-3 rounded-xl text-xs mt-1" /></div></div><button onclick="simpanJadwalToko()" class="nm-btn font-black px-6 py-3 rounded-xl text-xs text-blue-600">💾 Simpan</button></div>
+
+                <div class="nm-card p-6 bg-amber-500/5"><h4 class="text-xs font-black text-amber-600 uppercase">Sesi Aktif</h4><div class="overflow-x-auto"><table class="w-full text-left text-xs font-semibold"><thead><tr class="text-slate-400 border-b"><th class="pb-3 pl-1">Nama</th><th class="pb-3">Otoritas</th></tr></thead><tbody id="tabel-sesi-aktif" class="divide-y"></tbody></table></div></div>
+
+                <div class="grid grid-cols-1 gap-8"><div class="nm-card p-6 flex flex-col justify-between h-[450px] overflow-visible glow-box"><div class="flex justify-between flex-wrap gap-4 border-b pb-3"><h4 class="font-black text-sm uppercase">Grafik Trend</h4><div class="flex gap-1 bg-slate-200/70 p-1 rounded-xl text-[10px]"><button class="px-2.5 py-1 rounded-lg font-bold btn-filter active" id="filter-perjam" onclick="changeChartFilter('perjam')">Jam</button><button class="px-2.5 py-1 rounded-lg font-bold btn-filter" id="filter-harian" onclick="changeChartFilter('harian')">Hari</button><button class="px-2.5 py-1 rounded-lg font-bold btn-filter" id="filter-mingguan" onclick="changeChartFilter('mingguan')">Minggu</button><button class="px-2.5 py-1 rounded-lg font-bold btn-filter" id="filter-bulanan" onclick="changeChartFilter('bulanan')">Bulan</button><button class="px-2.5 py-1 rounded-lg font-bold btn-filter" id="filter-tahunan" onclick="changeChartFilter('tahunan')">Tahun</button></div></div><div class="w-full flex-1 relative mt-4 min-h-0"><canvas id="lineChartOmzet"></canvas></div></div></div>
+
+                <div class="grid grid-cols-1 gap-8"><div class="nm-card p-6 flex flex-col justify-between h-[400px] overflow-visible glow-box"><h4 class="font-black text-sm uppercase border-b pb-3">Proporsi Status</h4><div class="w-full flex-1 relative mt-4"><canvas id="pieChartLayanan"></canvas></div></div></div>
+
+                <div class="grid grid-cols-1 gap-8"><div class="nm-card p-6 flex flex-col justify-between h-[400px] overflow-visible glow-box"><h4 class="font-black text-sm uppercase border-b pb-3">Pendapatan per Layanan</h4><div class="w-full flex-1 relative mt-4"><canvas id="barChartLayanan"></canvas></div></div></div>
+
+                <div class="nm-card p-6 border-t-2 border-red-500"><h3 class="text-red-600 text-xs font-black uppercase">Log Penghapusan</h3><div class="overflow-x-auto"><table class="w-full text-left min-w-[700px] text-xs"><thead><tr class="text-slate-400 border-b font-bold uppercase"><th class="py-3 px-3">Waktu</th><th class="py-3 px-3">Identitas</th><th class="py-3 px-3">Layanan</th><th class="py-3 px-3">Kerugian</th></tr></thead><tbody id="tabel-log-hapus" class="divide-y font-semibold"></tbody></table></div></div>
+
+                <div class="nm-card p-6 space-y-4">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4"><h3 class="font-black text-base uppercase">Antrean</h3><div class="flex flex-wrap items-center gap-3"><input type="text" id="search-antrean" placeholder="Cari nama..." oninput="filterAntrean()" class="nm-input w-full md:w-48 px-4 py-2 rounded-xl text-xs" /><select id="bulk-status-action" class="nm-input w-32 px-3 py-2 rounded-xl text-xs"><option value="proses">Proses</option><option value="siap">Siap</option><option value="selesai">Selesai</option></select><button onclick="bulkStatusUpdate()" class="nm-btn font-black px-4 py-2 rounded-xl text-xs text-blue-600">Terapkan</button></div></div>
+                    <div class="overflow-x-auto border rounded-xl"><table class="w-full text-left whitespace-nowrap min-w-[1100px] text-xs font-semibold"><thead><tr class="text-slate-400 border-b bg-zinc-500/5 font-bold uppercase"><th class="py-4 px-4">No</th><th class="py-4 px-3">Hari</th><th class="py-4 px-3">Nama</th><th class="py-4 px-3">WA</th><th class="py-4 px-3">Layanan</th><th class="py-4 px-3">Metode</th><th class="py-4 px-3">Qty</th><th class="py-4 px-3">Total</th><th class="py-4 px-3">Status</th><th class="py-4 px-3">Kalender</th><th class="py-4 px-3">Notif</th><th class="py-4 px-4 text-center">Hapus</th></tr></thead><tbody id="tabel-antrean" class="divide-y"></tbody></table></div>
+                </div>
+
+                <!-- TOP CUSTOMERS -->
+                <div class="nm-card p-6 border-l-4 border-amber-500"><div class="flex justify-between"><h3 class="font-black text-sm uppercase">Top 5 Pelanggan</h3><span class="text-[10px] text-slate-400">Total transaksi</span></div><div class="overflow-x-auto"><table class="w-full text-left min-w-[400px]"><thead><tr class="text-slate-400 border-b text-xs font-bold uppercase"><th class="py-3 px-3">#</th><th class="py-3 px-3">Nama</th><th class="py-3 px-3">Transaksi</th><th class="py-3 px-3">Total</th></tr></thead><tbody id="tabel-top-customer" class="divide-y text-xs font-semibold"><tr><td colspan="4" class="text-slate-400 py-6 text-center">Menghitung...</td></tr></tbody></table></div></div>
+            </div>
+
+            <!-- PESANAN -->
+            <div id="pesanan" class="db-page w-full space-y-6">
+                <h1 class="text-2xl md:text-3xl font-black">Input Pesanan Baru</h1>
+                <div class="nm-card p-6 md:p-8 max-w-lg mx-auto space-y-6">
+                    <div class="flex justify-between border-b pb-4 flex-wrap"><span class="text-xs font-black uppercase">Formulir</span><span class="text-xs font-black text-blue-600 bg-blue-100 px-4 py-1.5 rounded-full">Nota: <strong id="next-paper-number">#1</strong></span></div>
+                    <div class="space-y-5">
+                        <div><label class="text-xs font-black">Nama</label><input type="text" id="input-nama" placeholder="Nama pelanggan" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div>
+                        <div><label class="text-xs font-black">WA</label><input type="text" id="input-phone" placeholder="62812345678" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div>
+                        <div><label class="text-xs font-black">Alamat</label><input type="text" id="input-alamat" placeholder="Alamat lengkap" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div>
+                        <div><label class="text-xs font-black">Paket</label><select id="input-layanan" onchange="toggleCustomLayananField(); hitungKalkulator();" class="nm-input w-full px-4 py-3 rounded-xl text-xs h-11"><option value="7000">Reguler (Rp 7.000/kg)</option><option value="15000">Express (Rp 15.000/kg)</option><option value="35000">Sepatu (Rp 35.000/pasang)</option><option value="custom">-- Custom --</option></select></div>
+                        <div id="custom-layanan-wrapper" class="hidden nm-card-inset p-5 border border-blue-200/40 space-y-4"><div><label class="text-[11px] font-black">Nama Custom</label><input type="text" id="input-custom-nama" placeholder="Nama layanan" class="nm-input w-full px-4 py-2.5 rounded-xl text-xs" /></div><div><label class="text-[11px] font-black">Harga Satuan</label><input type="number" id="input-custom-harga" placeholder="40000" oninput="hitungKalkulator()" class="nm-input w-full px-4 py-2.5 rounded-xl text-xs" /></div></div>
+                        <div><label class="text-xs font-black">Berat / Jumlah</label><input type="number" step="0.1" id="input-berat" placeholder="Kuantitas" oninput="hitungKalkulator()" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div>
+                        <div><label class="text-xs font-black">Metode Pembayaran</label><select id="input-metode" class="nm-input w-full px-4 py-3 rounded-xl text-xs h-11"><option value="Tunai">Tunai</option><option value="QRIS">QRIS</option><option value="Transfer">Transfer</option></select></div>
+                        <div class="nm-card-inset p-5 text-center"><span class="text-[10px] text-slate-400 uppercase font-black">Total</span><p id="live-total" class="text-3xl font-black text-emerald-600">Rp 0</p></div>
+                        <div class="flex gap-4"><button onclick="resetForm()" class="nm-btn font-black px-5 py-3.5 rounded-xl text-xs text-slate-500">Reset</button><button onclick="tambahOrderan()" class="nm-btn font-black px-5 py-3.5 rounded-xl text-xs text-blue-600 flex-1">Simpan</button></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PENGELUARAN -->
+            <div id="pengeluaran-page" class="db-page w-full space-y-6">
+                <h1 class="text-2xl md:text-3xl font-black">Catat Pengeluaran</h1>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="nm-card p-6 md:p-8 space-y-5"><h3 class="font-black text-base uppercase border-b pb-3">Input Baru</h3><div><label class="text-xs font-black">Item</label><input type="text" id="expense-item" placeholder="Detergen 5L" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div><div><label class="text-xs font-black">Biaya</label><input type="number" id="expense-cost" placeholder="120000" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div><button onclick="tambahPengeluaran()" class="w-full nm-btn font-black py-4 rounded-xl text-red-500 text-xs uppercase">Potong Laba</button></div>
+                    <div class="nm-card p-6 md:p-8 space-y-4"><h3 class="font-black text-base uppercase border-b pb-3">Daftar Biaya</h3><div class="overflow-x-auto"><table class="w-full text-left min-w-[340px] text-xs"><thead><tr class="text-slate-400 border-b font-bold uppercase"><th class="pb-3 px-2">Item</th><th class="pb-3 px-2">Biaya</th><th class="pb-3 px-2 text-center">Aksi</th></tr></thead><tbody id="tabel-pengeluaran" class="divide-y font-semibold"></tbody></table></div></div>
+                </div>
+                <div id="section-log-pengeluaran" class="hidden nm-card p-6 border-t-2 border-red-600"><h3 class="font-black text-red-700 text-xs uppercase">Log Hapus Pengeluaran</h3><div class="overflow-x-auto"><table class="w-full text-left min-w-[500px] text-xs"><thead><tr class="text-slate-400 border-b font-bold uppercase"><th class="py-3 px-2">Waktu</th><th class="py-3 px-2">Item</th><th class="py-3 px-2">Dihapus Oleh</th><th class="py-3 px-2">Biaya</th></tr></thead><tbody id="tabel-log-hapus-pengeluaran" class="divide-y"></tbody></table></div></div>
+            </div>
+
+            <!-- ARSIP -->
+            <div id="arsip-page" class="db-page w-full space-y-6">
+                <h1 class="text-2xl md:text-3xl font-black">Arsip Transaksi</h1>
+                <div class="nm-card p-6 space-y-4"><div class="overflow-x-auto border rounded-xl"><table class="w-full text-left whitespace-nowrap min-w-[1100px] text-xs font-semibold"><thead><tr class="text-slate-400 border-b bg-zinc-500/5 font-bold uppercase"><th class="py-4 px-4">No</th><th class="py-4 px-3">Hari</th><th class="py-4 px-3">Nama</th><th class="py-4 px-3">WA</th><th class="py-4 px-3">Layanan</th><th class="py-4 px-3">Metode</th><th class="py-4 px-3">Qty</th><th class="py-4 px-3">Total</th><th class="py-4 px-3">Status</th><th class="py-4 px-3">Kalender</th><th class="py-4 px-3">Notif</th><th class="py-4 px-4 text-center">Hapus</th></tr></thead><tbody id="tabel-arsip" class="divide-y"></tbody></table></div></div>
+            </div>
+
+            <!-- LAPORAN -->
+            <div id="laporan-page" class="db-page w-full space-y-6">
+                <h1 class="text-2xl md:text-3xl font-black">Laporan Keuangan</h1>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="nm-card p-6 space-y-4"><h3 class="font-black text-base uppercase border-b pb-3">Ringkasan</h3><div class="space-y-3 text-sm"><div class="flex justify-between"><span class="text-[var(--text-muted)]">Total Pemasukan:</span><span id="laporan-pemasukan" class="font-black text-emerald-600">Rp 0</span></div><div class="flex justify-between"><span class="text-[var(--text-muted)]">Total Pengeluaran:</span><span id="laporan-pengeluaran" class="font-black text-red-500">Rp 0</span></div><div class="flex justify-between border-t pt-3"><span class="font-black">Laba Bersih:</span><span id="laporan-laba" class="font-black text-blue-600 text-lg">Rp 0</span></div><div class="flex justify-between"><span class="text-[var(--text-muted)]">Order Selesai:</span><span id="laporan-order-selesai" class="font-black">0</span></div><div class="flex justify-between"><span class="text-[var(--text-muted)]">Order Aktif:</span><span id="laporan-order-aktif" class="font-black">0</span></div></div></div>
+                    <div class="nm-card p-6 space-y-4"><h3 class="font-black text-base uppercase border-b pb-3">Ekspor</h3><button onclick="unduhRekapanExcel()" class="w-full nm-btn font-black py-4 rounded-xl text-emerald-600 text-sm">📥 Excel</button><button onclick="showToast('Cetak sedang dikembangkan', 'info')" class="w-full nm-btn font-black py-4 rounded-xl text-blue-600 text-sm">🖨️ Cetak</button></div>
+                </div>
+                <div class="nm-card p-6 space-y-4"><h3 class="font-black text-base uppercase border-b pb-3">Laporan Bulanan</h3><div class="flex flex-wrap gap-4"><select id="laporan-bulan" class="nm-input w-40 px-4 py-2 rounded-xl text-xs"><option value="0">Jan</option><option value="1">Feb</option><option value="2">Mar</option><option value="3">Apr</option><option value="4">Mei</option><option value="5">Jun</option><option value="6">Jul</option><option value="7">Agu</option><option value="8">Sep</option><option value="9">Okt</option><option value="10">Nov</option><option value="11">Des</option></select><select id="laporan-tahun" class="nm-input w-40 px-4 py-2 rounded-xl text-xs"><option value="2024">2024</option><option value="2025">2025</option><option value="2026" selected>2026</option></select><button onclick="generateLaporanBulanan()" class="nm-btn font-black px-5 py-2 rounded-xl text-xs text-blue-600">Tampilkan</button></div><div id="laporan-bulanan-result" class="mt-4"><p class="text-[var(--text-muted)] text-sm">Pilih bulan dan tahun, lalu klik Tampilkan.</p></div></div>
+            </div>
+
+            <!-- PELANGGAN -->
+            <div id="pelanggan-page" class="db-page w-full space-y-6">
+                <h1 class="text-2xl md:text-3xl font-black">Daftar Pelanggan</h1>
+                <div class="nm-card p-6"><div class="overflow-x-auto border rounded-xl"><table class="w-full text-left min-w-[600px] text-xs font-semibold"><thead><tr class="text-slate-400 border-b bg-zinc-500/5 font-bold uppercase"><th class="py-4 px-4">#</th><th class="py-4 px-3">Nama</th><th class="py-4 px-3">Total Order</th><th class="py-4 px-3">Total Belanja</th><th class="py-4 px-3">Rata-rata</th></tr></thead><tbody id="tabel-semua-pelanggan" class="divide-y"><tr><td colspan="5" class="text-slate-400 py-6 text-center">Memuat...</td></tr></tbody></table></div></div>
+            </div>
+
+            <!-- LAYANAN POPULER -->
+            <div id="layanan-populer-page" class="db-page w-full space-y-6">
+                <h1 class="text-2xl md:text-3xl font-black">Layanan Populer</h1>
+                <div class="grid md:grid-cols-2 gap-8"><div class="nm-card p-6 flex flex-col justify-between h-[400px]"><h4 class="font-black text-sm uppercase border-b pb-3">Distribusi</h4><div class="w-full flex-1 relative mt-4"><canvas id="pieChartLayananPopuler"></canvas></div></div><div class="nm-card p-6 space-y-4"><h4 class="font-black text-sm uppercase border-b pb-3">Detail</h4><div id="list-layanan-populer" class="space-y-3"><p class="text-slate-400 text-xs">Memuat...</p></div></div></div>
+            </div>
+
+            <!-- INVENTARIS -->
+            <div id="inventaris-page" class="db-page w-full space-y-6">
+                <h1 class="text-2xl md:text-3xl font-black">Manajemen Inventaris</h1>
+                <p class="text-sm text-[var(--text-muted)]">Kelola stok bahan-bahan laundry. Data tersimpan di perangkat Anda.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="nm-card p-6 space-y-4"><h3 class="font-black text-base uppercase border-b pb-3">Tambah Stok</h3><div><label class="text-xs font-black">Nama Barang</label><input type="text" id="inventaris-nama" placeholder="Detergen 5L" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div><div><label class="text-xs font-black">Jumlah</label><input type="number" id="inventaris-jumlah" placeholder="10" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div><button onclick="tambahInventaris()" class="w-full nm-btn font-black py-4 rounded-xl text-blue-600 text-xs uppercase">Tambah</button></div>
+                    <div class="nm-card p-6 space-y-4"><h3 class="font-black text-base uppercase border-b pb-3">Daftar Stok</h3><div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead><tr class="text-slate-400 border-b font-bold uppercase"><th class="py-2 px-2">Barang</th><th class="py-2 px-2">Stok</th><th class="py-2 px-2 text-center">Aksi</th></tr></thead><tbody id="tabel-inventaris" class="divide-y"><tr><td colspan="3" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr></tbody></table></div></div>
+                </div>
+            </div>
+
+            <!-- REWARD CONFIG -->
+            <div id="reward-config-page" class="db-page w-full space-y-6">
+                <h1 class="text-2xl md:text-3xl font-black">Konfigurasi Reward & Promo</h1>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="nm-card p-6 space-y-5">
+                        <h3 class="font-black text-base uppercase border-b pb-3">Pengaturan Diskon</h3>
+                        <div><label class="text-xs font-black">Diskon Reward (%)</label><input type="number" id="reward-discount-percent" placeholder="15" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div>
+                        <div><label class="text-xs font-black">Minimal Check-in</label><input type="number" id="reward-min-checkin" placeholder="10" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div>
+                        <button onclick="saveRewardConfig()" class="w-full nm-btn font-black py-4 rounded-xl text-indigo-600 text-xs uppercase">Simpan Konfigurasi</button>
+                        <div class="nm-card-inset p-4 text-center mt-4"><span class="text-[10px] text-slate-400 uppercase font-black tracking-widest">Status Saat Ini</span><p id="reward-config-status" class="text-sm font-black text-indigo-600 mt-1">Diskon 15% (min 10 check-in)</p></div>
+                    </div>
+                    <div class="nm-card p-6 space-y-5">
+                        <h3 class="font-black text-base uppercase border-b pb-3">Pengaturan Promo (Publik)</h3>
+                        <div><label class="text-xs font-black">Pesan Promo</label><input type="text" id="promo-message" placeholder="Diskon 15% untuk semua layanan!" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div>
+                        <div><label class="text-xs font-black">Tanggal Berakhir Promo</label><input type="datetime-local" id="promo-end-date" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div>
+                        <button onclick="savePromoConfig()" class="w-full nm-btn font-black py-4 rounded-xl text-amber-600 text-xs uppercase">Simpan Promo</button>
+                    </div>
+                </div>
+                <div class="nm-card p-6 border-l-4 border-indigo-500"><h3 class="font-black text-sm uppercase">Daftar Pemenang Reward</h3><div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead><tr class="text-slate-400 border-b font-bold uppercase"><th class="py-2 px-2">Nama</th><th class="py-2 px-2">Waktu</th><th class="py-2 px-2">Diskon</th></tr></thead><tbody id="tabel-reward-winners" class="divide-y"><tr><td colspan="3" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr></tbody></table></div></div>
+                <div class="nm-card p-6 border-l-4 border-amber-500"><h3 class="font-black text-sm uppercase">Riwayat Aktivasi Reward</h3><div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead><tr class="text-slate-400 border-b font-bold uppercase"><th class="py-2 px-2">Waktu</th><th class="py-2 px-2">Nama</th><th class="py-2 px-2">Diskon</th><th class="py-2 px-2">Status</th></tr></thead><tbody id="tabel-reward-history" class="divide-y"><tr><td colspan="4" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr></tbody></table></div></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ================================================================
+    JAVASCRIPT
+    ================================================================ -->
+    <script>
+        // ================================================================
+        // GLOBALS
+        // ================================================================
+        window.orders = [];
+        window.deleteLogs = [];
+        window.expenses = [];
+        window.deleteExpenseLogs = [];
+        window.rewards = [];
+        window.rewardWinners = [];
+        window.nextOrderNumber = 1;
+        window.schedule = { weekday: "07:00 - 21:00", sabtu: "06:00 - 22:00", minggu: "06:00 - 22:00" };
+        let currentRole = localStorage.getItem('laundry_role') || "belum_login";
+        let activeUserRealName = localStorage.getItem('laundry_name') || "";
+        let lineChart = null,
+            pieChart = null,
+            pieChartPopuler = null,
+            barChartLayanan = null;
+        let activeFilter = "perjam";
+        let lastOrderCount = 0;
+        let inventaris = JSON.parse(localStorage.getItem('laundry_inventaris')) || [];
+        let lastScrollY = 0;
+
+        // Reward config
+        let rewardConfig = {
+            discountPercent: parseInt(localStorage.getItem('laundry_reward_discount')) || 15,
+            minCheckin: parseInt(localStorage.getItem('laundry_reward_min_checkin')) || 10
+        };
+
+        // Promo config
+        let promoConfig = {
+            message: localStorage.getItem('laundry_promo_message') || "Diskon 15% untuk semua layanan! 🎉",
+            endDate: localStorage.getItem('laundry_promo_end') || new Date(Date.now() + 30 * 86400000).toISOString()
+        };
+
+        // ================================================================
+        // SMART NAVBAR
+        // ================================================================
+        function initSmartNavbar() {
+            const navbar = document.getElementById('public-navbar');
+            if (!navbar) return;
+            let ticking = false;
+            window.addEventListener('scroll', function() {
+                if (!ticking) {
+                    window.requestAnimationFrame(function() {
+                        const currentScrollY = window.scrollY;
+                        if (currentScrollY > 20) navbar.classList.add('nav-scrolled');
+                        else navbar.classList.remove('nav-scrolled');
+                        if (currentScrollY > 80) {
+                            if (currentScrollY > lastScrollY) navbar.classList.add('nav-hidden');
+                            else navbar.classList.remove('nav-hidden');
+                        } else navbar.classList.remove('nav-hidden');
+                        lastScrollY = currentScrollY;
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+        }
+
+        // ================================================================
+        // TOAST
+        // ================================================================
+        function showToast(message, type = 'info', duration = 4000) {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+            const el = document.createElement('div');
+            el.className = `toast-item ${type}`;
+            el.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${message}</span>`;
+            container.appendChild(el);
+            setTimeout(() => { el.classList.add('removing');
+                setTimeout(() => el.remove(), 300); }, duration);
+        }
+
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('admin-notification');
+            if (!container) return;
+            const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+            const el = document.createElement('div');
+            el.className = `toast-item ${type}`;
+            el.innerHTML = `<span>${icons[type] || 'ℹ️'}</span><span>${message}</span>`;
+            container.appendChild(el);
+            setTimeout(() => { el.classList.add('removing');
+                setTimeout(() => el.remove(), 300); }, 5000);
+        }
+
+        // ================================================================
+        // DARK MODE
+        // ================================================================
+        function toggleDarkModeGeser() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            if (lineChart && pieChart) setTimeout(initCharts, 150);
+            if (pieChartPopuler) setTimeout(renderPopularServices, 200);
+            if (barChartLayanan) setTimeout(renderBarChartLayanan, 200);
+        }
+
+        // ================================================================
+        // NAVIGASI
+        // ================================================================
+        function showPage(page) {
+            const publicContent = document.getElementById('public-main-content');
+            const profilContent = document.getElementById('profil-content');
+            const garansiContent = document.getElementById('public-garansi-content');
+            const navPublic = document.getElementById('nav-public');
+            const navProfil = document.getElementById('nav-profil');
+            if (page === 'public') {
+                publicContent.style.display = 'block';
+                profilContent.classList.remove('active');
+                garansiContent.classList.add('hidden');
+                if (navPublic) navPublic.classList.add('active');
+                if (navProfil) navProfil.classList.remove('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (page === 'profil') {
+                publicContent.style.display = 'none';
+                profilContent.classList.add('active');
+                garansiContent.classList.add('hidden');
+                if (navPublic) navPublic.classList.remove('active');
+                if (navProfil) navProfil.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (page === 'garansi') {
+                publicContent.style.display = 'none';
+                profilContent.classList.remove('active');
+                garansiContent.classList.remove('hidden');
+                if (navPublic) navPublic.classList.remove('active');
+                if (navProfil) navProfil.classList.remove('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function showGaransiPage() { showPage('garansi'); }
+
+        function backToMainPublic() { showPage('public'); }
+
+        // ================================================================
+        // MOBILE MENUS
+        // ================================================================
+        function toggleAdminMobileMenu() {
+            const menu = document.getElementById('admin-mobile-nav');
+            const icon = document.getElementById('admin-fab-icon');
+            if (!menu || !icon) return;
+            const hidden = menu.classList.contains('hidden');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+            icon.innerText = hidden ? '✕' : '⚡';
+        }
+
+        function toggleClientMobileMenu() {
+            const menu = document.getElementById('client-mobile-nav');
+            const icon = document.getElementById('client-fab-icon');
+            if (!menu || !icon) return;
+            const hidden = menu.classList.contains('hidden');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+            icon.innerText = hidden ? '✕' : '⚡';
+        }
+
+        // ================================================================
+        // REWARD FIREBASE (Check-in harian per nama, klaim sekali)
+        // ================================================================
+        function renderCheckinGrid() {
+            const nama = document.getElementById('reward-client-name').value.trim();
+            const grid = document.getElementById('grid-checkin-nodes');
+            if (!grid) return;
+            if (!nama) {
+                grid.innerHTML = '<p class="text-xs text-slate-400 col-span-5 text-center">Masukkan nama dulu.</p>';
+                return;
+            }
+            const ref = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}`);
+            window.dbOnValue(ref, (snap) => {
+                const count = snap.exists() ? Object.keys(snap.val()).length : 0;
+                grid.innerHTML = '';
+                for (let i = 1; i <= 10; i++) {
+                    if (i <= count) grid.innerHTML +=
+                        `<div class="p-3 text-xs font-black text-center text-emerald-600 bg-emerald-500/10 mx-0.5 rounded-xl glow-inset-circle">Done<br>${i}</div>`;
+                    else grid.innerHTML +=
+                        `<div class="p-3 nm-card text-xs font-bold text-center text-slate-400 mx-0.5">Lock<br>${i}</div>`;
+                }
+                const btnCheckin = document.getElementById('btn-action-checkin');
+                const btnClaim = document.getElementById('btn-claim-reward');
+                // Cek apakah sudah klaim
+                const claimRef = window.dbRef(window.firebaseDb, `laundry_rewards_claimed/${nama}`);
+                window.dbOnValue(claimRef, (snapClaim) => {
+                    const claimed = snapClaim.exists();
+                    if (claimed) {
+                        btnCheckin.disabled = true;
+                        btnCheckin.classList.add('opacity-40');
+                        btnClaim.disabled = true;
+                        btnClaim.classList.add('opacity-40', 'cursor-not-allowed');
+                        btnClaim.innerText = 'Sudah Klaim';
+                    } else if (count >= 10) {
+                        btnCheckin.disabled = true;
+                        btnCheckin.classList.add('opacity-40');
+                        btnClaim.disabled = false;
+                        btnClaim.classList.remove('opacity-40', 'cursor-not-allowed');
+                        btnClaim.innerText = 'Klaim Reward';
+                    } else {
+                        btnCheckin.disabled = false;
+                        btnCheckin.classList.remove('opacity-40');
+                        btnClaim.disabled = true;
+                        btnClaim.classList.add('opacity-40', 'cursor-not-allowed');
+                        btnClaim.innerText = 'Klaim Reward';
+                    }
+                }, { onlyOnce: true });
+            }, { onlyOnce: false });
+        }
+
+        function lakukanCheckinHarian() {
+            const nama = document.getElementById('reward-client-name').value.trim();
+            if (!nama) return showToast('Masukkan nama Anda!', 'warning');
+            const today = new Date().toISOString().split('T')[0];
+            const checkinRef = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}/${today}`);
+
+            // Cek apakah sudah check-in hari ini
+            window.dbOnValue(checkinRef, (snap) => {
+                if (snap.exists()) {
+                    showToast('Anda sudah check-in hari ini!', 'warning');
+                    return;
+                }
+                // Cek total check-in
+                const totalRef = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}`);
+                window.dbOnValue(totalRef, (snapTotal) => {
+                    const total = snapTotal.exists() ? Object.keys(snapTotal.val()).length : 0;
+                    if (total >= 10) {
+                        showToast('Anda sudah 10x check-in, silakan klaim reward!', 'info');
+                        return;
+                    }
+                    // Simpan check-in
+                    window.dbSet(checkinRef, { timestamp: Date.now() });
+                    showToast(`Check-in ke-${total+1} berhasil!`, 'success');
+                    renderCheckinGrid();
+                }, { once: true });
+            }, { once: true });
+        }
+
+        function kirimDataKlaimReward() {
+            const nama = document.getElementById('reward-client-name').value.trim();
+            if (!nama) return showToast('Isi nama valid!', 'warning');
+
+            // Cek apakah sudah klaim
+            const claimRef = window.dbRef(window.firebaseDb, `laundry_rewards_claimed/${nama}`);
+            window.dbOnValue(claimRef, (snap) => {
+                if (snap.exists()) {
+                    showToast('Anda sudah pernah klaim reward!', 'warning');
+                    return;
+                }
+                // Hitung total check-in
+                const checkinRef = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}`);
+                window.dbOnValue(checkinRef, (snapCheck) => {
+                    const total = snapCheck.exists() ? Object.keys(snapCheck.val()).length : 0;
+                    if (total < 10) {
+                        showToast(`Anda baru ${total} check-in, butuh 10 untuk klaim.`, 'warning');
+                        return;
+                    }
+                    // Simpan klaim
+                    const disc = rewardConfig.discountPercent || 15;
+                    window.dbSet(claimRef, { waktu: new Date().toLocaleString('id-ID'), diskon: disc + '%' });
+                    showToast(`Selamat! Reward ${disc}% berhasil diklaim!`, 'success');
+                    tutupPintuReward();
+                    // Kirim WA
+                    const teksWA =
+                        `Halo Admin Laundry, saya ${nama} sudah klaim reward check-in. Mohon verifikasi.`;
+                    window.open(
+                        `https://api.whatsapp.com/send?phone=6281945497854&text=${encodeURIComponent(teksWA)}`,
+                        '_blank');
+                }, { once: true });
+            }, { once: true });
+        }
+
+        // ================================================================
+        // REWARD CONFIG
+        // ================================================================
+        function saveRewardConfig() {
+            const disc = parseInt(document.getElementById('reward-discount-percent').value);
+            const min = parseInt(document.getElementById('reward-min-checkin').value);
+            if (!disc || disc < 0 || disc > 100) return showToast('Masukkan diskon 0-100%', 'warning');
+            if (!min || min < 1) return showToast('Minimal check-in minimal 1', 'warning');
+            rewardConfig.discountPercent = disc;
+            rewardConfig.minCheckin = min;
+            localStorage.setItem('laundry_reward_discount', disc);
+            localStorage.setItem('laundry_reward_min_checkin', min);
+            document.getElementById('reward-config-status').innerText = `Diskon ${disc}% (min ${min} check-in)`;
+            document.getElementById('reward-discount-display').innerText = disc + '%';
+            showToast('Konfigurasi reward disimpan!', 'success');
+        }
+
+        function loadRewardConfig() {
+            const disc = document.getElementById('reward-discount-percent');
+            const min = document.getElementById('reward-min-checkin');
+            if (disc) disc.value = rewardConfig.discountPercent;
+            if (min) min.value = rewardConfig.minCheckin;
+            document.getElementById('reward-config-status').innerText =
+                `Diskon ${rewardConfig.discountPercent}% (min ${rewardConfig.minCheckin} check-in)`;
+            document.getElementById('reward-discount-display').innerText = rewardConfig.discountPercent + '%';
+        }
+
+        // ================================================================
+        // PROMO CONFIG
+        // ================================================================
+        function savePromoConfig() {
+            const msg = document.getElementById('promo-message').value.trim();
+            const end = document.getElementById('promo-end-date').value;
+            if (!msg) return showToast('Pesan promo harus diisi!', 'warning');
+            if (!end) return showToast('Pilih tanggal berakhir!', 'warning');
+            promoConfig.message = msg;
+            promoConfig.endDate = new Date(end).toISOString();
+            localStorage.setItem('laundry_promo_message', msg);
+            localStorage.setItem('laundry_promo_end', promoConfig.endDate);
+            showToast('Promo berhasil disimpan!', 'success');
+            renderPromoPublic();
+        }
+
+        function loadPromoConfig() {
+            const msg = document.getElementById('promo-message');
+            const end = document.getElementById('promo-end-date');
+            if (msg) msg.value = promoConfig.message;
+            if (end) end.value = new Date(promoConfig.endDate).toISOString().slice(0, 16);
+        }
+
+        function renderPromoPublic() {
+            // Update marquee
+            const track = document.getElementById('promo-marquee-text');
+            const clone = document.getElementById('promo-marquee-text-clone');
+            if (track) track.innerText = promoConfig.message;
+            if (clone) clone.innerText = promoConfig.message;
+
+            // Update promo detail section
+            const title = document.getElementById('public-promo-title');
+            const msg = document.getElementById('public-promo-message');
+            if (title) title.innerText = 'Promo Spesial';
+            if (msg) msg.innerText = promoConfig.message;
+
+            // Countdown
+            const target = new Date(promoConfig.endDate);
+            const interval = setInterval(() => {
+                const now = new Date();
+                const diff = target - now;
+                if (diff <= 0) {
+                    clearInterval(interval);
+                    return;
+                }
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
+                document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
+                document.getElementById('cd-minutes').innerText = String(minutes).padStart(2, '0');
+                document.getElementById('cd-seconds').innerText = String(seconds).padStart(2, '0');
+            }, 1000);
+        }
+
+        // ================================================================
+        // POPUPS
+        // ================================================================
+        function bukaPintuReward() { const o = document.getElementById('reward-gate'); if (!o) return; o.classList.remove(
+                'hidden');
+            setTimeout(() => o.classList.add('flex'), 10);
+            renderCheckinGrid(); }
+
+        function tutupPintuReward() { const o = document.getElementById('reward-gate'); if (!o) return; o.classList.remove(
+                'flex');
+            setTimeout(() => o.classList.add('hidden'), 300); }
+
+        function bukaPintuLogin() { const o = document.getElementById('login-gate'); if (!o) return; o.classList.remove(
+                'hidden');
+            setTimeout(() => o.classList.add('flex'), 10); }
+
+        function tutupPintuLogin() { const o = document.getElementById('login-gate'); if (!o) return; o.classList.remove(
+                'flex');
+            setTimeout(() => o.classList.add('hidden'), 300); }
+
+        function togglePasswordVisibility() { const p = document.getElementById('gate-password'); if (!p) return; p.type = p
+                .type === "password" ? "text" : "password";
+            document.getElementById('eye-icon').textContent = p.type === "password" ? "👁️" : "🙈"; }
+
+        function checkGateLogin() {
+            const u = document.getElementById('gate-username').value.trim();
+            const p = document.getElementById('gate-password').value;
+            if (!u || !p) return showToast('Lengkapi kolom otentikasi!', 'warning');
+            if (p === "owner2026") { currentRole = "owner";
+                activeUserRealName = u + " (Owner)"; } else if (p === "admin2026") { currentRole = "admin";
+                activeUserRealName = u + " (Admin)"; } else return showToast('Kunci sandi salah! Akses ditolak.', 'error');
+            localStorage.setItem('laundry_role', currentRole);
+            localStorage.setItem('laundry_name', activeUserRealName);
+            openDashboardSystem(true);
+        }
+
+        // ================================================================
+        // DASHBOARD / LOGOUT
+        // ================================================================
+        function openDashboardSystem(anim) {
+            tutupPintuLogin();
+            document.getElementById('public-page').classList.add('hidden');
+            document.getElementById('admin-workspace').classList.remove('hidden');
+            const floater = document.getElementById('client-floating-controls');
+            if (floater) floater.style.display = 'none';
+            document.getElementById('current-role').innerText = activeUserRealName;
+            const btnReset = document.getElementById('btn-reset-db');
+            const secLogExp = document.getElementById('section-log-pengeluaran');
+            if (currentRole === "owner") {
+                if (btnReset) btnReset.style.display = "inline-block";
+                if (secLogExp) secLogExp.style.display = "block";
+            } else {
+                if (btnReset) btnReset.style.display = "none";
+                if (secLogExp) secLogExp.style.display = "none";
+            }
+            loadRewardConfig();
+            loadPromoConfig();
+            renderPromoPublic();
+            initCharts();
+            renderAllData();
+            showToast('Dashboard terbuka!', 'success');
+        }
+
+        function executeLogout() {
+            currentRole = "belum_login";
+            activeUserRealName = "";
+            localStorage.clear();
+            document.getElementById('admin-workspace').classList.add('hidden');
+            document.getElementById('public-page').classList.remove('hidden');
+            const floater = document.getElementById('client-floating-controls');
+            if (floater) floater.style.display = 'flex';
+            showPage('public');
+            showToast('Sesi berakhir.', 'info');
+        }
+
+        // ================================================================
+        // SWITCH PAGE
+        // ================================================================
+        function switchPage(pageId, element) {
+            document.querySelectorAll('.db-page').forEach(s => s.classList.remove('active'));
+            const pNode = document.getElementById(pageId);
+            if (pNode) pNode.classList.add('active');
+            document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.menu-item-mobile').forEach(m => {
+                m.classList.remove('text-blue-600');
+                m.classList.add('text-slate-500');
+            });
+            if (element) {
+                element.classList.add('active');
+                if (element.classList.contains('menu-item-mobile')) {
+                    element.classList.remove('text-slate-500');
+                    element.classList.add('text-blue-600');
+                }
+            }
+            if (pageId === 'dashboard') setTimeout(() => { updateChartsData();
+                renderAllData(); }, 50);
+            if (pageId === 'laporan-page') setTimeout(renderLaporanKeuangan, 50);
+            if (pageId === 'pelanggan-page') setTimeout(renderAllCustomers, 50);
+            if (pageId === 'layanan-populer-page') setTimeout(renderPopularServices, 50);
+            if (pageId === 'inventaris-page') setTimeout(renderInventaris, 50);
+            if (pageId === 'reward-config-page') { loadRewardConfig();
+                loadPromoConfig();
+                renderRewardWinners(); }
+        }
+
+        // ================================================================
+        // JADWAL
+        // ================================================================
+        function syncJadwalTokoUI() {
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+            const pub = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+            set('setting-jadwal-weekday', window.schedule.weekday);
+            set('setting-jadwal-sabtu', window.schedule.sabtu);
+            set('setting-jadwal-minggu', window.schedule.minggu);
+            pub('public-jadwal-weekday', window.schedule.weekday);
+            pub('public-jadwal-sabtu', window.schedule.sabtu);
+            pub('public-jadwal-minggu', window.schedule.minggu);
+        }
+
+        function simpanJadwalToko() {
+            const w = document.getElementById('setting-jadwal-weekday').value.trim();
+            const s = document.getElementById('setting-jadwal-sabtu').value.trim();
+            const m = document.getElementById('setting-jadwal-minggu').value.trim();
+            if (!w || !s || !m) return showToast('Semua kolom jadwal harus diisi!', 'warning');
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_operational_schedule'), { weekday: w, sabtu: s, minggu: m });
+            showToast('Jadwal diperbarui!', 'success');
+        }
+
+        // ================================================================
+        // LACAK
+        // ================================================================
+        function lacakNotaPelanggan() {
+            const val = document.getElementById('search-nota-input').value.trim();
+            const box = document.getElementById('hasil-lacak-box');
+            if (!val) return showToast('Masukkan nomor nota!', 'warning');
+            const item = window.orders.find(o => String(o.noNota) === String(val));
+            if (item && box) {
+                box.classList.remove('hidden');
+                document.getElementById('lacak-nama').innerText = "Nama: " + item.nama;
+                document.getElementById('lacak-layanan').innerText = "Paket: " + item.layanan + " (" + item.berat +
+                " Kg/Pcs)";
+                document.getElementById('lacak-total').innerText = "Rp " + item.total.toLocaleString('id-ID');
+                document.getElementById('lacak-antar').innerText = "Metode: " + (item.antar || "Ambil Sendiri");
+                const tglSelesaiText = item.tanggalSelesai ? ` (${item.tanggalSelesai})` : "";
+                const b = document.getElementById('lacak-badge');
+                if (b) b.innerText = item.status === 'belum' ? "BELUM DICUCI" : item.status === 'proses' ?
+                    "SEDANG DICUCI" : item.status === 'siap' ? "SIAP DIAMBIL" : "SELESAI" + tglSelesaiText;
+                document.getElementById('qris-pay-wrapper').classList.remove('hidden');
+                showToast(`Data nota #${val} ditemukan!`, 'success');
+            } else {
+                if (box) box.classList.add('hidden');
+                showToast(`Nomor nota #${val} tidak ditemukan.`, 'error');
+            }
+        }
+
+        // ================================================================
+        // KALKULATOR PUBLIK
+        // ================================================================
+        function hitungKalkulatorPublik() {
+            const layanan = parseInt(document.getElementById('kalkulator-layanan').value);
+            const berat = parseFloat(document.getElementById('kalkulator-berat').value) || 0;
+            const total = layanan * berat;
+            document.getElementById('kalkulator-hasil').innerText = 'Rp ' + total.toLocaleString('id-ID');
+        }
+
+        // ================================================================
+        // KALKULATOR ORDER
+        // ================================================================
+        function hitungKalkulator() {
+            const sel = document.getElementById('input-layanan').value;
+            let tarif = sel === 'custom' ? (parseInt(document.getElementById('input-custom-harga').value) || 0) : parseInt(
+            sel);
+            const b = document.getElementById('input-berat').value;
+            const total = (b && b > 0) ? tarif * parseFloat(b) : 0;
+            document.getElementById('live-total').innerText = "Rp " + total.toLocaleString('id-ID');
+            return total;
+        }
+
+        function toggleCustomLayananField() {
+            const v = document.getElementById('input-layanan').value;
+            document.getElementById('custom-layanan-wrapper').style.display = (v === 'custom') ? "block" : "none";
+        }
+
+        function resetForm() {
+            document.getElementById('input-nama').value = "";
+            document.getElementById('input-phone').value = "";
+            document.getElementById('input-alamat').value = "";
+            document.getElementById('input-berat').value = "";
+            document.getElementById('input-layanan').value = "7000";
+            document.getElementById('input-metode').value = "Tunai";
+            toggleCustomLayananField();
+            document.getElementById('live-total').innerText = "Rp 0";
+        }
+
+        // ================================================================
+        // ORDER CRUD
+        // ================================================================
+        function tambahOrderan() {
+            const nama = document.getElementById('input-nama').value.trim();
+            const phone = document.getElementById('input-phone').value.trim();
+            const alamat = document.getElementById('input-alamat').value.trim();
+            const sel = document.getElementById('input-layanan');
+            const berat = document.getElementById('input-berat').value;
+            const metode = document.getElementById('input-metode').value;
+            let layText = sel.value === 'custom' ? document.getElementById('input-custom-nama').value.trim() : sel.options[
+                sel.selectedIndex].text.split(' (')[0];
+            if (!nama || !phone || !berat || berat <= 0) return showToast('Lengkapi semua data order!', 'warning');
+            const id = String(Date.now());
+            const tot = hitungKalkulator();
+            const obj = { id, timestamp: new Date().toISOString(), noNota: window.nextOrderNumber, nama, phone, alamat,
+                layanan: layText, antar: "Antar Jemput", berat: parseFloat(berat), total: tot, status: 'belum',
+                metode: metode, hari: new Date().toLocaleDateString('id-ID', { weekday: 'long' }) };
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_orders/' + id), obj);
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_next_number'), window.nextOrderNumber + 1);
+            showToast(`Pesanan #${window.nextOrderNumber} tersimpan!`, 'success');
+            resetForm();
+            switchPage('dashboard', document.querySelectorAll('.menu-item')[0]);
+        }
+
+        function hapusOrderan(id) {
+            if (!confirm("Hapus data order ini secara permanen?")) return;
+            const item = window.orders.find(o => String(o.id) === String(id));
+            if (!item) return;
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_delete_logs/' + Date.now()), { waktu: new Date()
+                    .toLocaleString('id-ID'), nama: item.nama, noNota: item.noNota, layanan: item.layanan,
+                total: item.total });
+            window.dbRemove(window.dbRef(window.firebaseDb, 'laundry_orders/' + id));
+            showToast(`Order #${item.noNota} dihapus.`, 'error');
+        }
+
+        function rotasiStatus(id, cur) {
+            if (cur === 'selesai') return;
+            const nxt = cur === 'belum' ? 'proses' : cur === 'proses' ? 'siap' : cur === 'siap' ? 'selesai' : 'belum';
+            const updates = { status: nxt };
+            if (nxt === 'selesai') { const now = new Date();
+                updates.tanggalSelesai = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }); }
+            window.dbUpdate(window.dbRef(window.firebaseDb, 'laundry_orders/' + id), updates);
+        }
+
+        function rotasiMetodeAntarTabel(id) {
+            const item = window.orders.find(o => String(o.id) === String(id));
+            if (!item || item.status === 'selesai') return;
+            window.dbUpdate(window.dbRef(window.firebaseDb, 'laundry_orders/' + id), { antar: item.antar ===
+                    "Antar Jemput" ? "Ambil Sendiri" : "Antar Jemput" });
+        }
+
+        function bukaGoogleCalendarLaundry(noNota, nama, layanan, metode) {
+            const title = encodeURIComponent(`[${metode.toUpperCase()}] Laundry Nota #${noNota} - ${nama}`);
+            const details = encodeURIComponent(`Detail:\nPelanggan: ${nama}\nLayanan: ${layanan}\nMetode: ${metode}\nWorkshop Bekasi`);
+            const loc = encodeURIComponent(`Workshop Admin Laundry Bekasi`);
+            window.open(
+                `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${loc}`,
+                '_blank');
+        }
+
+        // ================================================================
+        // PENGELUARAN
+        // ================================================================
+        function tambahPengeluaran() {
+            const item = document.getElementById('expense-item').value.trim();
+            const cost = parseInt(document.getElementById('expense-cost').value);
+            if (!item || !cost || cost <= 0) return showToast('Isi deskripsi dan nominal pengeluaran!', 'warning');
+            const id = String(Date.now());
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_expenses/' + id), { id, timestamp: new Date()
+                    .toISOString(), item, cost });
+            document.getElementById('expense-item').value = "";
+            document.getElementById('expense-cost').value = "";
+            showToast(`Pengeluaran "${item}" dicatat.`, 'success');
+        }
+
+        function deletePengeluaran(id) {
+            const match = window.expenses.find(e => String(e.id) === String(id));
+            if (!match) return;
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_delete_expense_logs/' + Date.now()), { waktu: new Date()
+                    .toLocaleString('id-ID'), item: match.item, cost: match.cost, oleh: activeUserRealName });
+            window.dbRemove(window.dbRef(window.firebaseDb, 'laundry_expenses/' + id));
+            showToast(`Pengeluaran "${match.item}" dihapus.`, 'error');
+        }
+
+        // ================================================================
+        // TARGET HARIAN
+        // ================================================================
+        let targetHarian = parseInt(localStorage.getItem('laundry_target_harian')) || 1000000;
+
+        function aturTargetHarian() {
+            const val = document.getElementById('input-target-harian').value.trim();
+            if (!val || parseInt(val) <= 0) return showToast('Masukkan nominal target yang valid!', 'warning');
+            targetHarian = parseInt(val);
+            localStorage.setItem('laundry_target_harian', targetHarian);
+            updateTargetProgress();
+            showToast('Target harian diperbarui!', 'success');
+        }
+
+        function updateTargetProgress() {
+            const today = new Date().toDateString();
+            const todayIncome = window.orders.filter(o => o.status === 'selesai' && new Date(o.timestamp).toDateString() ===
+                today).reduce((s, o) => s + o.total, 0);
+            const pct = Math.min((todayIncome / targetHarian) * 100, 100);
+            const bar = document.getElementById('target-progress-bar');
+            const text = document.getElementById('target-progress-text');
+            const status = document.getElementById('target-status-text');
+            if (bar) bar.style.width = pct + '%';
+            if (text) text.innerText = `Rp ${todayIncome.toLocaleString('id-ID')} / Rp ${targetHarian.toLocaleString('id-ID')}`;
+            if (status) status.innerText = pct >= 100 ? 'Target Tercapai!' : 'Tetap semangat!';
+        }
+
+        // ================================================================
+        // LAPORAN BULANAN
+        // ================================================================
+        function generateLaporanBulanan() {
+            const bulan = parseInt(document.getElementById('laporan-bulan').value);
+            const tahun = parseInt(document.getElementById('laporan-tahun').value);
+            const result = document.getElementById('laporan-bulanan-result');
+            if (!result) return;
+            const filtered = window.orders.filter(o => { const d = new Date(o.timestamp); return d.getMonth() === bulan &&
+                    d.getFullYear() === tahun && o.status === 'selesai'; });
+            const totalIncome = filtered.reduce((s, o) => s + o.total, 0);
+            const totalExpense = window.expenses.filter(e => { const d = new Date(e.timestamp); return d.getMonth() ===
+                    bulan && d.getFullYear() === tahun; }).reduce((s, e) => s + e.cost, 0);
+            result.innerHTML =
+                `<div class="nm-card-inset p-4 space-y-2"><div class="flex justify-between"><span class="font-black">Total Order Selesai:</span><span>${filtered.length} order</span></div><div class="flex justify-between"><span class="font-black">Total Pendapatan:</span><span class="text-emerald-600 font-black">Rp ${totalIncome.toLocaleString('id-ID')}</span></div><div class="flex justify-between"><span class="font-black">Total Pengeluaran:</span><span class="text-red-500 font-black">Rp ${totalExpense.toLocaleString('id-ID')}</span></div><div class="flex justify-between border-t pt-2"><span class="font-black text-lg">Laba Bersih:</span><span class="text-blue-600 font-black text-lg">Rp ${(totalIncome - totalExpense).toLocaleString('id-ID')}</span></div></div>`;
+        }
+
+        // ================================================================
+        // INVENTARIS
+        // ================================================================
+        function renderInventaris() {
+            const tbody = document.getElementById('tabel-inventaris');
+            if (!tbody) return;
+            if (inventaris.length === 0) { tbody.innerHTML =
+                `<tr><td colspan="3" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr>`; return; }
+            tbody.innerHTML = '';
+            inventaris.forEach((item, idx) => {
+                tbody.innerHTML +=
+                    `<tr><td class="py-2 px-2 font-semibold">${item.nama}</td><td class="py-2 px-2">${item.jumlah}</td><td class="py-2 px-2 text-center"><button onclick="hapusInventaris(${idx})" class="nm-btn text-xs font-black px-3 py-1 rounded-xl text-red-500 border">Hapus</button></td></tr>`;
+            });
+        }
+
+        function tambahInventaris() {
+            const nama = document.getElementById('inventaris-nama').value.trim();
+            const jumlah = parseInt(document.getElementById('inventaris-jumlah').value);
+            if (!nama || !jumlah || jumlah <= 0) return showToast('Isi data dengan benar!', 'warning');
+            inventaris.push({ nama, jumlah });
+            localStorage.setItem('laundry_inventaris', JSON.stringify(inventaris));
+            document.getElementById('inventaris-nama').value = '';
+            document.getElementById('inventaris-jumlah').value = '';
+            renderInventaris();
+            showToast(`Stok ${nama} ditambahkan!`, 'success');
+        }
+
+        function hapusInventaris(idx) {
+            if (!confirm('Hapus item ini?')) return;
+            inventaris.splice(idx, 1);
+            localStorage.setItem('laundry_inventaris', JSON.stringify(inventaris));
+            renderInventaris();
+            showToast('Item dihapus.', 'error');
+        }
+
+        // ================================================================
+        // RENDER ALL DATA
+        // ================================================================
+        function renderAllData() {
+            renderTable();
+            renderExpensesTable();
+            renderTopCustomers();
+            renderLaporanKeuangan();
+            renderAllCustomers();
+            renderPopularServices();
+            renderTodayStats();
+            renderExtraStats();
+            renderBarChartLayanan();
+            renderInventaris();
+            renderRewardWinners();
+            renderCheckinStats();
+            updateChartsData();
+            updateCounters();
+            checkNewOrder();
+        }
+
+        function checkNewOrder() {
+            const currentCount = window.orders.length;
+            if (currentCount > lastOrderCount && lastOrderCount > 0) {
+                const newOrder = window.orders[0];
+                if (newOrder) showNotification(`Order baru dari ${newOrder.nama} - #${newOrder.noNota}`, 'success');
+            }
+            lastOrderCount = currentCount;
+        }
+
+        // ================================================================
+        // RENDER TABLES
+        // ================================================================
+        function renderTable() {
+            const tAntrean = document.getElementById('tabel-antrean');
+            const tArsip = document.getElementById('tabel-arsip');
+            if (!tAntrean || !tArsip) return;
+            tAntrean.innerHTML = "";
+            tArsip.innerHTML = "";
+            const rev = [...window.orders].reverse();
+            rev.forEach(o => {
+                if (!o) return;
+                const isSelesai = o.status === 'selesai';
+                let sText = o.status === 'proses' ? "Sedang Dicuci" : o.status === 'siap' ? "Siap Diambil" :
+                    isSelesai ? "Selesai" : "Belum Dicuci";
+                if (isSelesai && o.tanggalSelesai) sText += ` (${o.tanggalSelesai})`;
+                const aText = o.antar || "Antar Jemput";
+                const badgeColor = o.status === 'belum' ?
+                    'bg-red-100 text-red-600 border border-red-200' : o.status === 'proses' ?
+                    'bg-amber-100 text-amber-600 border border-amber-200' : o.status === 'siap' ?
+                    'bg-sky-100 text-sky-600 border border-sky-200' :
+                    'bg-emerald-100 text-emerald-600 border border-emerald-200';
+                const txWA = encodeURIComponent(
+                    `Halo Kak ${o.nama},\nNota: *#${o.noNota}*\nStatus: *${sText.toUpperCase()}*.`);
+                const clickAttr = isSelesai ? "" : `onclick="rotasiStatus('${o.id}','${o.status}')"`;
+                const cursor = isSelesai ?
+                    "cursor-default opacity-90 select-none" :
+                    "transition duration-150 cursor-pointer";
+
+                const rowAntrean =
+                    `<tr class="hover:bg-zinc-500/5 transition">
+                    <td class="py-4 px-4"><span class="font-bold">#${o.noNota}</span></td>
+                    <td class="py-4 px-3">${o.hari || '-'}</td>
+                    <td class="py-4 px-3"><strong>${o.nama}</strong></td>
+                    <td class="py-4 px-3">${o.phone}</td>
+                    <td class="py-4 px-3">${o.layanan}</td>
+                    <td class="py-4 px-3"><button class="nm-btn text-xs font-black px-3 py-1.5 rounded-xl border" ${isSelesai ? 'disabled' : `onclick="rotasiMetodeAntarTabel('${o.id}')"`}>${aText}</button></td>
+                    <td class="py-4 px-3">${o.berat} Qty</td>
+                    <td class="py-4 px-3 font-black text-emerald-600">Rp ${o.total.toLocaleString('id-ID')}</td>
+                    <td class="py-4 px-3"><button class="px-4 py-2 rounded-full font-black tracking-wide ${badgeColor} shadow-sm ${cursor}" ${clickAttr}>${sText}</button></td>
+                    <td class="py-4 px-3"><button class="nm-btn text-[11px] px-3 py-1.5 rounded-lg text-indigo-600 font-black tracking-wide border" onclick="bukaGoogleCalendarLaundry('${o.noNota}','${o.nama}','${o.layanan}','${aText}')">Plot</button></td>
+                    <td class="py-4 px-3"><a href="https://api.whatsapp.com/send?phone=${o.phone}&text=${txWA}" target="_blank" class="nm-btn text-xs font-black px-3 py-1.5 rounded-xl text-blue-600 border">Kirim WA</a></td>
+                    <td class="py-4 px-4 text-center"><button class="nm-btn text-xs font-black px-3 py-1.5 rounded-xl text-red-500 border" onclick="hapusOrderan('${o.id}')">Hapus</button></td>
+                </tr>`;
+
+                const rowArsip =
+                    `<tr class="hover:bg-zinc-500/5 transition">
+                    <td class="py-4 px-4"><span class="font-bold">#${o.noNota}</span></td>
+                    <td class="py-4 px-3">${o.hari || '-'}</td>
+                    <td class="py-4 px-3"><strong>${o.nama}</strong></td>
+                    <td class="py-4 px-3">${o.phone}</td>
+                    <td class="py-4 px-3">${o.layanan}</td>
+                    <td class="py-4 px-3"><span class="text-slate-500">${aText}</span></td>
+                    <td class="py-4 px-3">${o.berat} Qty</td>
+                    <td class="py-4 px-3 font-black text-emerald-600">Rp ${o.total.toLocaleString('id-ID')}</td>
+                    <td class="py-4 px-3"><span class="px-4 py-2 rounded-full font-black tracking-wide ${badgeColor}">${sText}</span></td>
+                    <td class="py-4 px-3"><button class="nm-btn text-[11px] px-3 py-1.5 rounded-lg text-indigo-600 font-black tracking-wide border" onclick="bukaGoogleCalendarLaundry('${o.noNota}','${o.nama}','${o.layanan}','${aText}')">Plot</button></td>
+                    <td class="py-4 px-3"><a href="https://api.whatsapp.com/send?phone=${o.phone}&text=${txWA}" target="_blank" class="nm-btn text-xs font-black px-3 py-1.5 rounded-xl text-blue-600 border">Kirim WA</a></td>
+                    <td class="py-4 px-4 text-center"><button class="nm-btn text-xs font-black px-3 py-1.5 rounded-xl text-red-500 border" onclick="hapusOrderan('${o.id}')">Hapus</button></td>
+                </tr>`;
+
+                if (isSelesai) tArsip.innerHTML += rowArsip;
+                else tAntrean.innerHTML += rowAntrean;
+            });
+            renderDeleteLogs();
+            renderDeleteExpenseLogs();
+            const sesi = document.getElementById('tabel-sesi-aktif');
+            if (sesi) sesi.innerHTML =
+                `<tr><td class="py-3 pl-2"><strong>${activeUserRealName}</strong></td><td class="py-3 px-2"><span class="text-blue-600 font-black tracking-widest">${currentRole.toUpperCase()}</span></td></tr>`;
+        }
+
+        function renderExpensesTable() {
+            const t = document.getElementById('tabel-pengeluaran');
+            if (!t) return;
+            t.innerHTML = window.expenses.length ? "" :
+                `<tr><td colspan="3" class="text-slate-400 py-6 text-center font-bold">Belum ada data.</td></tr>`;
+            [...window.expenses].reverse().forEach(e => {
+                t.innerHTML +=
+                    `<tr class="hover:bg-zinc-500/5 transition"><td class="py-3 px-2 font-semibold">${e.item}</td><td class="py-3 px-2 text-red-500 font-bold">Rp ${e.cost.toLocaleString('id-ID')}</td><td class="py-3 px-2 text-center"><button class="nm-btn text-xs font-black px-3 py-1 rounded-xl text-red-500 border" onclick="deletePengeluaran('${e.id}')">Hapus</button></td></tr>`;
+            });
+        }
+
+        function renderDeleteLogs() {
+            const t = document.getElementById('tabel-log-hapus');
+            if (!t) return;
+            t.innerHTML = window.deleteLogs.length ? "" :
+                `<tr><td colspan="4" class="text-slate-400 py-4 text-center font-bold">Log kosong.</td></tr>`;
+            window.deleteLogs.forEach(l => { t.innerHTML +=
+                    `<tr><td class="py-3 px-3">${l.waktu}</td><td class="py-3 px-3">${l.nama} (#${l.noNota})</td><td class="py-3 px-3">${l.layanan}</td><td class="py-3 px-3 text-red-500 font-bold">Rp ${l.total.toLocaleString('id-ID')}</td></tr>`; });
+        }
+
+        function renderDeleteExpenseLogs() {
+            const t = document.getElementById('tabel-log-hapus-pengeluaran');
+            if (!t) return;
+            t.innerHTML = window.deleteExpenseLogs.length ? "" :
+                `<tr><td colspan="4" class="text-center py-4 text-slate-400 font-bold">Log kosong.</td></tr>`;
+            window.deleteExpenseLogs.forEach(l => { t.innerHTML +=
+                    `<tr><td class="py-3 px-2">${l.waktu}</td><td class="py-3 px-2">${l.item}</td><td class="py-3 px-2">${l.oleh}</td><td class="py-3 px-2 text-red-500 font-bold">Rp ${l.cost.toLocaleString('id-ID')}</td></tr>`; });
+        }
+
+        function renderRewardDashboard(dataArray) {
+            const body = document.getElementById('tabel-pemenang-reward');
+            if (!body) return;
+            if (!dataArray || dataArray.length === 0) { body.innerHTML =
+                    `<tr><td colspan="3" class="text-slate-400 py-4 text-center font-bold">Belum ada data.</td></tr>`; return; }
+            body.innerHTML = '';
+            dataArray.reverse().forEach(r => {
+                body.innerHTML +=
+                    `<tr><td class="py-3 px-3">${r.waktu || '-'}</td><td class="py-3 px-3"><strong>${r.nama}</strong></td><td class="py-3 px-3"><span class="bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 px-3 py-1 rounded-full font-black text-[10px] tracking-wide">${r.status || 'Terkonfirmasi'}</span></td></tr>`;
+            });
+        }
+
+        function renderRewardWinners() {
+            const tbody = document.getElementById('tabel-reward-winners');
+            if (!tbody) return;
+            const winners = window.rewards || [];
+            if (winners.length === 0) { tbody.innerHTML =
+                    `<tr><td colspan="3" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr>`; return; }
+            tbody.innerHTML = '';
+            winners.forEach(r => {
+                tbody.innerHTML +=
+                    `<tr><td class="py-2 px-2 font-semibold">${r.nama}</td><td class="py-2 px-2">${r.waktu || '-'}</td><td class="py-2 px-2 text-indigo-600 font-black">${r.diskon || '15%'}</td></tr>`;
+            });
+            // History
+            const histBody = document.getElementById('tabel-reward-history');
+            if (histBody) {
+                histBody.innerHTML = '';
+                winners.slice(0, 20).forEach(r => {
+                    histBody.innerHTML +=
+                        `<tr><td class="py-2 px-2">${r.waktu || '-'}</td><td class="py-2 px-2 font-semibold">${r.nama}</td><td class="py-2 px-2 text-indigo-600 font-black">${r.diskon || '15%'}</td><td class="py-2 px-2"><span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-black">Aktif</span></td></tr>`;
+                });
+                if (winners.length === 0) histBody.innerHTML =
+                    `<tr><td colspan="4" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr>`;
+            }
+        }
+
+        function renderCheckinStats() {
+            const container = document.getElementById('checkin-stats');
+            if (!container) return;
+            const ref = window.dbRef(window.firebaseDb, `laundry_checkins`);
+            window.dbOnValue(ref, (snap) => {
+                if (!snap.exists()) { container.innerHTML = '<p class="text-slate-400">Belum ada check-in.</p>'; return; }
+                const data = snap.val();
+                let html = '';
+                Object.keys(data).forEach(nama => {
+                    const dates = Object.keys(data[nama]);
+                    html +=
+                        `<div class="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800 py-1"><span class="font-semibold">${nama}</span><span class="text-blue-600 font-black">${dates.length} check-in</span></div>`;
+                });
+                container.innerHTML = html;
+            }, { onlyOnce: true });
+        }
+
+        // ================================================================
+        // STATS & COUNTERS
+        // ================================================================
+        function updateCounters() {
+            const omzetKotor = window.orders.filter(o => o.status !== 'belum').reduce((s, o) => s + o.total, 0);
+            const totalEx = window.expenses.reduce((s, e) => s + e.cost, 0);
+            const set = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+            set('count-belum', window.orders.filter(o => o.status === 'belum').length + " Order");
+            set('count-proses', window.orders.filter(o => o.status === 'proses').length + " Order");
+            set('count-siap', window.orders.filter(o => o.status === 'siap').length + " Order");
+            set('count-selesai', window.orders.filter(o => o.status === 'selesai').length + " Order");
+            set('total-pengeluaran-display', "Rp " + totalEx.toLocaleString('id-ID'));
+            set('total-pendapatan', "Rp " + (omzetKotor - totalEx).toLocaleString('id-ID'));
+            const selesai = window.orders.filter(o => o.status === 'selesai').length;
+            const express = window.orders.filter(o => o.layanan && o.layanan.toLowerCase().includes('express')).length;
+            const rewardCount = window.rewards ? window.rewards.length : 0;
+            document.getElementById('stat-cucian').innerText = selesai;
+            document.getElementById('stat-pelanggan').innerText = window.orders.length;
+            document.getElementById('stat-express').innerText = express;
+            document.getElementById('stat-reward').innerText = rewardCount;
+        }
+
+        function renderTodayStats() {
+            const today = new Date().toDateString();
+            const todayIncome = window.orders.filter(o => o.status === 'selesai' && new Date(o.timestamp).toDateString() ===
+                today).reduce((s, o) => s + o.total, 0);
+            const todayExpense = window.expenses.filter(e => new Date(e.timestamp).toDateString() === today).reduce((s,
+            e) => s + e.cost, 0);
+            document.getElementById('today-income').innerText = 'Rp ' + todayIncome.toLocaleString('id-ID');
+            document.getElementById('today-expense').innerText = 'Rp ' + todayExpense.toLocaleString('id-ID');
+            document.getElementById('today-profit').innerText = 'Rp ' + (todayIncome - todayExpense).toLocaleString(
+            'id-ID');
+            updateTargetProgress();
+        }
+
+        function renderExtraStats() {
+            const now = new Date();
+            const sevenDays = new Date(now);
+            sevenDays.setDate(sevenDays.getDate() - 7);
+            const total7 = window.orders.filter(o => o.status === 'selesai' && new Date(o.timestamp) >= sevenDays)
+                .reduce((s, o) => s + o.total, 0);
+            const avg = Math.round(total7 / 7);
+            document.getElementById('stat-rata-harian').innerText = 'Rp ' + avg.toLocaleString('id-ID');
+            const dayMap = {};
+            window.orders.forEach(o => { if (o.status === 'selesai') { const d = new Date(o.timestamp).toDateString();
+                    if (!dayMap[d]) dayMap[d] = 0;
+                    dayMap[d]++; } });
+            const maxOrder = Object.values(dayMap).reduce((a, b) => Math.max(a, b), 0);
+            document.getElementById('stat-order-terbanyak').innerText = maxOrder;
+            const unique = new Set(window.orders.map(o => o.nama));
+            document.getElementById('stat-total-pelanggan').innerText = unique.size;
+            const totalBerat = window.orders.reduce((s, o) => s + (parseFloat(o.berat) || 0), 0);
+            document.getElementById('stat-total-item').innerText = totalBerat.toFixed(1) + ' kg';
+        }
+
+        function renderTopCustomers() {
+            const tbody = document.getElementById('tabel-top-customer');
+            if (!tbody) return;
+            const map = {};
+            window.orders.forEach(o => { if (o.status === 'selesai') { if (!map[o.nama]) map[o.nama] = {
+                        totalTransaksi: 0,
+                        totalBelanja: 0 };
+                    map[o.nama].totalTransaksi += 1;
+                    map[o.nama].totalBelanja += o.total; } });
+            const sorted = Object.entries(map).sort((a, b) => b[1].totalBelanja - a[1].totalBelanja).slice(0, 5);
+            if (sorted.length === 0) { tbody.innerHTML =
+                    `<tr><td colspan="4" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr>`; return; }
+            tbody.innerHTML = '';
+            sorted.forEach(([nama, data], idx) => {
+                tbody.innerHTML +=
+                    `<tr><td class="py-3 px-3 font-black text-blue-600">${idx+1}</td><td class="py-3 px-3 font-semibold">${nama}</td><td class="py-3 px-3">${data.totalTransaksi} kali</td><td class="py-3 px-3 font-black text-emerald-600">Rp ${data.totalBelanja.toLocaleString('id-ID')}</td></tr>`;
+            });
+        }
+
+        function renderLaporanKeuangan() {
+            const totalPemasukan = window.orders.filter(o => o.status !== 'belum').reduce((s, o) => s + o.total, 0);
+            const totalPengeluaran = window.expenses.reduce((s, e) => s + e.cost, 0);
+            const labaBersih = totalPemasukan - totalPengeluaran;
+            const orderSelesai = window.orders.filter(o => o.status === 'selesai').length;
+            const orderAktif = window.orders.filter(o => o.status !== 'selesai').length;
+            document.getElementById('laporan-pemasukan').innerText = 'Rp ' + totalPemasukan.toLocaleString('id-ID');
+            document.getElementById('laporan-pengeluaran').innerText = 'Rp ' + totalPengeluaran.toLocaleString('id-ID');
+            document.getElementById('laporan-laba').innerText = 'Rp ' + labaBersih.toLocaleString('id-ID');
+            document.getElementById('laporan-order-selesai').innerText = orderSelesai;
+            document.getElementById('laporan-order-aktif').innerText = orderAktif;
+        }
+
+        function renderAllCustomers() {
+            const tbody = document.getElementById('tabel-semua-pelanggan');
+            if (!tbody) return;
+            const map = {};
+            window.orders.forEach(o => { if (!map[o.nama]) map[o.nama] = { total: 0, count: 0 };
+                map[o.nama].total += o.total;
+                map[o.nama].count += 1; });
+            const sorted = Object.entries(map).sort((a, b) => b[1].total - a[1].total);
+            if (sorted.length === 0) { tbody.innerHTML =
+                    `<tr><td colspan="5" class="text-slate-400 py-6 text-center">Belum ada pelanggan.</td></tr>`; return; }
+            tbody.innerHTML = '';
+            sorted.forEach(([nama, data], idx) => {
+                tbody.innerHTML +=
+                    `<tr class="hover:bg-zinc-500/5 transition"><td class="py-4 px-4 font-black text-blue-600">${idx+1}</td><td class="py-4 px-3 font-semibold">${nama}</td><td class="py-4 px-3">${data.count} kali</td><td class="py-4 px-3 font-black text-emerald-600">Rp ${data.total.toLocaleString('id-ID')}</td><td class="py-4 px-3 text-slate-500">Rp ${Math.round(data.total/data.count).toLocaleString('id-ID')}</td></tr>`;
+            });
+        }
+
+        function renderPopularServices() {
+            const list = document.getElementById('list-layanan-populer');
+            const ctx = document.getElementById('pieChartLayananPopuler');
+            if (!list || !ctx) return;
+            const map = {};
+            window.orders.forEach(o => { if (o.status === 'selesai') { const key = o.layanan || 'Lainnya'; if (!map[key])
+                        map[key] = 0;
+                    map[key]++; } });
+            const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]);
+            if (sorted.length === 0) { list.innerHTML = '<p class="text-slate-400 text-xs">Belum ada data.</p>'; return; }
+            list.innerHTML = sorted.map(([name, count]) =>
+                    `<div class="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800 py-2"><span class="font-semibold text-xs">${name}</span><span class="font-black text-xs text-blue-600">${count} order</span></div>`
+                )
+                .join('');
+            if (pieChartPopuler) pieChartPopuler.destroy();
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#ffffff' : '#000000';
+            const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444', '#14b8a6', '#f97316'];
+            pieChartPopuler = new Chart(ctx.getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: sorted.map(s => s[0]), datasets: [{ data: sorted.map(s => s[1]),
+                        backgroundColor: colors.slice(0, sorted.length), borderWidth: 0, hoverOffset: 12 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: {
+                            position: 'bottom', labels: { color: textColor, font: { weight: 'bold' },
+                                boxWidth: 12 } } } }
+            });
+        }
+
+        function renderBarChartLayanan() {
+            const ctx = document.getElementById('barChartLayanan');
+            if (!ctx) return;
+            const map = {};
+            window.orders.forEach(o => { if (o.status === 'selesai') { const key = o.layanan || 'Lainnya'; if (!map[key])
+                        map[key] = 0;
+                    map[key] += o.total; } });
+            const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]);
+            if (sorted.length === 0) { if (barChartLayanan) { barChartLayanan.destroy();
+                    barChartLayanan = null; } return; }
+            const labels = sorted.map(s => s[0]);
+            const data = sorted.map(s => s[1]);
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#ffffff' : '#000000';
+            const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)';
+            if (barChartLayanan) barChartLayanan.destroy();
+            barChartLayanan = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: { labels: labels, datasets: [{ label: 'Pendapatan (Rp)', data: data,
+                        backgroundColor: ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#ef4444',
+                            '#14b8a6'
+                        ], borderRadius: 8 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor,
+                                font: { weight: 'bold' } } } }, scales: { y: { grid: { color: gridColor },
+                            ticks: { color: textColor, callback: v => 'Rp ' + v.toLocaleString(
+                                'id-ID') } }, x: { grid: { color: gridColor }, ticks: { color: textColor } } } }
+            });
+        }
+
+        // ================================================================
+        // BULK & SEARCH
+        // ================================================================
+        function filterAntrean() {
+            const keyword = document.getElementById('search-antrean').value.toLowerCase();
+            document.querySelectorAll('#tabel-antrean tr').forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(keyword) ? '' : 'none';
+            });
+        }
+
+        function bulkStatusUpdate() {
+            showToast('Fitur bulk update dinonaktifkan (checkbox dihapus).', 'warning');
+        }
+
+        // ================================================================
+        // LIGHTBOX
+        // ================================================================
+        function bukaLightbox(el) {
+            const img = el.querySelector('img');
+            if (!img) return;
+            const modal = document.getElementById('lightbox-modal');
+            const target = document.getElementById('lightbox-img');
+            if (!modal || !target) return;
+            target.src = img.src;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function tutupLightbox() {
+            const modal = document.getElementById('lightbox-modal');
+            if (!modal) return;
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') tutupLightbox(); });
+
+        // ================================================================
+        // CHARTS
+        // ================================================================
+        function initCharts() {
+            const ctxL = document.getElementById('lineChartOmzet');
+            const ctxP = document.getElementById('pieChartLayanan');
+            if (!ctxL || !ctxP) return;
+            if (lineChart) lineChart.destroy();
+            if (pieChart) pieChart.destroy();
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)';
+            const textColor = isDark ? '#ffffff' : '#000000';
+            lineChart = new Chart(ctxL.getContext('2d'), {
+                type: 'line',
+                data: { labels: ['Mulai'], datasets: [{ label: 'Laba Bersih Kumulatif', data: [0],
+                        borderColor: '#2563eb', backgroundColor: 'rgba(37,99,235,0.06)', fill: true,
+                        tension: 0.2, borderWidth: 3, pointBackgroundColor: '#2563eb',
+                        pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor,
+                                font: { weight: 'bold' } } } }, scales: { y: { grid: { color: gridColor },
+                            ticks: { color: textColor, callback: v => 'Rp ' + v.toLocaleString(
+                                'id-ID') } }, x: { grid: { color: gridColor }, ticks: { color: textColor,
+                                maxTicksLimit: 15 } } } },
+                plugins: [{ id: 'glowPlugin', beforeDraw: (chart) => { const ctx = chart.ctx;
+                        ctx.save();
+                        ctx.shadowColor = isDark ? 'rgba(96,165,250,0.6)' : 'rgba(37,99,235,0.5)';
+                        ctx.shadowBlur = 12;
+                        ctx.shadowOffsetX = 0;
+                        ctx.shadowOffsetY = 4; }, afterDraw: (chart) => chart.ctx.restore() }]
+            });
+            pieChart = new Chart(ctxP.getContext('2d'), {
+                type: 'doughnut',
+                data: { labels: ['Belum', 'Proses', 'Siap', 'Selesai'], datasets: [{ data: [0, 0, 0, 0],
+                        backgroundColor: ['#ef4444', '#f59e0b', '#0284c7', '#10b981'], borderWidth: 0,
+                        hoverOffset: 12 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: {
+                            position: 'bottom', labels: { color: textColor, font: { weight: 'bold' } } } } }
+            });
+            updateChartsData();
+        }
+
+        function changeChartFilter(t) {
+            activeFilter = t;
+            document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById('filter-' + t);
+            if (btn) btn.classList.add('active');
+            updateChartsData();
+        }
+
+        function updateChartsData() {
+            if (!lineChart || !pieChart) return;
+            pieChart.data.datasets[0].data = [
+                window.orders.filter(o => o.status === 'belum').length,
+                window.orders.filter(o => o.status === 'proses').length,
+                window.orders.filter(o => o.status === 'siap').length,
+                window.orders.filter(o => o.status === 'selesai').length
+            ];
+            pieChart.update();
+            const timeline = [];
+            window.orders.forEach(o => { if (o.status !== 'belum') timeline.push({ type: 'in', amt: o.total,
+                    date: new Date(o.timestamp), key: o.nama }); });
+            window.expenses.forEach(e => { timeline.push({ type: 'out', amt: e.cost, date: new Date(e.timestamp),
+                    key: e.item }); });
+            timeline.sort((a, b) => a.date - b.date);
+            const labels = ['Mulai'];
+            const values = [0];
+            let balance = 0;
+            const now = new Date();
+            timeline.forEach(node => {
+                const diff = now - node.date;
+                let pass = false;
+                if (activeFilter === "perjam" && diff <= 24 * 60 * 60 * 1000) pass = true;
+                else if (activeFilter === "harian" && diff <= 7 * 24 * 60 * 60 * 1000) pass = true;
+                else if (activeFilter === "mingguan" && diff <= 30 * 24 * 60 * 60 * 1000) pass = true;
+                else if (activeFilter === "bulanan" && node.date.getMonth() === now.getMonth()) pass = true;
+                else if (activeFilter === "tahunan" && node.date.getFullYear() === now.getFullYear()) pass =
+                true;
+                if (pass || timeline.length <= 5) {
+                    balance += node.type === 'in' ? node.amt : -node.amt;
+                    labels.push(
+                        `${node.type === 'in' ? '+' : '-'} ${node.key} [${node.date.toLocaleDateString('id-ID',{day:'numeric',month:'short'})} ${node.date.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}]`
+                        );
+                    values.push(balance);
+                }
+            });
+            lineChart.data.labels = labels;
+            lineChart.data.datasets[0].data = values;
+            lineChart.data.datasets[0].borderColor = balance >= 0 ? '#10b981' : '#ef4444';
+            lineChart.update();
+            renderBarChartLayanan();
+        }
+
+        // ================================================================
+        // EXCEL & PDF
+        // ================================================================
+        function unduhRekapanExcel() {
+            if (!window.orders.length && !window.expenses.length) return showToast('Belum ada data untuk diekspor.',
+            'warning');
+            const arr = [
+                ["LAPORAN KAS MASUK"],
+                ["Tanggal:", new Date().toLocaleString()], [],
+                ["No", "Hari", "Nama", "Layanan", "Qty", "Total", "Status"]
+            ];
+            window.orders.forEach(o => arr.push([`#${o.noNota}`, o.hari || '-', o.nama, o.layanan, o.berat, o.total, o
+                .status.toUpperCase()
+            ]));
+            arr.push([], ["PENGELUARAN"], []);
+            arr.push(["Item", "Biaya", "Waktu"]);
+            window.expenses.forEach(e => arr.push([e.item, e.cost, new Date(e.timestamp).toLocaleString('id-ID')]));
+            const totalPemasukan = window.orders.filter(o => o.status !== 'belum').reduce((s, o) => s + o.total, 0);
+            const totalPengeluaran = window.expenses.reduce((s, e) => s + e.cost, 0);
+            arr.push([], ["REKAP"]);
+            arr.push(["Total Pemasukan", totalPemasukan]);
+            arr.push(["Total Pengeluaran", totalPengeluaran]);
+            arr.push(["Laba Bersih", totalPemasukan - totalPengeluaran]);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(arr), "Laporan");
+            XLSX.writeFile(wb, `Laporan_AdminLaundry_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showToast('Excel berhasil diunduh!', 'success');
+        }
+
+        function eksporPDF() { showToast('Menyiapkan PDF...', 'info');
+            window.print(); }
+
+        // ================================================================
+        // RESET
+        // ================================================================
+        function executeSystemReset() {
+            if (currentRole !== "owner") return showToast('Hanya Owner yang bisa reset database!', 'error');
+            if (!confirm('Kosongkan seluruh database Firebase secara permanen?')) return;
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_orders'), null);
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_expenses'), null);
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_rewards'), null);
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_rewards_claimed'), null);
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_checkins'), null);
+            window.dbSet(window.dbRef(window.firebaseDb, 'laundry_next_number'), 1);
+            showToast('Database dibersihkan!', 'success');
+            setTimeout(() => location.reload(), 800);
+        }
+
+        // ================================================================
+        // KIRIM PESAN KONTAK
+        // ================================================================
+        function kirimPesanKontak() {
+            const name = document.getElementById('contact-name').value.trim();
+            const email = document.getElementById('contact-email').value.trim();
+            const message = document.getElementById('contact-message').value.trim();
+            if (!name || !email || !message) return showToast('Lengkapi semua kolom!', 'warning');
+            const text = `Halo Admin Laundry,\n\nNama: ${name}\nEmail: ${email}\nPesan: ${message}`;
+            window.open(`https://api.whatsapp.com/send?phone=6281945497854&text=${encodeURIComponent(text)}`, '_blank');
+            showToast('Pesan terkirim via WhatsApp!', 'success');
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-email').value = '';
+            document.getElementById('contact-message').value = '';
+        }
+
+        // ================================================================
+        // FIREBASE INIT
+        // ================================================================
+        (function initFirebase() {
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.textContent = `
+                import { initializeApp } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-app.js";
+                import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-analytics.js";
+                import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-database.js";
+                const config = {
+                    apiKey: "AIzaSyBDll9PY0pQSY6YBEE5Bv4Lnq-hkMO35WA",
+                    authDomain: "loundry1-3d8e4.firebaseapp.com",
+                    databaseURL: "https://loundry1-3d8e4-default-rtdb.asia-southeast1.firebasedatabase.app",
+                    projectId: "loundry1-3d8e4",
+                    storageBucket: "loundry1-3d8e4.firebasestorage.app",
+                    messagingSenderId: "538574456576",
+                    appId: "1:538574456576:web:fec75cfe112aab624315e5",
+                    measurementId: "G-P4FCTGWQTS"
+                };
+                const app = initializeApp(config);
+                const analytics = getAnalytics(app);
+                const db = getDatabase(app);
+                window.firebaseDb = db;
+                window.dbRef = ref;
+                window.dbSet = set;
+                window.dbPush = push;
+                window.dbOnValue = onValue;
+                window.dbRemove = remove;
+                window.dbUpdate = update;
+
+                let renderTimer = null;
+                function debounceRender(fn) {
+                    if (renderTimer) clearTimeout(renderTimer);
+                    renderTimer = setTimeout(() => { fn(); renderTimer = null; }, 100);
+                }
+
+                window.dbOnValue(ref(db, 'laundry_orders'), (snap) => {
+                    window.orders = snap.val() ? Object.values(snap.val()) : [];
+                    debounceRender(() => { renderAllData(); });
+                });
+                window.dbOnValue(ref(db, 'laundry_expenses'), (snap) => {
+                    window.expenses = snap.val() ? Object.values(snap.val()) : [];
+                    debounceRender(() => { renderExpensesTable(); updateCounters(); renderLaporanKeuangan(); renderTodayStats(); renderExtraStats(); });
+                });
+                window.dbOnValue(ref(db, 'laundry_delete_logs'), (snap) => {
+                    window.deleteLogs = snap.val() ? Object.values(snap.val()) : [];
+                    debounceRender(renderDeleteLogs);
+                });
+                window.dbOnValue(ref(db, 'laundry_delete_expense_logs'), (snap) => {
+                    window.deleteExpenseLogs = snap.val() ? Object.values(snap.val()) : [];
+                    debounceRender(renderDeleteExpenseLogs);
+                });
+                window.dbOnValue(ref(db, 'laundry_next_number'), (snap) => {
+                    if (snap.exists()) { window.nextOrderNumber = snap.val(); const el = document.getElementById('next-paper-number'); if (el) el.innerText = "#" + window.nextOrderNumber; }
+                });
+                window.dbOnValue(ref(db, 'laundry_operational_schedule'), (snap) => {
+                    if (snap.exists()) { window.schedule = snap.val(); syncJadwalTokoUI(); }
+                });
+                window.dbOnValue(ref(db, 'laundry_rewards_claimed'), (snap) => {
+                    window.rewards = snap.val() ? Object.values(snap.val()) : [];
+                    renderRewardDashboard(window.rewards);
+                    renderRewardWinners();
+                    renderCheckinStats();
+                });
+                window.dbOnValue(ref(db, 'laundry_checkins'), (snap) => {
+                    renderCheckinStats();
+                });
+            `;
+            document.head.appendChild(script);
+        })();
+
+        // ================================================================
+        // DOM READY
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('theme') === 'dark') { document.documentElement.classList.add('dark'); const toggle =
+                    document.getElementById('dark-mode-toggle'); if (toggle) toggle.checked = true; }
+            initSmartNavbar();
+            syncJadwalTokoUI();
+            renderCheckinGrid();
+            renderInventaris();
+            loadRewardConfig();
+            loadPromoConfig();
+            renderPromoPublic();
+            const track = document.getElementById('marquee-track-testi');
+            if (track) track.innerHTML += track.innerHTML;
+            if (currentRole !== "belum_login") setTimeout(() => openDashboardSystem(false), 600);
+            setTimeout(() => { updateCounters(); }, 700);
+            document.getElementById('public-main-content').style.display = 'block';
+            showPage('public');
+            const backBtn = document.getElementById('back-to-top');
+            if (backBtn) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 400) backBtn.classList.add('visible');
+                    else backBtn.classList.remove('visible');
+                });
+            }
+        });
+
+        // ================================================================
+        // SECURITY
+        // ================================================================
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e
+                    .ctrlKey && e.keyCode === 85)) e.preventDefault();
+        });
+
+        // ================================================================
+        // EXPOSE
+        // ================================================================
+        window.toggleDarkModeGeser = toggleDarkModeGeser;
+        window.toggleAdminMobileMenu = toggleAdminMobileMenu;
+        window.toggleClientMobileMenu = toggleClientMobileMenu;
+        window.bukaPintuReward = bukaPintuReward;
+        window.tutupPintuReward = tutupPintuReward;
+        window.bukaPintuLogin = bukaPintuLogin;
+        window.tutupPintuLogin = tutupPintuLogin;
+        window.togglePasswordVisibility = togglePasswordVisibility;
+        window.checkGateLogin = checkGateLogin;
+        window.showGaransiPage = showGaransiPage;
+        window.backToMainPublic = backToMainPublic;
+        window.showPage = showPage;
+        window.openDashboardSystem = openDashboardSystem;
+        window.executeLogout = executeLogout;
+        window.switchPage = switchPage;
+        window.syncJadwalTokoUI = syncJadwalTokoUI;
+        window.simpanJadwalToko = simpanJadwalToko;
+        window.lacakNotaPelanggan = lacakNotaPelanggan;
+        window.hitungKalkulatorPublik = hitungKalkulatorPublik;
+        window.hitungKalkulator = hitungKalkulator;
+        window.toggleCustomLayananField = toggleCustomLayananField;
+        window.resetForm = resetForm;
+        window.tambahOrderan = tambahOrderan;
+        window.hapusOrderan = hapusOrderan;
+        window.rotasiStatus = rotasiStatus;
+        window.rotasiMetodeAntarTabel = rotasiMetodeAntarTabel;
+        window.bukaGoogleCalendarLaundry = bukaGoogleCalendarLaundry;
+        window.tambahPengeluaran = tambahPengeluaran;
+        window.deletePengeluaran = deletePengeluaran;
+        window.renderAllData = renderAllData;
+        window.renderTable = renderTable;
+        window.renderExpensesTable = renderExpensesTable;
+        window.renderDeleteLogs = renderDeleteLogs;
+        window.renderDeleteExpenseLogs = renderDeleteExpenseLogs;
+        window.renderRewardDashboard = renderRewardDashboard;
+        window.renderRewardWinners = renderRewardWinners;
+        window.renderCheckinStats = renderCheckinStats;
+        window.renderTopCustomers = renderTopCustomers;
+        window.renderLaporanKeuangan = renderLaporanKeuangan;
+        window.renderAllCustomers = renderAllCustomers;
+        window.renderPopularServices = renderPopularServices;
+        window.renderTodayStats = renderTodayStats;
+        window.renderExtraStats = renderExtraStats;
+        window.renderBarChartLayanan = renderBarChartLayanan;
+        window.renderInventaris = renderInventaris;
+        window.tambahInventaris = tambahInventaris;
+        window.hapusInventaris = hapusInventaris;
+        window.generateLaporanBulanan = generateLaporanBulanan;
+        window.updateCounters = updateCounters;
+        window.initCharts = initCharts;
+        window.changeChartFilter = changeChartFilter;
+        window.updateChartsData = updateChartsData;
+        window.unduhRekapanExcel = unduhRekapanExcel;
+        window.eksporPDF = eksporPDF;
+        window.executeSystemReset = executeSystemReset;
+        window.lakukanCheckinHarian = lakukanCheckinHarian;
+        window.kirimDataKlaimReward = kirimDataKlaimReward;
+        window.renderCheckinGrid = renderCheckinGrid;
+        window.showToast = showToast;
+        window.showNotification = showNotification;
+        window.aturTargetHarian = aturTargetHarian;
+        window.filterAntrean = filterAntrean;
+        window.bulkStatusUpdate = bulkStatusUpdate;
+        window.bukaLightbox = bukaLightbox;
+        window.tutupLightbox = tutupLightbox;
+        window.kirimPesanKontak = kirimPesanKontak;
+        window.saveRewardConfig = saveRewardConfig;
+        window.loadRewardConfig = loadRewardConfig;
+        window.savePromoConfig = savePromoConfig;
+        window.loadPromoConfig = loadPromoConfig;
+        window.renderPromoPublic = renderPromoPublic;
+    </script>
+
+</body>
+</html>
