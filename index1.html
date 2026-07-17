@@ -69,6 +69,8 @@
             box-shadow: var(--nm-shadow);
             border: 1px solid var(--border-rgba);
             transition: transform var(--transition), box-shadow var(--transition);
+            overflow: hidden;
+            width: 100%;
         }
         .nm-card:hover {
             transform: translateY(-3px);
@@ -412,15 +414,25 @@
         }
         .toast-container {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
+            bottom: 1.5rem;
+            left: 1rem;
+            right: 1rem;
             z-index: 9999;
             display: flex;
             flex-direction: column;
             gap: 0.75rem;
-            max-width: 380px;
-            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
             pointer-events: none;
+        }
+        @media (min-width: 640px) {
+            .toast-container {
+                left: auto;
+                right: 2rem;
+                bottom: 2rem;
+                max-width: 380px;
+                margin: 0;
+            }
         }
         .toast-container .toast-item {
             pointer-events: auto;
@@ -438,6 +450,7 @@
             font-size: 0.82rem;
             font-weight: 600;
             color: var(--text-main);
+            width: 100%;
         }
         .toast-item.success {
             border-left-color: var(--success);
@@ -560,14 +573,24 @@
         #admin-notification {
             position: fixed;
             top: 1rem;
+            left: 1rem;
             right: 1rem;
             z-index: 999;
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            max-width: 380px;
-            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
             pointer-events: none;
+        }
+        @media (min-width: 640px) {
+            #admin-notification {
+                left: auto;
+                right: 1rem;
+                top: 1rem;
+                max-width: 380px;
+                margin: 0;
+            }
         }
         #admin-notification .toast-item {
             pointer-events: auto;
@@ -782,6 +805,54 @@
         }
         .border-amber-500 {
             border-color: #f59e0b !important;
+        }
+
+        /* ============================================================
+           EXPENSES TABLE — MOBILE FIX
+           ============================================================ */
+        .expense-table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -0.25rem;
+            padding: 0 0.25rem;
+            width: 100%;
+        }
+        .expense-table-wrap table {
+            min-width: 280px;
+            width: 100%;
+        }
+        @media (max-width: 480px) {
+            .expense-table-wrap table {
+                min-width: 220px;
+            }
+            .expense-table-wrap td,
+            .expense-table-wrap th {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+                font-size: 0.7rem !important;
+            }
+        }
+        .expense-card-fix {
+            overflow: hidden;
+            width: 100%;
+        }
+        .expense-card-fix .nm-card {
+            overflow: hidden;
+            width: 100%;
+        }
+
+        /* ============================================================
+           NOTIFICATION MOBILE FIX
+           ============================================================ */
+        @media (max-width: 480px) {
+            .toast-item {
+                font-size: 0.72rem !important;
+                padding: 0.7rem 0.9rem !important;
+            }
+            #admin-notification .toast-item {
+                font-size: 0.72rem !important;
+                padding: 0.7rem 0.9rem !important;
+            }
         }
     </style>
 </head>
@@ -1262,14 +1333,52 @@
                 </div>
             </div>
 
-            <!-- PENGELUARAN -->
+            <!-- ==========================================================
+            PENGELUARAN — FIXED MOBILE OVERFLOW
+            ========================================================== -->
             <div id="pengeluaran-page" class="db-page w-full space-y-6">
                 <h1 class="text-2xl md:text-3xl font-black">Catat Pengeluaran</h1>
                 <div class="grid md:grid-cols-2 gap-8">
-                    <div class="nm-card p-6 md:p-8 space-y-5"><h3 class="font-black text-base uppercase border-b pb-3">Input Baru</h3><div><label class="text-xs font-black">Item</label><input type="text" id="expense-item" placeholder="Detergen 5L" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div><div><label class="text-xs font-black">Biaya</label><input type="number" id="expense-cost" placeholder="120000" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div><button onclick="tambahPengeluaran()" class="w-full nm-btn font-black py-4 rounded-xl text-red-500 text-xs uppercase">Potong Laba</button></div>
-                    <div class="nm-card p-6 md:p-8 space-y-4"><h3 class="font-black text-base uppercase border-b pb-3">Daftar Biaya</h3><div class="overflow-x-auto"><table class="w-full text-left min-w-[340px] text-xs"><thead><tr class="text-slate-400 border-b font-bold uppercase"><th class="pb-3 px-2">Item</th><th class="pb-3 px-2">Biaya</th><th class="pb-3 px-2 text-center">Aksi</th></tr></thead><tbody id="tabel-pengeluaran" class="divide-y font-semibold"></tbody></table></div></div>
+                    <!-- Input Baru -->
+                    <div class="nm-card p-6 md:p-8 space-y-5 expense-card-fix">
+                        <h3 class="font-black text-base uppercase border-b pb-3">Input Baru</h3>
+                        <div><label class="text-xs font-black">Item</label><input type="text" id="expense-item" placeholder="Detergen 5L" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div>
+                        <div><label class="text-xs font-black">Biaya</label><input type="number" id="expense-cost" placeholder="120000" class="nm-input w-full px-4 py-3 rounded-xl text-xs" /></div>
+                        <button onclick="tambahPengeluaran()" class="w-full nm-btn font-black py-4 rounded-xl text-red-500 text-xs uppercase">Potong Laba</button>
+                    </div>
+                    <!-- Daftar Biaya — with responsive table wrapper -->
+                    <div class="nm-card p-6 md:p-8 space-y-4 expense-card-fix">
+                        <h3 class="font-black text-base uppercase border-b pb-3">Daftar Biaya</h3>
+                        <div class="expense-table-wrap">
+                            <table class="w-full text-left text-xs font-semibold">
+                                <thead>
+                                    <tr class="text-slate-400 border-b font-bold uppercase">
+                                        <th class="pb-3 px-2">Item</th>
+                                        <th class="pb-3 px-2">Biaya</th>
+                                        <th class="pb-3 px-2 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabel-pengeluaran" class="divide-y"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div id="section-log-pengeluaran" class="hidden nm-card p-6 border-t-2 border-red-600"><h3 class="font-black text-red-700 text-xs uppercase">Log Hapus Pengeluaran</h3><div class="overflow-x-auto"><table class="w-full text-left min-w-[500px] text-xs"><thead><tr class="text-slate-400 border-b font-bold uppercase"><th class="py-3 px-2">Waktu</th><th class="py-3 px-2">Item</th><th class="py-3 px-2">Dihapus Oleh</th><th class="py-3 px-2">Biaya</th></tr></thead><tbody id="tabel-log-hapus-pengeluaran" class="divide-y"></tbody></table></div></div>
+                <div id="section-log-pengeluaran" class="hidden nm-card p-6 border-t-2 border-red-600">
+                    <h3 class="font-black text-red-700 text-xs uppercase">Log Hapus Pengeluaran</h3>
+                    <div class="expense-table-wrap">
+                        <table class="w-full text-left text-xs font-semibold">
+                            <thead>
+                                <tr class="text-slate-400 border-b font-bold uppercase">
+                                    <th class="py-3 px-2">Waktu</th>
+                                    <th class="py-3 px-2">Item</th>
+                                    <th class="py-3 px-2">Dihapus Oleh</th>
+                                    <th class="py-3 px-2">Biaya</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabel-log-hapus-pengeluaran" class="divide-y"></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- ARSIP -->
