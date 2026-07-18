@@ -854,6 +854,96 @@
                 padding: 0.7rem 0.9rem !important;
             }
         }
+
+        /* ============================================================
+           REWARD — GLOW INSET CIRCLE (FIX)
+           ============================================================ */
+        .glow-inset-circle {
+            box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.08), inset -3px -3px 8px rgba(255, 255, 255, 0.8);
+            background: #f8fafc;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .glow-inset-circle.done {
+            background: #d1fae5;
+            box-shadow: inset 2px 2px 6px rgba(16, 185, 129, 0.2), inset -2px -2px 6px rgba(255, 255, 255, 0.6);
+            color: #065f46;
+        }
+        .glow-inset-circle.locked {
+            background: #f1f5f9;
+            box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.06), inset -2px -2px 6px rgba(255, 255, 255, 0.6);
+            color: #94a3b8;
+        }
+        .glow-inset-circle .num {
+            font-size: 0.6rem;
+            font-weight: 800;
+            opacity: 0.6;
+        }
+        .glow-inset-circle .label {
+            font-size: 0.55rem;
+            font-weight: 700;
+        }
+
+        /* ============================================================
+           REWARD GRID — TOMBOL CHECK-IN
+           ============================================================ */
+        #grid-checkin-nodes {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+        }
+        #grid-checkin-nodes .node-box {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 800;
+            border-radius: 12px;
+            padding: 0.2rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            background: #f1f5f9;
+            box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.06), inset -2px -2px 6px rgba(255, 255, 255, 0.6);
+            color: #94a3b8;
+        }
+        #grid-checkin-nodes .node-box.done {
+            background: #d1fae5;
+            box-shadow: inset 2px 2px 6px rgba(16, 185, 129, 0.2), inset -2px -2px 6px rgba(255, 255, 255, 0.6);
+            color: #065f46;
+        }
+        #grid-checkin-nodes .node-box.locked {
+            background: #f1f5f9;
+            box-shadow: inset 2px 2px 6px rgba(0, 0, 0, 0.06), inset -2px -2px 6px rgba(255, 255, 255, 0.6);
+            color: #94a3b8;
+        }
+        #grid-checkin-nodes .node-box .num {
+            font-size: 0.7rem;
+            font-weight: 900;
+        }
+        #grid-checkin-nodes .node-box .label {
+            font-size: 0.5rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        @media (max-width: 480px) {
+            #grid-checkin-nodes {
+                gap: 0.3rem;
+            }
+            #grid-checkin-nodes .node-box {
+                font-size: 0.5rem;
+                border-radius: 8px;
+            }
+            #grid-checkin-nodes .node-box .num {
+                font-size: 0.6rem;
+            }
+            #grid-checkin-nodes .node-box .label {
+                font-size: 0.4rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -871,8 +961,8 @@
         <div class="fixed bottom-6 right-6 flex flex-col items-end gap-3 z-50 md:hidden" id="client-floating-controls">
             <div class="hidden flex-col bg-white border border-slate-200 shadow-2xl rounded-2xl p-2 gap-1 text-center w-36 mb-1" id="client-mobile-nav">
                 <a href="#" onclick="showPage('public'); toggleClientMobileMenu();" class="font-black text-[11px] py-2 px-3 rounded-xl block text-blue-600 tracking-wide uppercase hover:bg-slate-100 text-left">Home</a>
-                <a href="index3.html"  class="font-black text-[11px] py-2 px-3 rounded-xl block text-[var(--text-main)] tracking-wide uppercase hover:bg-slate-100 text-left">Profil</a>
-                <a href="index4.html"  class="font-black text-[11px] py-2 px-3 rounded-xl block text-[var(--text-main)] tracking-wide uppercase hover:bg-slate-100 text-left">Layanan</a>
+                <a href="index3.html" class="font-black text-[11px] py-2 px-3 rounded-xl block text-[var(--text-main)] tracking-wide uppercase hover:bg-slate-100 text-left">Profil</a>
+                <a href="index4.html" class="font-black text-[11px] py-2 px-3 rounded-xl block text-[var(--text-main)] tracking-wide uppercase hover:bg-slate-100 text-left">Layanan</a>
                 <a href="index5.html" class="font-black text-[11px] py-2 px-3 rounded-xl block text-[var(--text-main)] tracking-wide uppercase hover:bg-slate-100 text-left">Bantuan</a>
                 <button onclick="bukaPintuReward(); toggleClientMobileMenu();" class="font-black text-[11px] py-2 px-3 rounded-xl block text-indigo-600 tracking-wide uppercase hover:bg-slate-100 text-left w-full">Reward</button>
             </div>
@@ -893,8 +983,8 @@
             <div class="hidden lg:flex items-center space-x-4 xl:space-x-6">
                 <a href="#" class="nav-link active">Beranda</a>
                 <a href="index3.html">Profil</a>
-                <a href="index4.html"  class="nav-link">Layanan</a>
-                <a href="index5.html"  class="nav-link">Bantuan</a>
+                <a href="index4.html" class="nav-link">Layanan</a>
+                <a href="index5.html" class="nav-link">Bantuan</a>
                 <button onclick="bukaPintuReward()" class="text-indigo-600 hover:text-indigo-500 transition duration-200 font-bold text-sm">Reward</button>
                 <button onclick="showGaransiPage()" class="text-red-500 hover:text-red-600 transition duration-200 font-bold text-sm">Garansi</button>
             </div>
@@ -1199,17 +1289,29 @@
     </div>
 
     <!-- ===== POPUPS ===== -->
+    <!-- REWARD GATE -->
     <div id="reward-gate" class="gate-popup-overlay fixed inset-0 bg-black/70 backdrop-blur-md items-center justify-center z-50 p-4">
-        <div class="gate-popup-content nm-card p-8 md:p-10 w-full max-w-md relative glow-box">
+        <div class="gate-popup-content nm-card p-6 md:p-10 w-full max-w-md relative glow-box">
             <button onclick="tutupPintuReward()" class="absolute top-4 right-5 font-black text-slate-400 text-2xl">×</button>
-            <div class="text-center"><span class="bg-indigo-100 text-indigo-700 text-xs font-black px-4 py-1.5 rounded-full">Loyalitas</span><h2 class="text-2xl font-black mt-2">Check-In 10x</h2><p class="text-xs text-[var(--text-muted)]">Dapatkan voucher diskon <span id="reward-discount-display">15%</span>.</p></div>
-            <div class="mt-4"><label class="text-xs font-black">Nama:</label><input type="text" id="reward-client-name" placeholder="Nama lengkap..." class="nm-input w-full px-5 py-3 rounded-xl text-xs mt-1" oninput="renderCheckinGrid()" /></div>
-            <div class="grid grid-cols-5 gap-3 my-5" id="grid-checkin-nodes"></div>
-            <div class="space-y-4"><button id="btn-action-checkin" onclick="lakukanCheckinHarian()" class="w-full nm-btn font-black py-4 rounded-xl text-blue-600 text-xs">Check-In</button><button id="btn-claim-reward" disabled onclick="kirimDataKlaimReward()" class="w-full nm-btn font-black py-4 rounded-xl text-emerald-600 opacity-40 cursor-not-allowed text-xs">Klaim Reward</button></div>
-            <p class="text-[10px] text-center text-slate-400 mt-2">* Check-in hanya bisa dilakukan 1x per hari per nama. Klaim reward hanya sekali.</p>
+            <div class="text-center">
+                <span class="bg-indigo-100 text-indigo-700 text-xs font-black px-4 py-1.5 rounded-full">Loyalitas</span>
+                <h2 class="text-2xl font-black mt-2">Check-In 10x</h2>
+                <p class="text-xs text-[var(--text-muted)]">Dapatkan voucher diskon <span id="reward-discount-display" class="font-black text-indigo-600">15%</span>.</p>
+            </div>
+            <div class="mt-4">
+                <label class="text-xs font-black">Nama:</label>
+                <input type="text" id="reward-client-name" placeholder="Nama lengkap..." class="nm-input w-full px-5 py-3 rounded-xl text-xs mt-1" oninput="renderCheckinGrid()" />
+            </div>
+            <div id="grid-checkin-nodes" class="my-5"></div>
+            <div class="space-y-3">
+                <button id="btn-action-checkin" onclick="lakukanCheckinHarian()" class="w-full nm-btn font-black py-3.5 rounded-xl text-blue-600 text-xs">Check-In Hari Ini</button>
+                <button id="btn-claim-reward" disabled onclick="kirimDataKlaimReward()" class="w-full nm-btn font-black py-3.5 rounded-xl text-emerald-600 opacity-40 cursor-not-allowed text-xs">Klaim Reward</button>
+            </div>
+            <p class="text-[10px] text-center text-slate-400 mt-3">* Check-in 1x/hari. Klaim reward setelah 10x check-in (hanya sekali).</p>
         </div>
     </div>
 
+    <!-- LOGIN GATE -->
     <div id="login-gate" class="gate-popup-overlay fixed inset-0 bg-black/70 backdrop-blur-md items-center justify-center z-50 p-4">
         <div class="gate-popup-content nm-card p-8 md:p-10 w-full max-w-sm relative">
             <button onclick="tutupPintuLogin()" class="absolute top-4 right-5 font-black text-slate-400 text-2xl">×</button>
@@ -1595,105 +1697,217 @@
         }
 
         // ================================================================
-        // REWARD FIREBASE
+        // REWARD — 100% FIXED
         // ================================================================
+
+        /**
+         * renderCheckinGrid — render grid 10 kotak check-in & status klaim
+         * dipanggil saat nama berubah atau popup dibuka
+         */
         function renderCheckinGrid() {
             const nama = document.getElementById('reward-client-name').value.trim();
             const grid = document.getElementById('grid-checkin-nodes');
+            const btnCheckin = document.getElementById('btn-action-checkin');
+            const btnClaim = document.getElementById('btn-claim-reward');
+
             if (!grid) return;
+
+            // Jika nama kosong, tampilkan pesan
             if (!nama) {
-                grid.innerHTML = '<p class="text-xs text-slate-400 col-span-5 text-center">Masukkan nama dulu.</p>';
+                grid.innerHTML =
+                    `<div class="col-span-5 text-center text-xs text-slate-400 font-semibold py-4">Masukkan nama untuk memulai.</div>`;
+                if (btnCheckin) { btnCheckin.disabled = true;
+                    btnCheckin.classList.add('opacity-40'); }
+                if (btnClaim) { btnClaim.disabled = true;
+                    btnClaim.classList.add('opacity-40', 'cursor-not-allowed');
+                    btnClaim.innerText = 'Klaim Reward'; }
                 return;
             }
-            const ref = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}`);
-            window.dbOnValue(ref, (snap) => {
-                const count = snap.exists() ? Object.keys(snap.val()).length : 0;
-                grid.innerHTML = '';
-                for (let i = 1; i <= 10; i++) {
-                    if (i <= count) grid.innerHTML +=
-                        `<div class="p-3 text-xs font-black text-center text-emerald-600 bg-emerald-500/10 mx-0.5 rounded-xl glow-inset-circle">Done<br>${i}</div>`;
-                    else grid.innerHTML +=
-                        `<div class="p-3 nm-card text-xs font-bold text-center text-slate-400 mx-0.5">Lock<br>${i}</div>`;
-                }
-                const btnCheckin = document.getElementById('btn-action-checkin');
-                const btnClaim = document.getElementById('btn-claim-reward');
-                const claimRef = window.dbRef(window.firebaseDb, `laundry_rewards_claimed/${nama}`);
+
+            const checkinRef = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}`);
+            const claimRef = window.dbRef(window.firebaseDb, `laundry_rewards_claimed/${nama}`);
+
+            // Ambil data check-in dan klaim secara paralel
+            let checkinCount = 0;
+            let alreadyClaimed = false;
+
+            // 1. Ambil data check-in
+            window.dbOnValue(checkinRef, (snapCheck) => {
+                checkinCount = snapCheck.exists() ? Object.keys(snapCheck.val()).length : 0;
+
+                // 2. Ambil data klaim
                 window.dbOnValue(claimRef, (snapClaim) => {
-                    const claimed = snapClaim.exists();
-                    if (claimed) {
-                        btnCheckin.disabled = true;
-                        btnCheckin.classList.add('opacity-40');
-                        btnClaim.disabled = true;
-                        btnClaim.classList.add('opacity-40', 'cursor-not-allowed');
-                        btnClaim.innerText = 'Sudah Klaim';
-                    } else if (count >= 10) {
-                        btnCheckin.disabled = true;
-                        btnCheckin.classList.add('opacity-40');
-                        btnClaim.disabled = false;
-                        btnClaim.classList.remove('opacity-40', 'cursor-not-allowed');
-                        btnClaim.innerText = 'Klaim Reward';
-                    } else {
-                        btnCheckin.disabled = false;
-                        btnCheckin.classList.remove('opacity-40');
-                        btnClaim.disabled = true;
-                        btnClaim.classList.add('opacity-40', 'cursor-not-allowed');
-                        btnClaim.innerText = 'Klaim Reward';
-                    }
+                    alreadyClaimed = snapClaim.exists();
+
+                    // Render grid
+                    renderGrid(grid, checkinCount);
+
+                    // Update tombol
+                    updateButtons(btnCheckin, btnClaim, checkinCount, alreadyClaimed, nama);
+
                 }, { onlyOnce: true });
-            }, { onlyOnce: false });
+
+            }, { onlyOnce: true });
         }
 
+        /** render grid internal */
+        function renderGrid(grid, count) {
+            grid.innerHTML = '';
+            const maxNodes = 10;
+            for (let i = 1; i <= maxNodes; i++) {
+                const done = i <= count;
+                const cls = done ? 'node-box done' : 'node-box locked';
+                const label = done ? '✅' : '🔒';
+                grid.innerHTML += `
+                    <div class="${cls}">
+                        <span class="num">${i}</span>
+                        <span class="label">${label}</span>
+                    </div>
+                `;
+            }
+        }
+
+        /** update tombol berdasarkan status */
+        function updateButtons(btnCheckin, btnClaim, count, claimed, nama) {
+            if (!btnCheckin || !btnClaim) return;
+
+            if (claimed) {
+                // Sudah klaim: semua disable
+                btnCheckin.disabled = true;
+                btnCheckin.classList.add('opacity-40');
+                btnClaim.disabled = true;
+                btnClaim.classList.add('opacity-40', 'cursor-not-allowed');
+                btnClaim.innerText = '✅ Sudah Klaim';
+                return;
+            }
+
+            // Belum klaim
+            if (count >= 10) {
+                // Cukup check-in → aktifkan klaim
+                btnCheckin.disabled = true;
+                btnCheckin.classList.add('opacity-40');
+                btnClaim.disabled = false;
+                btnClaim.classList.remove('opacity-40', 'cursor-not-allowed');
+                btnClaim.innerText = '🎁 Klaim Reward Sekarang!';
+            } else {
+                // Kurang check-in
+                btnCheckin.disabled = false;
+                btnCheckin.classList.remove('opacity-40');
+                btnClaim.disabled = true;
+                btnClaim.classList.add('opacity-40', 'cursor-not-allowed');
+                btnClaim.innerText = `Klaim (${count}/10)`;
+            }
+        }
+
+        /**
+         * lakukanCheckinHarian — tambah check-in hari ini jika belum
+         */
         function lakukanCheckinHarian() {
             const nama = document.getElementById('reward-client-name').value.trim();
-            if (!nama) return showToast('Masukkan nama Anda!', 'warning');
+            if (!nama) {
+                showToast('Masukkan nama Anda terlebih dahulu!', 'warning');
+                return;
+            }
+
             const today = new Date().toISOString().split('T')[0];
-            const checkinRef = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}/${today}`);
+            const checkinRef = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}`);
+
+            // Cek apakah sudah check-in hari ini
             window.dbOnValue(checkinRef, (snap) => {
-                if (snap.exists()) {
+                const data = snap.val() || {};
+                const dates = Object.keys(data);
+
+                if (dates.includes(today)) {
                     showToast('Anda sudah check-in hari ini!', 'warning');
                     return;
                 }
-                const totalRef = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}`);
-                window.dbOnValue(totalRef, (snapTotal) => {
-                    const total = snapTotal.exists() ? Object.keys(snapTotal.val()).length : 0;
-                    if (total >= 10) {
-                        showToast('Anda sudah 10x check-in, silakan klaim reward!', 'info');
-                        return;
-                    }
-                    window.dbSet(checkinRef, { timestamp: Date.now() });
-                    showToast(`Check-in ke-${total+1} berhasil!`, 'success');
-                    renderCheckinGrid();
-                }, { once: true });
-            }, { once: true });
-        }
 
-        function kirimDataKlaimReward() {
-            const nama = document.getElementById('reward-client-name').value.trim();
-            if (!nama) return showToast('Isi nama valid!', 'warning');
-            const claimRef = window.dbRef(window.firebaseDb, `laundry_rewards_claimed/${nama}`);
-            window.dbOnValue(claimRef, (snap) => {
-                if (snap.exists()) {
-                    showToast('Anda sudah pernah klaim reward!', 'warning');
+                // Cek apakah sudah 10x (max)
+                if (dates.length >= 10) {
+                    showToast('Anda sudah 10x check-in! Segera klaim reward.', 'info');
+                    renderCheckinGrid();
                     return;
                 }
-                const checkinRef = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}`);
+
+                // Tambah check-in
+                const todayRef = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}/${today}`);
+                window.dbSet(todayRef, { timestamp: Date.now() })
+                    .then(() => {
+                        showToast(`Check-in ke-${dates.length + 1} berhasil! ✅`, 'success');
+                        renderCheckinGrid();
+                        // Refresh stats di dashboard
+                        renderCheckinStats();
+                    })
+                    .catch(err => {
+                        showToast('Gagal check-in: ' + err.message, 'error');
+                    });
+
+            }, { onlyOnce: true });
+        }
+
+        /**
+         * kirimDataKlaimReward — klaim reward setelah 10 check-in
+         */
+        function kirimDataKlaimReward() {
+            const nama = document.getElementById('reward-client-name').value.trim();
+            if (!nama) {
+                showToast('Masukkan nama Anda!', 'warning');
+                return;
+            }
+
+            const checkinRef = window.dbRef(window.firebaseDb, `laundry_checkins/${nama}`);
+            const claimRef = window.dbRef(window.firebaseDb, `laundry_rewards_claimed/${nama}`);
+
+            // Cek apakah sudah klaim
+            window.dbOnValue(claimRef, (snapClaim) => {
+                if (snapClaim.exists()) {
+                    showToast('Anda sudah pernah klaim reward!', 'warning');
+                    renderCheckinGrid();
+                    return;
+                }
+
+                // Cek jumlah check-in
                 window.dbOnValue(checkinRef, (snapCheck) => {
-                    const total = snapCheck.exists() ? Object.keys(snapCheck.val()).length : 0;
-                    if (total < 10) {
-                        showToast(`Anda baru ${total} check-in, butuh 10 untuk klaim.`, 'warning');
+                    const count = snapCheck.exists() ? Object.keys(snapCheck.val()).length : 0;
+
+                    if (count < 10) {
+                        showToast(`Masih ${count}/10 check-in. Butuh 10 untuk klaim.`, 'warning');
                         return;
                     }
+
+                    // Simpan klaim
                     const disc = rewardConfig.discountPercent || 15;
-                    window.dbSet(claimRef, { waktu: new Date().toLocaleString('id-ID'), diskon: disc + '%' });
-                    showToast(`Selamat! Reward ${disc}% berhasil diklaim!`, 'success');
-                    tutupPintuReward();
-                    const teksWA =
-                        `Halo Admin Laundry, saya ${nama} sudah klaim reward check-in. Mohon verifikasi.`;
-                    window.open(
-                        `https://api.whatsapp.com/send?phone=6281945497854&text=${encodeURIComponent(teksWA)}`,
-                        '_blank');
-                }, { once: true });
-            }, { once: true });
+                    const payload = {
+                        waktu: new Date().toLocaleString('id-ID'),
+                        diskon: disc + '%',
+                        nama: nama,
+                        timestamp: Date.now()
+                    };
+
+                    window.dbSet(claimRef, payload)
+                        .then(() => {
+                            showToast(`🎉 Selamat! Reward ${disc}% berhasil diklaim!`, 'success');
+                            tutupPintuReward();
+                            // Update data
+                            window.rewards.push(payload);
+                            renderRewardDashboard(window.rewards);
+                            renderRewardWinners();
+                            renderCheckinStats();
+                            // Kirim notifikasi WA
+                            const teksWA =
+                                `Halo Admin Laundry, saya ${nama} sudah klaim reward check-in. Mohon verifikasi.`;
+                            window.open(
+                                `https://api.whatsapp.com/send?phone=6281945497854&text=${encodeURIComponent(teksWA)}`,
+                                '_blank'
+                            );
+                        })
+                        .catch(err => {
+                            showToast('Gagal klaim: ' + err.message, 'error');
+                        });
+
+                }, { onlyOnce: true });
+
+            }, { onlyOnce: true });
         }
 
         // ================================================================
@@ -1702,8 +1916,8 @@
         function saveRewardConfig() {
             const disc = parseInt(document.getElementById('reward-discount-percent').value);
             const min = parseInt(document.getElementById('reward-min-checkin').value);
-            if (!disc || disc < 0 || disc > 100) return showToast('Masukkan diskon 0-100%', 'warning');
-            if (!min || min < 1) return showToast('Minimal check-in minimal 1', 'warning');
+            if (isNaN(disc) || disc < 0 || disc > 100) return showToast('Masukkan diskon 0-100%', 'warning');
+            if (isNaN(min) || min < 1) return showToast('Minimal check-in minimal 1', 'warning');
             rewardConfig.discountPercent = disc;
             rewardConfig.minCheckin = min;
             localStorage.setItem('laundry_reward_discount', disc);
@@ -1718,9 +1932,10 @@
             const min = document.getElementById('reward-min-checkin');
             if (disc) disc.value = rewardConfig.discountPercent;
             if (min) min.value = rewardConfig.minCheckin;
-            document.getElementById('reward-config-status').innerText =
-                `Diskon ${rewardConfig.discountPercent}% (min ${rewardConfig.minCheckin} check-in)`;
-            document.getElementById('reward-discount-display').innerText = rewardConfig.discountPercent + '%';
+            const status = document.getElementById('reward-config-status');
+            if (status) status.innerText = `Diskon ${rewardConfig.discountPercent}% (min ${rewardConfig.minCheckin} check-in)`;
+            const display = document.getElementById('reward-discount-display');
+            if (display) display.innerText = rewardConfig.discountPercent + '%';
         }
 
         // ================================================================
@@ -1772,28 +1987,137 @@
         }
 
         // ================================================================
-        // POPUPS
+        // REWARD DASHBOARD RENDERERS
         // ================================================================
-        function bukaPintuReward() { const o = document.getElementById('reward-gate'); if (!o) return; o.classList.remove(
-                'hidden');
+
+        function renderRewardDashboard(dataArray) {
+            const body = document.getElementById('tabel-pemenang-reward');
+            if (!body) return;
+            const data = dataArray || window.rewards || [];
+            if (data.length === 0) {
+                body.innerHTML =
+                    `<tr><td colspan="3" class="text-slate-400 py-6 text-center font-bold">Belum ada data.</td></tr>`;
+                return;
+            }
+            body.innerHTML = '';
+            // tampilkan terbaru di atas
+            const sorted = [...data].reverse().slice(0, 20);
+            sorted.forEach(r => {
+                body.innerHTML += `
+                    <tr>
+                        <td class="py-3 px-3">${r.waktu || '-'}</td>
+                        <td class="py-3 px-3"><strong>${r.nama || 'Anonim'}</strong></td>
+                        <td class="py-3 px-3"><span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-black text-[10px] tracking-wide">${r.status || 'Terkonfirmasi'}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderRewardWinners() {
+            const tbody = document.getElementById('tabel-reward-winners');
+            if (!tbody) return;
+            const data = window.rewards || [];
+            if (data.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="3" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr>`;
+                return;
+            }
+            tbody.innerHTML = '';
+            data.slice(0, 30).forEach(r => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="py-2 px-2 font-semibold">${r.nama || 'Anonim'}</td>
+                        <td class="py-2 px-2">${r.waktu || '-'}</td>
+                        <td class="py-2 px-2 text-indigo-600 font-black">${r.diskon || '15%'}</td>
+                    </tr>
+                `;
+            });
+            // history
+            const histBody = document.getElementById('tabel-reward-history');
+            if (histBody) {
+                histBody.innerHTML = '';
+                data.slice(0, 30).forEach(r => {
+                    histBody.innerHTML += `
+                        <tr>
+                            <td class="py-2 px-2">${r.waktu || '-'}</td>
+                            <td class="py-2 px-2 font-semibold">${r.nama || 'Anonim'}</td>
+                            <td class="py-2 px-2 text-indigo-600 font-black">${r.diskon || '15%'}</td>
+                            <td class="py-2 px-2"><span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-black">Aktif</span></td>
+                        </tr>
+                    `;
+                });
+                if (data.length === 0) histBody.innerHTML =
+                    `<tr><td colspan="4" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr>`;
+            }
+        }
+
+        function renderCheckinStats() {
+            const container = document.getElementById('checkin-stats');
+            if (!container) return;
+            const ref = window.dbRef(window.firebaseDb, `laundry_checkins`);
+            window.dbOnValue(ref, (snap) => {
+                if (!snap.exists()) {
+                    container.innerHTML = '<p class="text-slate-400">Belum ada check-in.</p>';
+                    return;
+                }
+                const data = snap.val();
+                let html = '';
+                const entries = Object.entries(data);
+                // urutkan dari yang terbanyak
+                entries.sort((a, b) => Object.keys(b[1]).length - Object.keys(a[1]).length);
+                entries.slice(0, 10).forEach(([nama, dates]) => {
+                    const count = Object.keys(dates).length;
+                    html += `
+                        <div class="flex justify-between items-center border-b border-slate-100 py-1">
+                            <span class="font-semibold">${nama}</span>
+                            <span class="text-blue-600 font-black">${count} check-in</span>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html || '<p class="text-slate-400">Belum ada data.</p>';
+            }, { onlyOnce: true });
+        }
+
+        // ================================================================
+        // POPUPS — REWARD + LOGIN
+        // ================================================================
+        function bukaPintuReward() {
+            const o = document.getElementById('reward-gate');
+            if (!o) return;
+            o.classList.remove('hidden');
             setTimeout(() => o.classList.add('flex'), 10);
-            renderCheckinGrid(); }
+            // reset nama & grid
+            document.getElementById('reward-client-name').value = '';
+            renderCheckinGrid();
+        }
 
-        function tutupPintuReward() { const o = document.getElementById('reward-gate'); if (!o) return; o.classList.remove(
-                'flex');
-            setTimeout(() => o.classList.add('hidden'), 300); }
+        function tutupPintuReward() {
+            const o = document.getElementById('reward-gate');
+            if (!o) return;
+            o.classList.remove('flex');
+            setTimeout(() => o.classList.add('hidden'), 300);
+        }
 
-        function bukaPintuLogin() { const o = document.getElementById('login-gate'); if (!o) return; o.classList.remove(
-                'hidden');
-            setTimeout(() => o.classList.add('flex'), 10); }
+        function bukaPintuLogin() {
+            const o = document.getElementById('login-gate');
+            if (!o) return;
+            o.classList.remove('hidden');
+            setTimeout(() => o.classList.add('flex'), 10);
+        }
 
-        function tutupPintuLogin() { const o = document.getElementById('login-gate'); if (!o) return; o.classList.remove(
-                'flex');
-            setTimeout(() => o.classList.add('hidden'), 300); }
+        function tutupPintuLogin() {
+            const o = document.getElementById('login-gate');
+            if (!o) return;
+            o.classList.remove('flex');
+            setTimeout(() => o.classList.add('hidden'), 300);
+        }
 
-        function togglePasswordVisibility() { const p = document.getElementById('gate-password'); if (!p) return; p.type = p
-                .type === "password" ? "text" : "password";
-            document.getElementById('eye-icon').textContent = p.type === "password" ? "👁️" : "🙈"; }
+        function togglePasswordVisibility() {
+            const p = document.getElementById('gate-password');
+            if (!p) return;
+            p.type = p.type === "password" ? "text" : "password";
+            document.getElementById('eye-icon').textContent = p.type === "password" ? "👁️" : "🙈";
+        }
 
         function checkGateLogin() {
             const u = document.getElementById('gate-username').value.trim();
@@ -2257,58 +2581,6 @@
                 `<tr><td colspan="4" class="text-center py-4 text-slate-400 font-bold">Log kosong.</td></tr>`;
             window.deleteExpenseLogs.forEach(l => { t.innerHTML +=
                     `<tr><td class="py-3 px-2">${l.waktu}</td><td class="py-3 px-2">${l.item}</td><td class="py-3 px-2">${l.oleh}</td><td class="py-3 px-2 text-red-500 font-bold">Rp ${l.cost.toLocaleString('id-ID')}</td></tr>`; });
-        }
-
-        function renderRewardDashboard(dataArray) {
-            const body = document.getElementById('tabel-pemenang-reward');
-            if (!body) return;
-            if (!dataArray || dataArray.length === 0) { body.innerHTML =
-                    `<tr><td colspan="3" class="text-slate-400 py-4 text-center font-bold">Belum ada data.</td></tr>`; return; }
-            body.innerHTML = '';
-            dataArray.reverse().forEach(r => {
-                body.innerHTML +=
-                    `<tr><td class="py-3 px-3">${r.waktu || '-'}</td><td class="py-3 px-3"><strong>${r.nama}</strong></td><td class="py-3 px-3"><span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full font-black text-[10px] tracking-wide">${r.status || 'Terkonfirmasi'}</span></td></tr>`;
-            });
-        }
-
-        function renderRewardWinners() {
-            const tbody = document.getElementById('tabel-reward-winners');
-            if (!tbody) return;
-            const winners = window.rewards || [];
-            if (winners.length === 0) { tbody.innerHTML =
-                    `<tr><td colspan="3" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr>`; return; }
-            tbody.innerHTML = '';
-            winners.forEach(r => {
-                tbody.innerHTML +=
-                    `<tr><td class="py-2 px-2 font-semibold">${r.nama}</td><td class="py-2 px-2">${r.waktu || '-'}</td><td class="py-2 px-2 text-indigo-600 font-black">${r.diskon || '15%'}</td></tr>`;
-            });
-            const histBody = document.getElementById('tabel-reward-history');
-            if (histBody) {
-                histBody.innerHTML = '';
-                winners.slice(0, 20).forEach(r => {
-                    histBody.innerHTML +=
-                        `<tr><td class="py-2 px-2">${r.waktu || '-'}</td><td class="py-2 px-2 font-semibold">${r.nama}</td><td class="py-2 px-2 text-indigo-600 font-black">${r.diskon || '15%'}</td><td class="py-2 px-2"><span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] font-black">Aktif</span></td></tr>`;
-                });
-                if (winners.length === 0) histBody.innerHTML =
-                    `<tr><td colspan="4" class="text-slate-400 py-6 text-center">Belum ada data.</td></tr>`;
-            }
-        }
-
-        function renderCheckinStats() {
-            const container = document.getElementById('checkin-stats');
-            if (!container) return;
-            const ref = window.dbRef(window.firebaseDb, `laundry_checkins`);
-            window.dbOnValue(ref, (snap) => {
-                if (!snap.exists()) { container.innerHTML = '<p class="text-slate-400">Belum ada check-in.</p>'; return; }
-                const data = snap.val();
-                let html = '';
-                Object.keys(data).forEach(nama => {
-                    const dates = Object.keys(data[nama]);
-                    html +=
-                        `<div class="flex justify-between items-center border-b border-slate-100 py-1"><span class="font-semibold">${nama}</span><span class="text-blue-600 font-black">${dates.length} check-in</span></div>`;
-                });
-                container.innerHTML = html;
-            }, { onlyOnce: true });
         }
 
         // ================================================================
